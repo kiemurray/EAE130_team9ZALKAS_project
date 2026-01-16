@@ -14,22 +14,28 @@ max_iterations = 100
 aim_120c = 356 #lb
 aim_9x = 188 #lb
 mk_83jdam = 985 #lb 
-a2a_payload = 2500 + 6*aim_120c + 2*aim_9x
-strike_payload = 2500 + 2*aim_9x + 4*mk_83jdam
+crew = 200 #lb
+num_crew = input("How many crew on boards? ")
+num_crew = int(num_crew)
+a2a_payload = 2500 + 6*aim_120c + 2*aim_9x +num_crew*200
+strike_payload = 2500 + 2*aim_9x + 4*mk_83jdam + num_crew*200
+
 
 # mission segment fuel fractions Wi+1/Wi (from ppt slides)
 warmup = 0.99
 taxi = 0.99
 takeoff = 0.99
-climb = 0.95 #pick later, given range is 0.9-0.96
+climb = 0.96 #pick later, given range is 0.9-0.96
 ingress = 0.995
 egress = 0.95
-combat = 0.90 #revist
-dash = 0.90 #revisit
+combat = 0.95 #revist
+dash = 0.95 #revisit
 descent = 0.99
 landing = 0.995
 cruise = math.exp(-range*c_t/(speed*L_over_D)) #possibly split into cruise and ingress/egress
+print(f"cruise fuel fraction: {cruise}")
 loiter = math.exp(-endurance*c_t/L_over_D)
+print(f"loiter fuel fraction: {loiter}")
 
 # Initial guess for TOGW
 TOGW_guess = 50000.0   #lb
@@ -91,3 +97,5 @@ if error > tolerance:
 else:
     print(f"\nConverged TOGW: {round(TOGW_guess)}lb")
     print("Iterations:", iteration)
+
+print("")
