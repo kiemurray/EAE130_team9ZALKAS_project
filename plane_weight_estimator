@@ -3,10 +3,10 @@ import math
 
 #set up
 c_t = 0.7       #come back to put value from chosen engine
-L_over_D = 10.0 #group decide on appropriate L/D from chart (will depend on wetted AR)
+L_over_D = 12.0 #group decide on appropriate L/D from chart (will depend on wetted AR)
 endurance = 1.0 #hrs (pick later)
 speed = 460     #knots (40,000ft at Ma 0.8)
-range = 700     #nm from RFP (1000nm ideal)
+range = 1400     #nm from RFP (700nm combat radius)
 tolerance = 1e-6            
 max_iterations = 100
 
@@ -15,7 +15,9 @@ aim_120c = 356 #lb
 aim_9x = 188 #lb
 mk_83jdam = 985 #lb 
 crew = 200 #lb
-num_crew = input("How many crew on boards? ")
+num_crew = input("How many crew on board? ")
+while num_crew not in ["1", "2"]:
+        num_crew = input("crew can only be 1 or 2. try again: ")
 num_crew = int(num_crew)
 a2a_payload = 2500 + 6*aim_120c + 2*aim_9x +num_crew*200
 strike_payload = 2500 + 2*aim_9x + 4*mk_83jdam + num_crew*200
@@ -98,4 +100,3 @@ else:
     print(f"\nConverged TOGW: {round(TOGW_guess)}lb")
     print("Iterations:", iteration)
 
-print("")
