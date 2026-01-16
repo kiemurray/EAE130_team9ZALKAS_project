@@ -22,8 +22,10 @@ warmup = 0.99
 taxi = 0.99
 takeoff = 0.99
 climb = 0.95 #pick later, given range is 0.9-0.96
-#ingress/egress = 0.??
-#combat = 0.??
+ingress = 0.995
+egress = 0.95
+combat = 0.90 #revist
+dash = 0.90 #revisit
 descent = 0.99
 landing = 0.995
 cruise = math.exp(-range*c_t/(speed*L_over_D)) #possibly split into cruise and ingress/egress
@@ -33,8 +35,8 @@ loiter = math.exp(-endurance*c_t/L_over_D)
 TOGW_guess = 50000.0   #lb
 
 # mission fuel uses: air to air or strike
-air_to_air = warmup*taxi*takeoff*climb*cruise*descent*loiter*landing #change to actual mission
-strike = warmup*taxi*takeoff*climb*cruise*descent*loiter*landing #change to actual mission
+air_to_air = warmup*taxi*takeoff*climb*cruise*ingress*combat*egress*cruise*descent*loiter*landing 
+strike = warmup*taxi*takeoff*climb*cruise*ingress*dash*egress*cruise*descent*loiter*landing 
 
 #set mission type
 mission_type = input("\nSelect A for air-to-air or S for strike: ")

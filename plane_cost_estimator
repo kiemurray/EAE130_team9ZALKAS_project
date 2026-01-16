@@ -15,7 +15,7 @@ RE = 59.10  #Engineering rate
 RT = 60.7   #Tooling rate
 RM = 50.1   #Manufacturing rate
 RQC = 55.4  #QC rate
-CPI_1986_to_2026 = 3.0 
+CPI_1986_to_2026 = 3.0 #Come back w real CPI or change to current labor rates (pick whatever is cheaper)
 
 #Estimated avionics cost (i think should be 1986 money bc later is inflated)
 Cavionics = 3000000   #money per aircraft i think
