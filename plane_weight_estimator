@@ -2,11 +2,11 @@ import numpy as np
 import math
 
 #set up
-c_t = 0.7  #come back to put value from chosen engine
+c_t = 0.7       #come back to put value from chosen engine
 L_over_D = 10.0 #group decide on appropriate L/D from chart (will depend on wetted AR)
 endurance = 1.0 #hrs (pick later)
-speed = 460 #knots (40,000ft at Ma 0.8)
-range = 700 #nm from RFP (1000nm ideal)
+speed = 460     #knots (40,000ft at Ma 0.8)
+range = 700     #nm from RFP (1000nm ideal)
 tolerance = 1e-6            
 max_iterations = 100
 
