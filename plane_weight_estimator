@@ -2,9 +2,9 @@ import numpy as np
 import math
 
 #set up
-c_t = 0.7       #come back to put value from chosen engine
-L_over_D = 12.0 #group decide on appropriate L/D from chart (will depend on wetted AR)
-endurance = 1.0 #hrs (pick later)
+c_t = 0.6       #come back to put value from chosen engine
+L_over_D = 10.0 #group decide on appropriate L/D from chart (will depend on wetted AR)
+endurance = 1/3 #hrs (20 min loiter max from RFP)
 speed = 460     #knots (40,000ft at Ma 0.8)
 range = 1400     #nm from RFP (700nm combat radius)
 tolerance = 1e-6            
@@ -19,7 +19,7 @@ num_crew = input("How many crew on board? ")
 while num_crew not in ["1", "2"]:
         num_crew = input("crew can only be 1 or 2. try again: ")
 num_crew = int(num_crew)
-a2a_payload = 2500 + 6*aim_120c + 2*aim_9x +num_crew*200
+a2a_payload = 2500 + 6*aim_120c + 2*aim_9x + num_crew*200
 strike_payload = 2500 + 2*aim_9x + 4*mk_83jdam + num_crew*200
 
 
@@ -34,7 +34,7 @@ combat = 0.95 #revist
 dash = 0.95 #revisit
 descent = 0.99
 landing = 0.995
-cruise = math.exp(-range*c_t/(speed*L_over_D)) #possibly split into cruise and ingress/egress
+cruise = math.exp(-(range/2)*c_t/(speed*L_over_D)) #possibly split into cruise and ingress/egress
 print(f"cruise fuel fraction: {cruise}")
 loiter = math.exp(-endurance*c_t/L_over_D)
 print(f"loiter fuel fraction: {loiter}")
@@ -47,7 +47,7 @@ air_to_air = warmup*taxi*takeoff*climb*cruise*ingress*combat*egress*cruise*desce
 strike = warmup*taxi*takeoff*climb*cruise*ingress*dash*egress*cruise*descent*loiter*landing 
 
 #set mission type
-mission_type = input("\nSelect A for air-to-air or S for strike: ")
+mission_type = input("Select A for air-to-air or S for strike: ")
 while mission_type not in ["A", "a", "S", "s"]:
     mission_type = input("Please choose A or S: ")
 if mission_type in ["A", "a"]:
@@ -75,12 +75,17 @@ while error > tolerance and iteration < max_iterations:
     iteration += 1
 
     # estimate empty weight fraction We/W0 using Raymer's method
-    A = 2.34 #from raymer txtbook using fighter jet
-    C = -0.13 #from raymer txtbook
-    empty_weight_fraction = A * (TOGW_guess ** C)
+     #A = 2.34 #from raymer txtbook using fighter jet
+     # C = -0.13 #from raymer txtbook
+     #empty_weight_fraction = A * (TOGW_guess ** C)
+
+    # estimate empty weight using Roskam Mehtod
+    A = 0.5091
+    B = 0.9505
+    empty_weight = 10 ** ((np.log10(TOGW_guess) - A) / B)
 
     # compute weights
-    empty_weight = empty_weight_fraction * TOGW_guess
+    #empty_weight = empty_weight_fraction * TOGW_guess #raymer only
     fuel_weight = fuel_fraction * TOGW_guess
 
     # solve for new TOGW
@@ -94,9 +99,10 @@ while error > tolerance and iteration < max_iterations:
 
 # Final result
 if error > tolerance:
-    print("\nTOGW not converged")
+    print("TOGW not converged")
     print(f"Unconvered TOGW: {round(TOGW_guess)}lb")
 else:
-    print(f"\nConverged TOGW: {round(TOGW_guess)}lb")
+    print(f"Converged TOGW: {round(TOGW_guess)}lb")
+    print(f"Converged Empty Weight: {round(empty_weight)}lb")
     print("Iterations:", iteration)
 
