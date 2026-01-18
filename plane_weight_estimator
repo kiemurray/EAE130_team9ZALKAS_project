@@ -6,7 +6,7 @@ c_t = 0.6       #come back to put value from chosen engine
 L_over_D = 10.0 #group decide on appropriate L/D from chart (will depend on wetted AR)
 endurance = 1/3 #hrs (20 min loiter max from RFP)
 speed = 460     #knots (40,000ft at Ma 0.8)
-range = 1400     #nm from RFP (700nm combat radius)
+range = 1400    #nm from RFP (700nm combat radius)
 tolerance = 1e-6            
 max_iterations = 100
 
