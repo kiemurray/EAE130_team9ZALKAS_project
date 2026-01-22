@@ -13,7 +13,7 @@ endurance = 1/2 #hrs
 speed = 251*1.94    #knots (251 m/s)
 range = 9150    #nm 
 tolerance = 1e-6            
-max_iterations = 100
+max_iterations = 500
 
 #payload
 person = 181 #lb
@@ -31,7 +31,7 @@ print(f"cruise fuel fraction: {cruise}")
 print(f"loiter fuel fraction: {loiter}")
 
 # Initial guess for TOGW
-TOGW_guess = 150000.0   #lb
+TOGW_guess = 400000.0   #lb
 
 # mission fuel uses: air to air or strike
 final_weight_fraction = takeoff*climb*cruise*loiter*landing
@@ -53,7 +53,7 @@ while error > tolerance and iteration < max_iterations:
     A = 0.97
     C = -0.06 
     empty_weight_fraction = A * (TOGW_guess ** C)
-    empty_weight = 1 - empty_weight_fraction
+    empty_weight = empty_weight_fraction*TOGW_guess
 
     # compute weights
     #empty_weight = empty_weight_fraction * TOGW_guess #raymer only
