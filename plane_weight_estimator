@@ -2,11 +2,24 @@ import numpy as np
 import math
 
 #set up
-c_t = 0.6       #come back to put value from chosen engine
-L_over_D = 10.0 #group decide on appropriate L/D from chart (will depend on wetted AR)
-endurance = 1/3 #hrs (20 min loiter max from RFP)
-speed = 460     #knots (40,000ft at Ma 0.8)
-range = 1400    #nm from RFP (700nm combat radius)
+cruise_LoD = 10.0  #group decide on appropriate L/D from chart (will depend on wetted AR)
+cruise_ct = 0.6        #cruise
+cruise_speed = 460      #knots (40,000ft at Ma 0.8)
+cruise_range = 700     #nm from RFP (700nm combat radius, 1000nm desired)
+
+loiter_LoD = 10.0 
+loiter_endurance = 1/3  #hrs (20 min loiter max from RFP)
+loiter_ct = 0.6 
+
+dash_LoD = 6.0 
+dash_ct = 1.0 
+dash_range = 50 #nm
+dash_speed = 600 #knots
+
+combat_LoD = 3.5
+combat_ct = 1.2         #high trust
+combat_endurance = 2/60 #hr (2min, 5 min desired)
+
 tolerance = 1e-6            
 max_iterations = 100
 
@@ -15,12 +28,8 @@ aim_120c = 356 #lb
 aim_9x = 188 #lb
 mk_83jdam = 985 #lb 
 crew = 200 #lb
-num_crew = input("How many crew on board? ")
-while num_crew not in ["1", "2"]:
-        num_crew = input("crew can only be 1 or 2. try again: ")
-num_crew = int(num_crew)
-a2a_payload = 2500 + 6*aim_120c + 2*aim_9x + num_crew*200
-strike_payload = 2500 + 2*aim_9x + 4*mk_83jdam + num_crew*200
+a2a_payload = 2500 + 6*aim_120c + 2*aim_9x + crew
+strike_payload = 2500 + 2*aim_9x + 4*mk_83jdam + crew
 
 
 # mission segment fuel fractions Wi+1/Wi (from ppt slides)
@@ -28,23 +37,25 @@ warmup = 0.99
 taxi = 0.99
 takeoff = 0.99
 climb = 0.96 #pick later, given range is 0.9-0.96
-ingress = 0.995
-egress = 0.95
-combat = 0.95 #revist
-dash = 0.95 #revisit
+combat = math.exp(-combat_endurance*combat_ct/combat_LoD)
+dash_ingress = math.exp(-(dash_range)*dash_ct/(dash_speed*dash_LoD))
+dash_egress = math.exp(-(dash_range)*dash_ct/(dash_speed*dash_LoD))
 descent = 0.99
 landing = 0.995
-cruise = math.exp(-(range/2)*c_t/(speed*L_over_D)) #possibly split into cruise and ingress/egress
-print(f"cruise fuel fraction: {cruise}")
-loiter = math.exp(-endurance*c_t/L_over_D)
-print(f"loiter fuel fraction: {loiter}")
+cruise = math.exp(-(cruise_range)*cruise_ct/(cruise_speed*cruise_LoD)) #possibly split into cruise and ingress/egress
+loiter = math.exp(-loiter_endurance*loiter_ct/loiter_LoD)
+print(f"combat weight fraction: {combat}")
+print(f"dash ingress and egress weight fraction:   {dash_ingress}")
+print(f"cruise weight fraction: {cruise}")
+print(f"loiter weight fraction: {loiter}")
+
 
 # Initial guess for TOGW
 TOGW_guess = 50000.0   #lb
 
 # mission fuel uses: air to air or strike
-air_to_air = warmup*taxi*takeoff*climb*cruise*ingress*combat*egress*cruise*descent*loiter*landing 
-strike = warmup*taxi*takeoff*climb*cruise*ingress*dash*egress*cruise*descent*loiter*landing 
+air_to_air = warmup*taxi*takeoff*climb*cruise*combat*cruise*descent*loiter*landing 
+strike = warmup*taxi*takeoff*climb*cruise*dash_ingress*dash_egress*cruise*descent*loiter*landing 
 
 #set mission type
 mission_type = input("Select A for air-to-air or S for strike: ")
