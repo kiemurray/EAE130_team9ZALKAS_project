@@ -56,16 +56,17 @@ if mission_type in ["A", "a"]:
     fuel_fraction *= 1.06 #reserve fuel
     payload_weight = a2a_payload
     print(f"Payload weight for air-to-air is: {payload_weight} lbs")
+    print(f"Fuel fraction for air-to-air is:  {fuel_fraction} lbs")
 else:
     final_weight_fraction = strike
     fuel_fraction = 1 - final_weight_fraction
     fuel_fraction *= 1.06 #reserve fuel
     payload_weight = strike_payload
     print(f"Payload weight for strike is: {payload_weight} lbs")
+    print(f"Fuel fraction for strike is:  {fuel_fraction} lbs")
 
 if fuel_fraction >= 1.0:
     print("Fuel fraction exceeds 1.0. Your mission is not feasible")
-
 
 # Iteration counter
 iteration = 0
@@ -78,6 +79,7 @@ while error > tolerance and iteration < max_iterations:
      #A = 2.34 #from raymer txtbook using fighter jet
      # C = -0.13 #from raymer txtbook
      #empty_weight_fraction = A * (TOGW_guess ** C)
+     #empty_weight = empty_weight_fraction * TOGW_guess
 
     # estimate empty weight using Roskam Mehtod
     A = 0.5091
