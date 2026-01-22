@@ -7,25 +7,23 @@ import math
 #constants
 #set up
 c_t = 0.52       #come back to put value from chosen engine
-L_over_D = 18.0 
+L_over_Dmax = 18.0 
+L_over_D = L_over_Dmax*.94
 endurance = 1/2 #hrs
-speed = 488     #knots (251 m/s)
+speed = 251*1.94    #knots (251 m/s)
 range = 9150    #nm 
 tolerance = 1e-6            
 max_iterations = 100
 
 #payload
-person = 170
-luggage = 60 
+person = 181 #lb
+luggage = 60 #lb
 payload_weight = (2+12+314)*person + 314*luggage #lb
 print(f"Payload weight: {payload_weight} lbs") 
 
 # mission segment fuel fractions Wi+1/Wi (from ppt slides)
-warmup = 0.99
-taxi = 0.99
-takeoff = 0.99
-climb = 0.96 
-descent = 0.99
+takeoff = 0.97
+climb = 0.985 
 landing = 0.995
 cruise = math.exp(-(range)*c_t/(speed*L_over_D)) 
 loiter = math.exp(-endurance*c_t/L_over_D)
@@ -36,11 +34,10 @@ print(f"loiter fuel fraction: {loiter}")
 TOGW_guess = 150000.0   #lb
 
 # mission fuel uses: air to air or strike
-final_weight_fraction = warmup*taxi*takeoff*climb*cruise*descent*loiter*landing*taxi
+final_weight_fraction = takeoff*climb*cruise*loiter*landing
 fuel_fraction = 1 - final_weight_fraction
 fuel_fraction *= 1.06 #reserve fuel
-print(f"Payload weight for air-to-air is: {payload_weight} lbs")
-print(f"Fuel fraction for air-to-air is:  {fuel_fraction} lbs")
+print(f"final fuel fraction: {fuel_fraction}")
 
 if fuel_fraction >= 1.0:
     print("Fuel fraction exceeds 1.0. Your mission is not feasible")
@@ -53,7 +50,7 @@ while error > tolerance and iteration < max_iterations:
     iteration += 1
 
     # estimate empty weight fraction We/W0 using Raymer's method
-    A = 1.04 
+    A = 0.97
     C = -0.06 
     empty_weight_fraction = A * (TOGW_guess ** C)
     empty_weight = 1 - empty_weight_fraction
