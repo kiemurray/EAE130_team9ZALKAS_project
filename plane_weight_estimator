@@ -44,7 +44,7 @@ descent = 0.99
 landing = 0.995
 cruise = math.exp(-(cruise_range)*cruise_ct/(cruise_speed*cruise_LoD)) #possibly split into cruise and ingress/egress
 loiter = math.exp(-loiter_endurance*loiter_ct/loiter_LoD)
-print(f"combat weight fraction: {combat}")
+print(f"\ncombat weight fraction: {combat}")
 print(f"dash ingress and egress weight fraction:   {dash_ingress}")
 print(f"cruise weight fraction: {cruise}")
 print(f"loiter weight fraction: {loiter}")
@@ -58,7 +58,7 @@ air_to_air = warmup*taxi*takeoff*climb*cruise*combat*cruise*descent*loiter*landi
 strike = warmup*taxi*takeoff*climb*cruise*dash_ingress*dash_egress*cruise*descent*loiter*landing 
 
 #set mission type
-mission_type = input("Select A for air-to-air or S for strike: ")
+mission_type = input("\nSelect A for air-to-air or S for strike: ")
 while mission_type not in ["A", "a", "S", "s"]:
     mission_type = input("Please choose A or S: ")
 if mission_type in ["A", "a"]:
@@ -66,14 +66,14 @@ if mission_type in ["A", "a"]:
     fuel_fraction = 1 - final_weight_fraction
     fuel_fraction *= 1.06 #reserve fuel
     payload_weight = a2a_payload
-    print(f"Payload weight for air-to-air is: {payload_weight} lbs")
+    print(f"\nPayload weight for air-to-air is: {payload_weight} lbs")
     print(f"Fuel fraction for air-to-air is:  {fuel_fraction} lbs")
 else:
     final_weight_fraction = strike
     fuel_fraction = 1 - final_weight_fraction
     fuel_fraction *= 1.06 #reserve fuel
     payload_weight = strike_payload
-    print(f"Payload weight for strike is: {payload_weight} lbs")
+    print(f"\nPayload weight for strike is: {payload_weight} lbs")
     print(f"Fuel fraction for strike is:  {fuel_fraction} lbs")
 
 if fuel_fraction >= 1.0:
@@ -112,10 +112,10 @@ while error > tolerance and iteration < max_iterations:
 
 # Final result
 if error > tolerance:
-    print("TOGW not converged")
+    print("\nTOGW not converged")
     print(f"Unconvered TOGW: {round(TOGW_guess)}lb")
 else:
-    print(f"Converged TOGW: {round(TOGW_guess)}lb")
+    print(f"\nConverged TOGW: {round(TOGW_guess)}lb")
     print(f"Converged Empty Weight: {round(empty_weight)}lb")
     print("Iterations:", iteration)
 
