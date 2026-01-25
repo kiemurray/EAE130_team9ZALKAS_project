@@ -25,6 +25,7 @@ CPI_1986_to_2026 = 2.94
 
 #Estimated avionics cost 
 Cavionics = 40e6   #current money
+#Cavionics = 2000*2500*CPI_1986_to_2026 #$2000/lb FY86(raymer txtbook estimation but seems too low)
 
 #Man Hours
 HE = 4.86 * We**0.777 * Vmax**0.894 * Q**0.163 #Engineering hours 
@@ -37,10 +38,11 @@ print(f"Manufacturing hours: {HM:.1f} hrs")
 print(f"QC hours:            {HQC:.1f} hrs")
 
 #Labor costs
-C_eng_hours = HE * RE 
-C_tool_hours = HT * RT 
-C_mfg_hours  = HM * RM 
-C_QC_hours   = HQC * RM 
+material_fudge_factor = 2 #covers complexity of non aluminum parts
+C_eng_hours = HE * RE * material_fudge_factor
+C_tool_hours = HT * RT * material_fudge_factor
+C_mfg_hours  = HM * RM * material_fudge_factor
+C_QC_hours   = HQC * RM * material_fudge_factor
 
 #Engine production cost 
 Ceng = 1548 * (0.043*Tmax + 243.25*Mmax + 0.969*Tturbine_inlet - 2228) * CPI_1986_to_2026 #should be around 20 million
@@ -57,11 +59,12 @@ print(f"Flight test cost:         ${CF/1e6:.2f} million")
 print(f"Materials cost:           ${CM/1e6:.2f} million")
 
 #need to find RDTE and unit costs still:
-RDTE = C_eng_hours+ CF + CD + C_tool_hours
 modernization_factor = 1.5 #covers software dev, program management, other factors not covered by dapca method
+investment_cost_factor = 1.2 #from raymer, profit margin
+RDTE = C_eng_hours+ CF + CD + C_tool_hours
 RDTE *= modernization_factor
 flyaway_unit = C_mfg_hours/Q + C_QC_hours/Q + Ceng + Cavionics + CM/Q
-unit = (RDTE + 500*flyaway_unit)/500 
+unit = (RDTE + 500*flyaway_unit)/500 *investment_cost_factor
 print(f"\nRDT&E cost:   ${RDTE/1e9:.2f} billion")
 print(f"Flyaway cost: ${flyaway_unit/1e6:.2f} million/unit")
 print(f"Unit cost:    ${unit/1e6:.2f} million")
