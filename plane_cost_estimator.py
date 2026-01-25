@@ -2,13 +2,14 @@ import numpy as np
 
 #Inputs
 We = 30000               #Empty weight (lb) 
+Tmax = 41000             #Engine max thrust lbs
+Neng = 2                 #Number of engines per aircraft
+
+Tturbine_inlet = 4060    #Turbine inlet temperature Rankine 
 Vmax = 1050              #Maximum velocity (knots)
 Q = 500                  #Production quantity
 FTA = 4                  #Number of flight test aircraft
 Mmax = 1.8               #Max Mach number of aircraft
-Tmax = 41000             #Engine max thrust lbs
-Tturbine_inlet = 4060    #Turbine inlet temperature Rankine 
-Neng = 2                 #Number of engines per aircraft
 
 #Labor costs in 2026$ and CPI value (labor cost using graph from slides)
 year = 2026
@@ -40,8 +41,6 @@ C_eng_hours = HE * RE
 C_tool_hours = HT * RT 
 C_mfg_hours  = HM * RM 
 C_QC_hours   = HQC * RM 
-C_labor_tot = C_eng_hours + C_tool_hours + C_mfg_hours + C_QC_hours
-print(f"\nTotal labor cost: ${C_labor_tot/1e9:.2f} billion")
 
 #Engine production cost 
 Ceng = 1548 * (0.043*Tmax + 243.25*Mmax + 0.969*Tturbine_inlet - 2228) * CPI_1986_to_2026 #should be around 20 million

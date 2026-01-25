@@ -26,7 +26,7 @@ max_iterations = 100
 #payload
 aim_120c = 356 #lb
 aim_9x = 188 #lb
-mk_83jdam = 985 #lb 
+mk_83jdam = 1000 #lb 
 crew = 200 #lb
 a2a_payload = 2500 + 6*aim_120c + 2*aim_9x + crew
 strike_payload = 2500 + 2*aim_9x + 4*mk_83jdam + crew
@@ -37,10 +37,12 @@ warmup = 0.99
 taxi = 0.99
 takeoff = 0.99
 climb = 0.96 #pick later, given range is 0.9-0.96
+midstrike_climb = 0.98
 combat = math.exp(-combat_endurance*combat_ct/combat_LoD)
 dash_ingress = math.exp(-(dash_range)*dash_ct/(dash_speed*dash_LoD))
 dash_egress = math.exp(-(dash_range)*dash_ct/(dash_speed*dash_LoD))
 descent = 0.99
+midstrike_descent = 0.995
 landing = 0.995
 cruise = math.exp(-(cruise_range)*cruise_ct/(cruise_speed*cruise_LoD)) #possibly split into cruise and ingress/egress
 loiter = math.exp(-loiter_endurance*loiter_ct/loiter_LoD)
@@ -55,7 +57,7 @@ TOGW_guess = 50000.0   #lb
 
 # mission fuel uses: air to air or strike
 air_to_air = warmup*taxi*takeoff*climb*cruise*combat*cruise*descent*loiter*landing 
-strike = warmup*taxi*takeoff*climb*cruise*dash_ingress*dash_egress*cruise*descent*loiter*landing 
+strike = warmup*taxi*takeoff*climb*cruise*midstrike_descent*dash_ingress*dash_egress*midstrike_climb*cruise*descent*loiter*landing 
 
 #set mission type
 mission_type = input("\nSelect A for air-to-air or S for strike: ")
@@ -118,4 +120,15 @@ else:
     print(f"\nConverged TOGW: {round(TOGW_guess)}lb")
     print(f"Converged Empty Weight: {round(empty_weight)}lb")
     print("Iterations:", iteration)
+
+if mission_type in ["A", "a"]:
+    print(f"\nCombat Weight Fraction: {warmup*taxi*takeoff*climb*cruise} lbs")
+    print(f"Loiter Weight Fraction:  {warmup*taxi*takeoff*climb*cruise*combat*cruise*descent} lbs")
+else:
+    print(f"\nIngress Weight Fraction: {warmup*taxi*takeoff*climb*cruise*midstrike_descent} lbs")
+    print(f"Initial Cruise Weight Fraction:  {warmup*taxi*takeoff*climb} lbs")
+    print(f"Egress Weight Fraction:  {warmup*taxi*takeoff*climb*cruise*midstrike_descent*dash_ingress} lbs")
+    print(f"Loiter Weight Fraction:  {warmup*taxi*takeoff*climb*cruise*midstrike_descent*dash_ingress*dash_egress*midstrike_climb*cruise*descent} lbs")
+
+
 
