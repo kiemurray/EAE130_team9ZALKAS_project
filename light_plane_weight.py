@@ -2,26 +2,26 @@ import numpy as np
 import math
 
 #set up
-cruise_LoD = 9  #group decide on appropriate L/D from chart (will depend on wetted AR)
+cruise_LoD = 8.5 #group decide on appropriate L/D from chart (will depend on wetted AR)
 cruise_ct = 0.7        #cruise
-cruise_speed = 490      #knots 
-cruise_range = 1000     #nm from RFP (700nm combat radius, 1000nm desired) subtracting dash for strike
+cruise_speed = 490      #knots (40,000ft at Ma 0.8)
+cruise_range = 750     #nm from RFP (700nm combat radius, 1000nm desired) subtracting dash for strike
 
-loiter_LoD = 9 
+loiter_LoD = 8.5
 loiter_endurance = 1/3  #hrs (20 min loiter max from RFP)
 loiter_ct = 0.65 
 
-dash_LoD = 3
+dash_LoD = 2.83
 dash_ct = 0.7 
 dash_range = 50 #nm
 dash_speed = 560 #knots
 
-combat_LoD = 2.5
-combat_ct = 1.7         #high trust
+combat_LoD = 2.34
+combat_ct = 1.65         #high trust
 combat_endurance = 2/60 #hr (2min, 5 min desired)
 
 tolerance = 1e-6            
-max_iterations = 750
+max_iterations = 250
 
 #payload
 aim_120c = 356 #lb
@@ -36,9 +36,9 @@ mission_type = input("\nSelect A for air-to-air or S for strike: ")
 while mission_type not in ["A", "a", "S", "s"]:
     mission_type = input("Please choose A or S: ")
 if mission_type in ["A", "a"]:
-    cruise_range = 1000
+    cruise_range = 800
 else:
-    cruise_range = 950
+    cruise_range = 750
 
 # mission segment fuel fractions Wi+1/Wi (from ppt slides)
 warmup = 0.99
@@ -61,13 +61,13 @@ print(f"loiter weight fraction: {loiter}")
 
 
 # Initial guess for TOGW
-TOGW_guess = 70000.0   #lb
+TOGW_guess = 50000.0   #lb
 
 # mission fuel uses: air to air or strike
 air_to_air = warmup*taxi*takeoff*climb*cruise*midmission_descent*combat*midmission_climb*cruise*descent*loiter*landing 
 strike = warmup*taxi*takeoff*climb*cruise*midmission_descent*dash_ingress*dash_egress*midmission_climb*cruise*descent*loiter*landing 
 
-#set mission fractions
+#set mission fraction
 if mission_type in ["A", "a"]:
     final_weight_fraction = air_to_air
     fuel_fraction = 1 - final_weight_fraction
@@ -127,5 +127,4 @@ else:
     print("Iterations:", iteration)
     print(f"Fuel Weight: {round(fuel_weight)}")
     print(f"Payload Weight: {round(payload_weight)}")    
-    print(f"Structural Weight: {round(empty_weight-2500-2*6422)}")
-
+    print(f"Structural Weight: {round(empty_weight-2500-6422)}")
