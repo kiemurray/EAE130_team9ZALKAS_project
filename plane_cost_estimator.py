@@ -1,9 +1,9 @@
 import numpy as np
 
 #Inputs
-We = 37018              #Empty weight (lb) 
+We = 55697              #Empty weight (lb) 
 Tmax = 41000             #Engine max thrust lbs
-Neng = 1                 #Number of engines per aircraft
+Neng = 2                 #Number of engines per aircraft
 
 Tturbine_inlet = 4060    #Turbine inlet temperature Rankine 
 Vmax = 1050              #Maximum velocity (knots)
@@ -63,12 +63,15 @@ complexity_factor = 1.5 #covers software dev, program management, other factors 
 investment_cost_factor = 1.2 #from raymer, profit margin
 RDTE = C_eng_hours+ CF + CD + C_tool_hours
 RDTE *= complexity_factor
-flyaway_unit = (C_mfg_hours/Q + C_QC_hours/Q + Ceng + Cavionics + CM/Q) * investment_cost_factor
+flyaway_unit = (C_mfg_hours/Q + C_QC_hours/Q + Ceng_total + Cavionics + CM/Q) * investment_cost_factor
 #unit = (RDTE + 500*flyaway_unit)/500 *investment_cost_factor (doesnt apply for military)
 print(f"\nRDT&E cost:   ${RDTE/1e9:.2f} billion")
 print(f"Flyaway cost: ${flyaway_unit/1e6:.2f} million/unit")
-
-
+print(f"Material cost: ${investment_cost_factor*CM/Q/1e6:.2f} million/unit")
+print(f"QC cost: ${investment_cost_factor*C_QC_hours/Q/1e6:.2f} million/unit")
+print(f"Manufacturing cost: ${investment_cost_factor*C_mfg_hours/Q/1e6:.2f} million/unit")
+print(f"Engine cost: ${investment_cost_factor*Ceng_total/1e6:.2f} million/unit")
+print(f"Avionics cost: ${investment_cost_factor*Cavionics/1e6:.2f} million/unit")
 
 
 
