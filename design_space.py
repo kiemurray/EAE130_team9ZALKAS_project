@@ -28,7 +28,7 @@ rho_to = 0.00224392          # slug/ft^3 (sea level but 89.8F)
 W_S = np.linspace(20, 200, 500)  #lbf/ft^2
 
 # Takeoff constraint
-s_to = 0.0               # effective take off distance (ft)
+s_to = 	306 + 9/12               # C-13-2 catapult stroke length (ft)
 CLmax_TO = 0.0
 T_W_takeoff = ks**2 * W_S / (rho_to * g * CLmax_TO * s_to)
 
@@ -38,7 +38,7 @@ T_W_takeoff = ks**2 * W_S / (rho_to * g * CLmax_TO * s_to)
 #
 
 # Landing constraint 
-s_lg = 0.0         # ft
+s_lg = 349         # ft
 l_wf = 0.0         # landing weight fraction (find from weight code later)
 CLmax_L = 0.0
 W_S_landing = s_lg * rho_to * CLmax_L / 80
@@ -50,7 +50,7 @@ def cr_dash_constraint(v, rho, wf, T_dash_ratio):
     return (q * CD0) / (wf * T_dash_ratio * W_S) + (k * T_dash_ratio * W_S) / (wf * q)
 
 mach_cruise = 0.85
-v_cr = mach_cruise * a_40 # ft/s Ma 0.8-0.85 at 40,000ft
+v_cr = mach_cruise * a_40    # ft/s Ma 0.8-0.85 at 40,000ft
 cr_wf = 0.0                  # cruise weight fraction (find from weight code later, figure out if we need cruise 1 or cruise 2)
 Tcr_Tto = 0.0                # cruise thrust / take off thrust?
 T_W_cruise = cr_dash_constraint(v_cr, rho_40, cr_wf, Tcr_Tto)
@@ -74,7 +74,7 @@ T_W_ceiling = 0.0 #add eq
 # Maneuvering constraint
 psi = 0.0              # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
 v_maneuver = 0.0       # idk yet
-T20_Tto = 0.0         # midmission thrust / take off thrust
+T20_Tto = 0.0          # midmission thrust / take off thrust
 man_wf = mid_wf
 def manuever_constraint (v, rho, wf, T_man_ratio, psi):
     q = 0.5 * rho * v**2
