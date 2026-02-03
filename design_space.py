@@ -88,10 +88,11 @@ T_W_ceiling = 0.0 #add eq
 def manuever_constraint (v, rho, wf, T_man_ratio, psi):
     q = 0.5 * rho * v**2
     n = np.sqrt((psi * v / g) + 1)
+    print(f"n = {n}gs")
     return ((q * CD0) / (T_man_ratio * wf * W_S) + (k_cr * n**2 * mid_wf * W_S) / (T_man_ratio * q))
 
 psi = 8 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
-v_maneuver = 0.0       # idk yet
+v_maneuver = v_cr      # idk yet
 T20_Tto = 0.0          # 20kft thrust / take off thrust
 man_wf = mid_wf
 T_W_maneuver = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi)
