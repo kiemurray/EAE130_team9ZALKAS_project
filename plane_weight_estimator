@@ -133,4 +133,4 @@ else:
     print(f"mid wf: {warmup*taxi*takeoff*climb*cruise*midmission_descent*dash_ingress}")
     print(f"cruise 1 wf: {warmup*taxi*takeoff*climb*cruise}")
     print(f"cruise 2 wf: {warmup*taxi*takeoff*climb*cruise*midmission_descent*dash_ingress*dash_egress*midmission_climb*cruise}")
-
+    print(f"climb wf: {warmup*taxi*takeoff*climb}")
