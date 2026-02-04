@@ -14,10 +14,30 @@ k_to = 1 / (np.pi * AR * e_to)
 k_cr = 1 / (np.pi * AR * e_cr)
 k_land = 1 / (np.pi * AR * e_land)
 ks = 1.2
+R = 53.35           #ft*lbf/lbm-Rankine
 
 CLmax_TO = 1.7
 CLmax_L = 2.1
 CLmax_climb = 1.9 # REVISIT
+
+
+# Density and Temp Formulas
+#Returns an array, with [density, speed of sound] at the given altitude
+def atmo_vals(height):
+    if height < 36152:                              #feet
+        T_alt = 59 -0.00356*height                  #Fahrenheit
+        p_alt = 2116 * ((T_alt+459.7)/518.6)**(5.256)   #lbf/ft^2
+    elif height > 82345:
+        T_alt = -205.5 + 0.00164*height
+        p_alt = 51.97 * ((T_alt+459.7)/389.98)**(-11.388)
+    else:
+        T_alt = -70
+        p_alt = 473.1 * np.exp(1.73 - 0.000048*height)
+    rho_alt = p_alt / (1718 * (T_alt+459.7))            #slugs/ft^3
+    a_alt = (1.4*R*32.17*(T_alt+459.7))**(1/2)
+    return [rho_alt,a_alt]
+
+
 
 
 rho_40 = 0.000585189         # slug/ft^3 (cruise 40k ft)
@@ -44,7 +64,7 @@ W_S_stall = 0.5 * rho_sl * v_stall**2 * CLmax_L
 
 
 v_to = 160 #knots
-v_to *= 1.68781 #ft/s
+v_to *= 1.68781 #conversion to ft/s
 W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO
 
 # climb
@@ -89,7 +109,10 @@ T_W_dash30ideal = cr_dash_constraint(v_dash30ideal, rho_30, dash30_wf, Tdash30_T
 
 # Ceiling constraint
 ROC_ceiling = 100 / 60    # ft/s (service ceiling from slides)
-T_W_ceiling = 0.0 #add eq
+
+#this doesn't convert to takeoff T_W;
+T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(30000))[0]/2)**(1/2)*((W_S_takeoff * wf_climb))**(-1/2) + 2*(k_cr*CD0)**(1/2) #Lec 7 Slide 32
+
 
 # Maneuvering constraint
 def manuever_constraint (v, rho, wf, T_man_ratio, psi):
@@ -137,7 +160,7 @@ plt.plot(W_S, T_W_maneuver, color='tab:red', linewidth=2, label='Maneuver (8 deg
 
 plt.axvline(W_S_landing56lb, color='magenta', linestyle='-.', linewidth=2, label='Landing')
 plt.axvline(W_S_stall, color='purple', linestyle=':', linewidth=2, label='Stall')
-
+plt.axhline(T_W_ceiling, color='green', linewidth=2, label='Ceiling (at 60000 feet)')
 
 # Formatting
 plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=14)
