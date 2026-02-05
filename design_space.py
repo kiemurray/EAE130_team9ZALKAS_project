@@ -66,16 +66,17 @@ W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO
 
 # climb
 SEROC_launch = 200/60  #ft/s (200ft/min)
-G = SEROC_launch / (ks * np.sqrt(2 * W_S / (rho_to * CLmax_climb)))     #seroc/v_climb or set to 1.2% for FAR25
 wf_climb =  0.93148704 
+G = SEROC_launch / (ks * np.sqrt(2 * W_S / (rho_to * CLmax_climb)))     #seroc/v_climb or set to 1.2% for FAR25
 T_W_climb = ks**2*CD0/CLmax_climb + CLmax_climb*k_to/(ks**2) + G
-T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb
+T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
 
 
 # Cruise and Dash Constraints
 def cr_dash_constraint(v, rho, wf, T_dash_ratio):
     q = 0.5 * rho * v**2
-    return (q * CD0) / (wf * T_dash_ratio * W_S) + (k_cr * T_dash_ratio * W_S) / (wf * q)
+    T_Wcr = (q * CD0) / (wf * W_S) + (k_cr * wf * W_S) / (q)
+    return T_Wcr * wf / T_dash_ratio
 
 mach_cruise = 0.85
 v_cr = mach_cruise * a_40              # ft/s Ma 0.8-0.85 at 40,000ft
@@ -115,8 +116,8 @@ T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(30000))[0]/2)**(1/2)*((W
 def manuever_constraint (v, rho, wf, T_man_ratio, psi):
     q = 0.5 * rho * v**2
     n = np.sqrt((psi * v / g)**2 + 1)
-    return ((q * CD0) / (T_man_ratio * wf * W_S) + (k_cr * n**2 * wf * W_S) / (T_man_ratio * q))
-
+    T_Wman = ((q * CD0) / (wf * W_S) + (k_cr * n**2 * wf * W_S) / (q))
+    return T_Wman * wf / T_man_ratio
 psi = 8 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
 v_maneuver = v_cr    # idk yet
 T20_Tto = Tratio(20000)          # 20kft thrust / take off thrust
@@ -138,23 +139,23 @@ plt.figure(figsize=(12, 8))
 
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 
-plt.plot(W_S, T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
+plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 #plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 
-plt.plot(W_S, T_W_cruise, color='tab:blue', linewidth=2, label='Cruise (40k ft, M0.85)')
+plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 
-plt.plot(W_S, T_W_dashSL, color='tab:blue', linestyle='--', linewidth=2, label='Dash SL (M0.85)')
-plt.plot(W_S, T_W_dashSLideal, color='tab:blue', linestyle=':', linewidth=1.8, label='Dash SL Ideal (M0.9)')
+plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
+plt.plot(W_S, T_W_dashSLideal, color='cyan', linestyle='--', linewidth=2, label='Dash SL Ideal (M0.9)')
 
-plt.plot(W_S, T_W_dash30, color='tab:green', linestyle='--', linewidth=2, label='Dash 30k ft (M1.6)')
-plt.plot(W_S, T_W_dash30ideal, color='tab:green', linestyle=':', linewidth=1.8, label='Dash 30k ft Ideal (M2.0)')
+plt.plot(W_S, T_W_dash30, color='green',  linewidth=2, label='Dash 30k ft (M1.6)')
+plt.plot(W_S, T_W_dash30ideal, color='green', linestyle='--', linewidth=1.8, label='Dash 30k ft Ideal (M2.0)')
 
-plt.plot(W_S, T_W_maneuver, color='tab:red', linewidth=2, label='Maneuver (8 deg/s)')
-plt.plot(W_S, T_W_maneuver_ideal, color='tab:red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
+plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
+plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 
-plt.axvline(W_S_landing56lb, color='magenta', linestyle='-.', linewidth=2, label='Landing')
-plt.axvline(W_S_stall, color='purple', linestyle=':', linewidth=2, label='Stall')
-plt.axhline(T_W_ceiling, color='green', linewidth=2, label='Ceiling (at 60000 feet)')
+plt.axvline(W_S_landing56lb, color='magenta',  linewidth=2, label='Landing')
+plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
+plt.axhline(T_W_ceiling, color='darkgreen', linewidth=2, label='Ceiling (at 60000 feet)')
 
 # Formatting
 plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=14)
