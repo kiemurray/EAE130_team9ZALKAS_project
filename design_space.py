@@ -67,7 +67,7 @@ W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO
 # climb
 SEROC_launch = 200/60  #ft/s (200ft/min)
 wf_climb =  0.93148704 
-G = SEROC_launch / (ks * np.sqrt(2 * W_S / (rho_to * CLmax_climb)))     #seroc/v_climb or set to 1.2% for FAR25
+G = 0.024      #seroc/v_climb or set to 1.2% for FAR25
 T_W_climb = ks**2*CD0/CLmax_climb + CLmax_climb*k_to/(ks**2) + G
 T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
 
@@ -139,8 +139,8 @@ plt.figure(figsize=(12, 8))
 
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 
-plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
-#plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
+#plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
+plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 
