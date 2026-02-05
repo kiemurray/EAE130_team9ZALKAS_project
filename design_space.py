@@ -34,20 +34,17 @@ def atmo_vals(height):
         T_alt = -70
         p_alt = 473.1 * np.exp(1.73 - 0.000048*height)
     rho_alt = p_alt / (1718 * (T_alt+459.7))            #slugs/ft^3
-    a_alt = (1.4*R*32.17*(T_alt+459.7))**(1/2)
+    a_alt = (1.4*R*32.17*(T_alt+459.7))**(1/2)          # ft/s
     T_alt += 459.67 #converts to rankine
     return [rho_alt,a_alt,p_alt,T_alt]
 
 
-rho_40 = 0.000585189         # slug/ft^3 (cruise 40k ft)
-a_40 = 968.076               # ft/s
-rho_30 = 0.000889378
-a_30 = 994.664
-rho_20 = 0.00126659
-a_20 = 1036.85
-rho_sl = 0.00237717          
-a_SL = 1116.45
+rho_40, a_40 = atmo_vals(40000)[:2]
+rho_30, a_30 = atmo_vals(30000)[:2]
+rho_20, a_20 = atmo_vals(20000)[:2]
+rho_sl, a_SL = atmo_vals(0)[:2]
 rho_to = 0.00224392          # slug/ft^3 (sea level but 89.8F)
+
 def Tratio(height):
     return atmo_vals(height)[2]/atmo_vals(0)[2] * np.sqrt(atmo_vals(0)[3]/atmo_vals(height)[3])
 
@@ -73,10 +70,10 @@ T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #convert
 
 
 # Cruise and Dash Constraints
-def cr_dash_constraint(v, rho, wf, T_dash_ratio):
+def cr_dash_constraint(v, rho, wf, T_ratio):
     q = 0.5 * rho * v**2
     T_Wcr = (q * CD0) / (wf * W_S) + (k_cr * wf * W_S) / (q)
-    return T_Wcr * wf / T_dash_ratio
+    return T_Wcr * wf / T_ratio
 
 mach_cruise = 0.85
 v_cr = mach_cruise * a_40              # ft/s Ma 0.8-0.85 at 40,000ft
