@@ -59,10 +59,8 @@ print(f"Flight test cost:         ${CF/1e6:.2f} million")
 print(f"Materials cost:           ${CM/1e6:.2f} million")
 
 #need to find RDTE and unit costs still:
-complexity_factor = 1.5 #covers software dev, program management, other factors not covered by dapca method
 investment_cost_factor = 1.2 #from raymer, profit margin
 RDTE = C_eng_hours+ CF + CD + C_tool_hours
-RDTE *= complexity_factor
 flyaway_unit = (C_mfg_hours/Q + C_QC_hours/Q + Ceng_total + Cavionics + CM/Q) * investment_cost_factor
 #unit = (RDTE + 500*flyaway_unit)/500 *investment_cost_factor (doesnt apply for military)
 print(f"\nRDT&E cost:   ${RDTE/1e9:.2f} billion")
