@@ -18,7 +18,7 @@ R = 53.35           #ft*lbf/lbm-Rankine
 
 CLmax_TO = 1.7
 CLmax_L = 2.1
-CLmax_climb = 1.9 # REVISIT
+CLmax_climb = CLmax_TO # REVISIT
 
 
 # Density and Temp Formulas
