@@ -149,13 +149,14 @@ plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8,
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-plt.plot(41, 0.92, marker='*', color='gold', markersize=15, 
+# Manually placing the point based on your known design values
+# Syntax: plt.plot(x_coordinate, y_coordinate)
+plt.plot(67, 0.94, marker='*', color='gold', markersize=15, 
          markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
-plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
-design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
-
-plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
+plt.axhline(T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
+# Shading the region above Dash 30k Ideal and to the left of Stall
+plt.fill_between(W_S, T_W_dash30ideal, 3, # 3 is an arbitrary high Y-limit for shading
                  where=(W_S <= W_S_stall), 
                  color='yellow', 
                  alpha=0.3, 
