@@ -32,6 +32,7 @@ e_lnd = 0.725
 CD_lndwn = CDO_lndwn + (1/(3.14)*(e_lnd)*(AR))*np.square(CL)
 
 #PLOTTING
+plt.figure(figsize=(8,7))
 plt.plot(CD_cl, CL, label = "Clean")
 plt.plot(CD_tkup, CL, label = "Takeoff / Gears Up")
 plt.plot(CD_tkdwn, CL, label = "Takeoff / Gears Down")
@@ -41,7 +42,7 @@ plt.legend()
 plt.legend(loc="best")
 plt.xlim(0, 0.45)
 plt.ylim(-1, 1)
-plt.title("Drag Polar Plot")
-plt.xlabel("$C_D$")
-plt.ylabel("$C_L$")
+plt.title("Drag Polar Plot", fontsize=26)
+plt.xlabel("$C_D$", fontsize=20)
+plt.ylabel("$C_L$", fontsize=20)
 plt.show()

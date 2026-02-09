@@ -83,7 +83,8 @@ def cr_dash_constraint(v, rho, wf, T_ratio):
     return T_Wcr * wf / T_ratio
 
 mach_cruise = 0.85
-v_cr = mach_cruise * a_40                                                 # ft/s Ma 0.8-0.85 at 40,000ft
+v_cr = mach_cruise * a_40                                                # ft/s Ma 0.8-0.85 at 40,000ft
+print("V cruise: "+str(v_cr))
 Tcr_Tto = Tratio(40000)                                                   
 T_W_cruise = cr_dash_constraint(v_cr, rho_40, cr_wf, Tcr_Tto)
 
@@ -148,18 +149,17 @@ plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8,
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-# Manually placing the point based on your known design values
-# Syntax: plt.plot(x_coordinate, y_coordinate)
-plt.plot(67, 0.94, marker='*', color='gold', markersize=15, 
+plt.plot(75, 1, marker='*', color='gold', markersize=15, 
          markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.axhline(T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
-# Shading the region above Dash 30k Ideal and to the left of Stall
-plt.fill_between(W_S, T_W_dash30ideal, 3, # 3 is an arbitrary high Y-limit for shading
+design_envelope = np.maximum(T_W_dash30ideal, T_W_maneuver_ideal)
+plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
                  where=(W_S <= W_S_stall), 
                  color='yellow', 
                  alpha=0.3, 
-                 label='Design Window')# Formatting
+                 zorder=1,
+                 label='Design Window')
 plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=18)
 plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
 plt.title('Aircraft Constraint Diagram', fontsize=20)
