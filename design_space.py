@@ -150,7 +150,7 @@ plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, la
 plt.axvline(W_S_landing56lb, color='magenta',  linewidth=2, label='Landing')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.axhline(T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
-
+plt.fill_between(T_W_dash30ideal,W_S_stall,T_W_ceiling, color="yellow")
 # Formatting
 plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=14)
 plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=14)
