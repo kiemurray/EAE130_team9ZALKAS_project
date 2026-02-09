@@ -73,17 +73,18 @@ W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO / to_wf
 SEROC_launch = 200/60                                                    #ft/s (200ft/min)
 G = 0.024                                                                #2.4% for FAR25
 T_W_climb = ks**2*CD0/CLmax_climb + CLmax_climb*k_to/(ks**2) + G
-T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb      #converts back to TO condition
+T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
 
 
 # Cruise and Dash 
 def cr_dash_constraint(v, rho, wf, T_ratio):
     q = 0.5 * rho * v**2
-    T_Wcr = (q * CD0) / (wf * W_S) + (k_cr * wf * W_S) / (q)
+    T_Wcr = (q * CD0) / (W_S/wf) + (k_cr * W_S/wf) / (q)
     return T_Wcr * wf / T_ratio
 
 mach_cruise = 0.85
-v_cr = mach_cruise * a_40                                                 # ft/s Ma 0.8-0.85 at 40,000ft
+v_cr = mach_cruise * a_40                                                # ft/s Ma 0.8-0.85 at 40,000ft
+print("V cruise: "+str(v_cr))
 Tcr_Tto = Tratio(40000)                                                   
 T_W_cruise = cr_dash_constraint(v_cr, rho_40, cr_wf, Tcr_Tto)
 
@@ -109,15 +110,15 @@ T_W_dash30ideal = cr_dash_constraint(v_dash30ideal, rho_30, dash30_wf, Tdash30_T
 ROC_ceiling = 100 / 60                                                     #ft/s (service ceiling from slides)
 ceiling_alt = 50000                                                        #ft chose reasonable value
 Tceiling_ratio = Tratio(ceiling_alt)
-T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((W_S_takeoff * mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) #Lec 7 Slide 32
+T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((W_S/ mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) 
 T_W_ceiling *= mid_wf / Tceiling_ratio
 
 # Maneuvering 
-def manuever_constraint (v, rho, wf, T_man_ratio, psi):
+def manuever_constraint (v, rho, wf, T_ratio, psi):
     q = 0.5 * rho * v**2
     n = np.sqrt((psi * v / g)**2 + 1)
-    T_Wman = ((q * CD0) / (wf * W_S) + (k_cr * n**2 * wf * W_S) / (q))
-    return T_Wman * wf / T_man_ratio
+    T_Wman = ((q * CD0) / (W_S/wf) + (k_cr * n**2 * W_S/wf) / (q))
+    return T_Wman * wf / T_ratio
 psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
 v_maneuver = v_cr    
 T20_Tto = Tratio(20000)                                                     # 20kft thrust / take off thrust
@@ -148,18 +149,18 @@ plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8,
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-# Manually placing the point based on your known design values
-# Syntax: plt.plot(x_coordinate, y_coordinate)
-plt.plot(67, 0.94, marker='*', color='gold', markersize=15, 
+plt.plot(41, 0.92, marker='*', color='gold', markersize=15, 
          markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
-plt.axhline(T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
-# Shading the region above Dash 30k Ideal and to the left of Stall
-plt.fill_between(W_S, T_W_dash30ideal, 3, # 3 is an arbitrary high Y-limit for shading
+plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
+design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
+
+plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
                  where=(W_S <= W_S_stall), 
                  color='yellow', 
                  alpha=0.3, 
-                 label='Design Window')# Formatting
+                 zorder=1,
+                 label='Design Window')
 plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=18)
 plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
 plt.title('Aircraft Constraint Diagram', fontsize=20)
