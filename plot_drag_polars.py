@@ -7,27 +7,27 @@ CL = np.linspace(-2, 3, 500)
 AR = 2.066
 
 #CLEAN
-CDO_cl = 0.01111
+CDo_cl = 0.01166
 e_cl = 0.820
-CD_cl = CDO_cl + (1/(3.14)*(e_cl)*(AR))*np.square(CL)
+CD_cl = CDo_cl + (1/(3.14)*(e_cl)*(AR))*np.square(CL)
 
 #TAKEOFF / GEAR UP
-CDO_tkup = 0.02611
+CDO_tkup = CDo_cl + 0.015
 e_tk = 0.775
 CD_tkup = CDO_tkup + (1/(3.14)*(e_tk)*(AR))*np.square(CL)
 
 #TAKEOFF / GEAR DOWN
-CDO_tkdwn = 0.04611
+CDO_tkdwn = CDo_cl + 0.015 + 0.020
 e_tk = 0.775
 CD_tkdwn = CDO_tkdwn + (1/(3.14)*(e_tk)*(AR))*np.square(CL)
 
 #LANDING / GEAR UP
-CDO_lndup = 0.07611
+CDO_lndup = CDo_cl + 0.065
 e_lnd = 0.725
 CD_lndup = CDO_lndup + (1/(3.14)*(e_lnd)*(AR))*np.square(CL)
 
 #LANDING / GEAR DOWN
-CDO_lndwn = 0.09611
+CDO_lndwn = CDo_cl + 0.065 + 0.020
 e_lnd = 0.725
 CD_lndwn = CDO_lndwn + (1/(3.14)*(e_lnd)*(AR))*np.square(CL)
 
