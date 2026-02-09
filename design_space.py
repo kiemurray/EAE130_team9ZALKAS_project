@@ -67,7 +67,7 @@ W_S_stall = 0.5 * rho_sl * v_stall**2 * CLmax_L
 # Takeoff 
 v_to = 160 #knots
 v_to *= 1.68781 #conversion to ft/s
-W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO * to_wf
+W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO / to_wf
 
 # Climb
 SEROC_launch = 200/60                                                   #ft/s (200ft/min)
