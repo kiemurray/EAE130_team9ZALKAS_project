@@ -41,9 +41,9 @@ def atmo_vals(height):
     else:
         T_alt = -70
         p_alt = 473.1 * np.exp(1.73 - 0.000048*height)
-        rho_alt = p_alt / (1718 * (T_alt+459.7))                       #slugs/ft^3
-        a_alt = (1.4*R*32.17*(T_alt+459.7))**(1/2)                     # ft/s
-        T_alt += 459.67                                                #converts to rankine
+    rho_alt = p_alt / (1718 * (T_alt+459.7))                       #slugs/ft^3
+    a_alt = (1.4*R*32.17*(T_alt+459.7))**(1/2)                     # ft/s
+    T_alt += 459.67                                                #converts to rankine
     return [rho_alt,a_alt,p_alt,T_alt]
 
 
@@ -150,8 +150,12 @@ plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, la
 plt.axvline(W_S_landing56lb, color='magenta',  linewidth=2, label='Landing')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.axhline(T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
-plt.fill_between(T_W_dash30ideal,W_S_stall,T_W_ceiling, color="yellow")
-# Formatting
+# Shading the region above Dash 30k Ideal and to the left of Stall
+plt.fill_between(W_S, T_W_dash30ideal, 3, # 3 is an arbitrary high Y-limit for shading
+                 where=(W_S <= W_S_stall), 
+                 color='yellow', 
+                 alpha=0.3, 
+                 label='Design Window')# Formatting
 plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=14)
 plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=14)
 plt.title('Aircraft Constraint Diagram', fontsize=16)
