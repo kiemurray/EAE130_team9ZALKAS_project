@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #constants 
-g = 32.174          # ft/s^2
-CD0 = 0.01111       # clean, used for cruise, dashes, ceiling, manuever
+g = 32.174                                                            # ft/s^2
+CD0 = 0.01111                                                         # clean, used for cruise, dashes, ceiling, manuever
 W_TO = 55700
 AR = 2.066       
 n_eng = 2 
@@ -14,7 +14,7 @@ k_to = 1 / (np.pi * AR * e_to)
 k_cr = 1 / (np.pi * AR * e_cr)
 k_land = 1 / (np.pi * AR * e_land)
 ks = 1.2
-R = 53.35           #ft*lbf/lbm-Rankine
+R = 53.35                                                              #ft*lbf/lbm-Rankine
 
 CLmax_TO = 1.7
 CLmax_L = 2.1
@@ -32,18 +32,18 @@ wf_landing = 0.6227770873721522
 # Density and Temp Formulas
 #Returns an array, with [density, speed of sound] at the given altitude
 def atmo_vals(height):
-    if height < 36152:                                  #feet
-        T_alt = 59 -0.00356*height                      #Fahrenheit
-        p_alt = 2116 * ((T_alt+459.7)/518.6)**(5.256)   #lbf/ft^2
+    if height < 36152:                                                 #feet
+        T_alt = 59 -0.00356*height                                     #Fahrenheit
+        p_alt = 2116 * ((T_alt+459.7)/518.6)**(5.256)                  #lbf/ft^2
     elif height > 82345:
         T_alt = -205.5 + 0.00164*height
         p_alt = 51.97 * ((T_alt+459.7)/389.98)**(-11.388)
     else:
         T_alt = -70
         p_alt = 473.1 * np.exp(1.73 - 0.000048*height)
-    rho_alt = p_alt / (1718 * (T_alt+459.7))            #slugs/ft^3
-    a_alt = (1.4*R*32.17*(T_alt+459.7))**(1/2)          # ft/s
-    T_alt += 459.67                                     #converts to rankine
+        rho_alt = p_alt / (1718 * (T_alt+459.7))                       #slugs/ft^3
+        a_alt = (1.4*R*32.17*(T_alt+459.7))**(1/2)                     # ft/s
+        T_alt += 459.67                                                #converts to rankine
     return [rho_alt,a_alt,p_alt,T_alt]
 
 
@@ -51,17 +51,17 @@ rho_40, a_40 = atmo_vals(40000)[:2]
 rho_30, a_30 = atmo_vals(30000)[:2]
 rho_20, a_20 = atmo_vals(20000)[:2]
 rho_sl, a_SL = atmo_vals(0)[:2]
-rho_to = 0.00224392          # slug/ft^3 (sea level but 89.8F)
+rho_to = 0.00224392                                                     # slug/ft^3 (sea level but 89.8F)
 
 def Tratio(height):
     return atmo_vals(height)[2]/atmo_vals(0)[2] * np.sqrt(atmo_vals(0)[3]/atmo_vals(height)[3])
 
 # Wing loading range
-W_S = np.linspace(0, 200, 500)  #lbf/ft^2
+W_S = np.linspace(0, 200, 500)                                          #lbf/ft^2
 
 # Stall
-v_stall = 145/1.1                                    #knots
-v_stall *= 1.68781                                   #ft/s
+v_stall = 145/1.1                                                       #knots
+v_stall *= 1.68781                                                      #ft/s
 W_S_stall = 0.5 * rho_sl * v_stall**2 * CLmax_L
 
 # Takeoff 
@@ -70,10 +70,10 @@ v_to *= 1.68781 #conversion to ft/s
 W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO * to_wf
 
 # Climb
-SEROC_launch = 200/60                                                   #ft/s (200ft/min)
-G = 0.024                                                               #2.4% for FAR25
+SEROC_launch = 200/60                                                    #ft/s (200ft/min)
+G = 0.024                                                                #2.4% for FAR25
 T_W_climb = ks**2*CD0/CLmax_climb + CLmax_climb*k_to/(ks**2) + G
-T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
+T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb      #converts back to TO condition
 
 
 # Cruise and Dash 
@@ -106,8 +106,8 @@ v_dash30ideal = mach_dash30ideal * a_30
 T_W_dash30ideal = cr_dash_constraint(v_dash30ideal, rho_30, dash30_wf, Tdash30_Tto)
 
 # Service Ceiling
-ROC_ceiling = 100 / 60                      #ft/s (service ceiling from slides)
-ceiling_alt = 50000                         #ft chose reasonable val
+ROC_ceiling = 100 / 60                                                     #ft/s (service ceiling from slides)
+ceiling_alt = 50000                                                        #ft chose reasonable value
 Tceiling_ratio = Tratio(ceiling_alt)
 T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((W_S_takeoff * mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) #Lec 7 Slide 32
 T_W_ceiling *= mid_wf / Tceiling_ratio
@@ -118,19 +118,19 @@ def manuever_constraint (v, rho, wf, T_man_ratio, psi):
     n = np.sqrt((psi * v / g)**2 + 1)
     T_Wman = ((q * CD0) / (wf * W_S) + (k_cr * n**2 * wf * W_S) / (q))
     return T_Wman * wf / T_man_ratio
-psi = 8 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
-v_maneuver = v_cr    # idk yet
-T20_Tto = Tratio(20000)          # 20kft thrust / take off thrust
+psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
+v_maneuver = v_cr    
+T20_Tto = Tratio(20000)                                                     # 20kft thrust / take off thrust
 T_W_maneuver = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi)
 
-psi_ideal = 10 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
+psi_ideal = 10 * np.pi/180                                                  # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
 T_W_maneuver_ideal = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi_ideal)
 
 # Landing 
-v_engage56lb = 145      # knots 
+v_engage56lb = 145                                                          # knots 
 WOD = 15
 v_landing = v_engage56lb + WOD
-v_engage56lb *= 1.68781 #ft/s
+v_engage56lb *= 1.68781                                                     #ft/s
 
 W_S_landing56lb = 0.5 * rho_sl * v_landing**2 * CLmax_L
 W_S_landing56lb /= wf_landing
