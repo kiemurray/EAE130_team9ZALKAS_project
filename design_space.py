@@ -147,7 +147,11 @@ plt.plot(W_S, T_W_dash30, color='limegreen',  linewidth=2, label='Dash 30k ft (M
 plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8, label='Dash 30k ft Ideal (M2.0)')
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
-plt.axvline(W_S_landing56lb, color='magenta',  linewidth=2, label='Landing')
+diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
+# Manually placing the point based on your known design values
+# Syntax: plt.plot(x_coordinate, y_coordinate)
+plt.plot(67, 0.94, marker='*', color='gold', markersize=15, 
+         markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.axhline(T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
 # Shading the region above Dash 30k Ideal and to the left of Stall
@@ -156,11 +160,12 @@ plt.fill_between(W_S, T_W_dash30ideal, 3, # 3 is an arbitrary high Y-limit for s
                  color='yellow', 
                  alpha=0.3, 
                  label='Design Window')# Formatting
-plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=14)
-plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=14)
-plt.title('Aircraft Constraint Diagram', fontsize=16)
+plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=18)
+plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
+plt.title('Aircraft Constraint Diagram', fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=10, loc='upper right')
+
 
 plt.xlim(0, 200)
 plt.ylim(0, 2.0)  
