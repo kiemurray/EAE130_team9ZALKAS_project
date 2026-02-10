@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 #constants 
 g = 32.174                                                            # ft/s^2
-CD0 = 0.01111                                                         # clean, used for cruise, dashes, ceiling, manuever
+CD0 = 0.01166                                                         # clean, used for cruise, dashes, ceiling, manuever
 W_TO = 55700
 AR = 2.066       
 n_eng = 2 
@@ -135,11 +135,24 @@ v_engage56lb *= 1.68781                                                     #ft/
 W_S_landing56lb = 0.5 * rho_sl * v_landing**2 * CLmax_L
 W_S_landing56lb /= wf_landing
 
+# Arrestor Landing (will be check for later, probably not on the constraint diagram)
+F_hook = 120000                                                           #lbf
+s_lg = 349                                                                #ft, assumed length of landing runway w/ arresting wire
+S_wet = 2500                                                              #ft^2, assumed wetted area of the aircraft
+v_eng = 130 * 1.68781                                                     #ft/s, assumed engagement speed of the arresting hook (115 knots)
+
+#W_S_landing = (s_lg * g * rho_sl * S_wet * CD0) / (np.log(1 + (0.5*rho_sl*S_wet*v_eng**2*CD0)/0.8*F_hook))
+
+s_lg = (W_TO*wf_landing*v_eng**2) / (g * 0.8 * F_hook)
+
 # PLOTS
 plt.figure(figsize=(12, 8))
 plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
+
+plt.axvline(x=W_S_landing, color='magenta', linewidth=2, label='Landing (Arrestor)')
+
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
 plt.plot(W_S, T_W_dashSLideal, color='cyan', linestyle='--', linewidth=2, label='Dash SL Ideal (M0.9)')
