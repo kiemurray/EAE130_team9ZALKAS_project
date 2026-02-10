@@ -151,7 +151,7 @@ plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 
-plt.axvline(x=W_S_landing, color='magenta', linewidth=2, label='Landing (Arrestor)')
+#plt.axvline(x=W_S_landing, color='magenta', linewidth=2, label='Landing (Arrestor)')
 
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
@@ -161,7 +161,7 @@ plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8,
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-plt.plot(67, 0.91, marker='*', color='gold', markersize=20,  markeredgecolor='black', zorder=5, label='Design Point')
+plt.plot(67, 0.91, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
 design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
