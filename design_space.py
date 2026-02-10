@@ -164,7 +164,7 @@ plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=18)
 plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
 plt.title('Aircraft Constraint Diagram', fontsize=20)
 plt.grid(True, alpha=0.4)
-plt.legend(fontsize=10, loc='upper right')
+plt.legend(fontsize=14, loc='upper right')
 
 
 plt.xlim(0, 200)
