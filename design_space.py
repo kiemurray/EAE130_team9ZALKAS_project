@@ -152,7 +152,7 @@ plt.plot(41, 0.92, marker='*', color='gold', markersize=15,
          markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
-design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
+design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver_ideal, T_W_dash30ideal])
 
 plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
                  where=(W_S <= W_S_landing56lb), 
