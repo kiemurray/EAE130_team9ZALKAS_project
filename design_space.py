@@ -21,7 +21,6 @@ CLmax_L = 2.1
 CLmax_climb = CLmax_TO
 
 # Weight Fractions
-to_wf = 0.9801
 cr_wf = 0.93148704          
 wf_climb =  0.970299
 mid_wf = 0.7806623694686121        
@@ -67,7 +66,7 @@ W_S_stall = 0.5 * rho_sl * v_stall**2 * CLmax_L
 # Takeoff 
 v_to = 160 #knots
 v_to *= 1.68781 #conversion to ft/s
-W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO / to_wf
+W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO 
 
 # Climb
 SEROC_launch = 200/60                                                    #ft/s (200ft/min)
@@ -138,7 +137,7 @@ W_S_landing56lb /= wf_landing
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-
+plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
@@ -156,7 +155,7 @@ plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceilin
 design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
 
 plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
-                 where=(W_S <= W_S_stall), 
+                 where=(W_S <= W_S_landing56lb), 
                  color='yellow', 
                  alpha=0.3, 
                  zorder=1,
