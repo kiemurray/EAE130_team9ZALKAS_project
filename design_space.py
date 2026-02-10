@@ -78,7 +78,7 @@ T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #convert
 # Cruise and Dash 
 def cr_dash_constraint(v, rho, wf, T_ratio):
     q = 0.5 * rho * v**2
-    T_Wcr = (q * CD0) / (W_S/wf) + (k_cr * W_S/wf) / (q)
+    T_Wcr = (q * CD0) / (W_S*wf) + (k_cr * W_S*wf) / (q)
     return T_Wcr * wf / T_ratio
 
 mach_cruise = 0.85
@@ -109,7 +109,7 @@ T_W_dash30ideal = cr_dash_constraint(v_dash30ideal, rho_30, dash30_wf, Tdash30_T
 ROC_ceiling = 100 / 60                                                     #ft/s (service ceiling from slides)
 ceiling_alt = 50000                                                        #ft chose reasonable value
 Tceiling_ratio = Tratio(ceiling_alt)
-T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((W_S/ mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) 
+T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((W_S* mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) 
 T_W_ceiling *= mid_wf / Tceiling_ratio
 
 # Maneuvering 
