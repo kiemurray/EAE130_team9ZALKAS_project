@@ -73,13 +73,13 @@ W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO / to_wf
 SEROC_launch = 200/60                                                    #ft/s (200ft/min)
 G = 0.024                                                                #2.4% for FAR25
 T_W_climb = ks**2*CD0/CLmax_climb + CLmax_climb*k_to/(ks**2) + G
-T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb      #converts back to TO condition
+T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
 
 
 # Cruise and Dash 
 def cr_dash_constraint(v, rho, wf, T_ratio):
     q = 0.5 * rho * v**2
-    T_Wcr = (q * CD0) / (wf * W_S) + (k_cr * wf * W_S) / (q)
+    T_Wcr = (q * CD0) / (W_S/wf) + (k_cr * W_S/wf) / (q)
     return T_Wcr * wf / T_ratio
 
 mach_cruise = 0.85
@@ -110,15 +110,15 @@ T_W_dash30ideal = cr_dash_constraint(v_dash30ideal, rho_30, dash30_wf, Tdash30_T
 ROC_ceiling = 100 / 60                                                     #ft/s (service ceiling from slides)
 ceiling_alt = 50000                                                        #ft chose reasonable value
 Tceiling_ratio = Tratio(ceiling_alt)
-T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((W_S_takeoff * mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) #Lec 7 Slide 32
+T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((W_S/ mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) 
 T_W_ceiling *= mid_wf / Tceiling_ratio
 
 # Maneuvering 
-def manuever_constraint (v, rho, wf, T_man_ratio, psi):
+def manuever_constraint (v, rho, wf, T_ratio, psi):
     q = 0.5 * rho * v**2
     n = np.sqrt((psi * v / g)**2 + 1)
-    T_Wman = ((q * CD0) / (wf * W_S) + (k_cr * n**2 * wf * W_S) / (q))
-    return T_Wman * wf / T_man_ratio
+    T_Wman = ((q * CD0) / (W_S/wf) + (k_cr * n**2 * W_S/wf) / (q))
+    return T_Wman * wf / T_ratio
 psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
 v_maneuver = v_cr    
 T20_Tto = Tratio(20000)                                                     # 20kft thrust / take off thrust
@@ -149,11 +149,12 @@ plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8,
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-plt.plot(75, 1, marker='*', color='gold', markersize=15, 
+plt.plot(41, 0.92, marker='*', color='gold', markersize=15, 
          markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
-plt.axhline(T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
-design_envelope = np.maximum(T_W_dash30ideal, T_W_maneuver_ideal)
+plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
+design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
+
 plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
                  where=(W_S <= W_S_stall), 
                  color='yellow', 
