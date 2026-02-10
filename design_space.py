@@ -78,7 +78,7 @@ T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #convert
 # Cruise and Dash 
 def cr_dash_constraint(v, rho, wf, T_ratio):
     q = 0.5 * rho * v**2
-    T_Wcr = (q * CD0) / (W_S/wf) + (k_cr * W_S/wf) / (q)
+    T_Wcr = (q * CD0) / (W_S*wf) + (k_cr * W_S*wf) / (q)
     return T_Wcr * wf / T_ratio
 
 mach_cruise = 0.85
