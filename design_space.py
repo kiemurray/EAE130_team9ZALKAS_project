@@ -116,7 +116,7 @@ T_W_ceiling *= mid_wf / Tceiling_ratio
 def manuever_constraint (v, rho, wf, T_ratio, psi):
     q = 0.5 * rho * v**2
     n = np.sqrt((psi * v / g)**2 + 1)
-    T_Wman = ((q * CD0) / (W_S/wf) + (k_cr * n**2 * W_S/wf) / (q))
+    T_Wman = ((q * CD0) / (W_S*wf) + (k_cr * n**2 * W_S*wf) / (q))
     return T_Wman * wf / T_ratio
 psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
 v_maneuver = v_cr    
