@@ -151,7 +151,7 @@ plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 
-plt.axvline(x=W_S_landing, color='magenta', linewidth=2, label='Landing (Arrestor)')
+plt.axvline(x=W_S_landing56lb, color='magenta', linewidth=2, label='Landing (Arrestor)')
 
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
