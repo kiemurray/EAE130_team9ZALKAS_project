@@ -282,15 +282,15 @@ def outer_loop_thrust_for_one_constraint(
 
 
 # Fixed parameters for weight estimation
-L_D_max = 9
-R = 1000            # nmi
-E = 30 / 60         # min --> hr
-c = 0.52            # lb/(lbf hr)
-V = 291 * 1.94      # m/s --> knots
-S_ht = 0
-S_vt = 74
-S_wet_fuselage = 700
-num_engines = 2  # Example number of engines
+#L_D_max = 9
+#R = 1000            # nmi
+#E = 30 / 60         # min --> hr
+#c = 0.52            # lb/(lbf hr)
+#V = 291 * 1.94      # m/s --> knots
+#S_ht = 0
+#S_vt = 74
+#S_wet_fuselage = 700
+#num_engines = 2  # Example number of engines
 
 # Set grid of wing areas to analyze
 S_wing_grid = list(range(3000, 6000, 2))  # Example range of wing areas to analyze
