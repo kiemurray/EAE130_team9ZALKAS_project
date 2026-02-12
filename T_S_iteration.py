@@ -3,8 +3,13 @@ import matplotlib.pyplot as plt
 
 #change to our numbers
 AR = 2.06
+<<<<<<< HEAD
 s = 212 
+=======
+span = 46 
+>>>>>>> bd98b9f91f6b54a73aa267624afc5cf081bf19ea
 s_ref = 955
+g = 32.174
 
 #drag polar (change to our numbers)
 S_wet = 2500
@@ -149,6 +154,71 @@ print("W_crew: " + str(W_crew) + " lb")
 
 W_payload = W_crew + W_payload
 print("W_payload: " + str(W_payload) + " lb")
+
+rho = 5.85e-4          # slugs/ft^3 (ISA @ 40,000 ft)
+a   = 968.1            # ft/s (ISA @ 40,000 ft)
+M   = 0.84
+V = M * a              # ft/s
+C_D_0_cruise = C_D_0        # C_D_0 at cruise is the same as clean configuration
+e_cruise = e_clean          # Assuming cruise configuration is similar to clean configuration
+
+def calculate_cruise_constraint_coefficients(rho, V, C_D_0, AR, e):
+    q = 0.5 * rho * V**2   
+    coef_1 = q * C_D_0
+    coef_2 = 1/(np.pi * AR * e * q)
+    return coef_1, coef_2
+
+coef_1_cruise_constraint, coef_2_cruise_constraint = calculate_cruise_constraint_coefficients(rho, V, C_D_0_cruise, AR, e_cruise)
+
+print("Coefficient of cruise constraint (C_D_0 term):", coef_1_cruise_constraint)
+print("Coefficient of cruise constraint (induced drag term):", coef_2_cruise_constraint)
+
+V_dash = 400 * 1.94
+def calculate_manuever_constraint_coefficient(rho, V, C_D_0, AR, e, g):
+    psi = 8 * np.pi/180
+    q = 0.5 * rho * V_dash**2
+    n = np.sqrt((psi * V_dash / g)**2 + 1)
+    coef_m_1 = q * C_D_0
+    coef_m_2 = (1/(np.pi * AR * e * q))*((n**2)/q)
+    return coef_m_1, coef_m_2
+
+coef_1_maneuver_constraint, coef_2_maneuver_constraint = calculate_manuever_constraint_coefficient(rho, V_dash, C_D_0_cruise, AR, e_cruise, g)
+
+print("Coefficient of Manuever constraint:", coef_1_maneuver_constraint)
+print("Coefficient of Manuever constraint:", coef_2_maneuver_constraint)
+
+N_eng = 2  # Number of engines
+k_s = 1.2  
+C_L_max = 2.2
+G = 0.012  # Gradient (%)
+e = 0.8  # Oswald efficiency factor
+def calculate_climb_constraint_coefficient(N_eng, k_s, C_L_max, C_D_0, AR, e, G):
+    return (1/0.8) * (N_eng / (N_eng - 1)) * ((k_s**2) / C_L_max * C_D_0 + C_L_max / (np.pi * AR * e * k_s**2) + G)
+coef_1_climb_constraint = calculate_climb_constraint_coefficient(N_eng, k_s, C_L_max, C_D_0, AR, e, G)
+print("Coefficient of takeoff climb:", coef_1_climb_constraint)
+
+rho_rho_sl_takeoff = 0.95
+C_L_max_takeoff = 2.2
+BFL_takeoff = 10000
+
+def calculate_takeoff_field_length_coefficient(BFL, rho_ratio, C_L_max):
+    TOP_25_takeoff = BFL / 37.5
+    return 1 / (rho_ratio * C_L_max * TOP_25_takeoff)
+
+coef_takeoff_constraint = calculate_takeoff_field_length_coefficient(BFL_takeoff, rho_rho_sl_takeoff, C_L_max_takeoff)
+print("Coefficient of takeoff field length:", coef_takeoff_constraint)
+
+rho_rho_sl_landing = 0.95
+C_L_max_landing = 2.8
+s_a = 1000
+s_land = BFL_takeoff * 0.6
+landing_W_ratio = 0.65
+
+def calculate_landing_field_length_coefficient(rho_ratio, C_L_max, s_land, s_a, landing_W_ratio):
+    return rho_ratio * C_L_max * (s_land - s_a) / (80 * landing_W_ratio)
+
+coef_landing_constraint = calculate_landing_field_length_coefficient(rho_rho_sl_landing, C_L_max_landing, s_land, s_a, landing_W_ratio)
+print("Coefficient of landing field length:", coef_landing_constraint)
 
 
 
@@ -318,11 +388,18 @@ def outer_loop_thrust_for_one_constraint(
             # Wing loading from converged weight
             WS = W0 / S_wing
 
+#----------------------------- ADD YOUR CONSTRAINT LINE HERE ------------------------------
+# MANUEVER DONE
+
             # Constraint: compute required T/W from W/S
             # For cruise as example:
-            TW_req = coef_1_cruise_constraint/WS + coef_2_cruise_constraint*WS
+            #TW_req = coef_1_cruise_constraint/WS + coef_2_cruise_constraint*WS
+
             # For takeoff as example:
             # TW_req = coef_takeoff_constraint*WS
+
+            # For Manuever as example:
+            TW_req = coef_1_maneuver_constraint/WS + coef_2_maneuver_constraint*WS
 
             # Required total thrust
             T_req = TW_req * W0
@@ -363,7 +440,7 @@ S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(3000, 6000, 2))  # Example range of wing areas to analyze
+S_wing_grid = list(range(1000, 6000, 2))  # Example range of wing areas to analyze
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
 T_total_guess_init = 24000 * num_engines  # Initial guess for total thrust in pounds-force
@@ -384,12 +461,23 @@ T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_fina
 
 ##---plot---
 # Plot the resulting T vs S curve from the outer loop convergence
+<<<<<<< HEAD
+=======
+T_actual_777 = 220000
+S_actual_777 = 4605
+#print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
+>>>>>>> bd98b9f91f6b54a73aa267624afc5cf081bf19ea
 
 plt.figure(figsize=(16,9))
-plt.title('Converged T vs S for Cruise Constraint')
+plt.title('Converged T vs S for Manuever Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
+<<<<<<< HEAD
 plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
+=======
+plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
+plt.plot(S_wing_grid, T_total_curve, label='Converged T for Manuever Constraint', marker='o')
+>>>>>>> bd98b9f91f6b54a73aa267624afc5cf081bf19ea
 plt.legend(loc='best')
 plt.grid()
 plt.show()
