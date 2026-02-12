@@ -2,16 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #change to our numbers
-AR = 9.8
+AR = 2.06
 s = 212 
-s_ref = 4605
+s_ref = 955
 
 #drag polar (change to our numbers)
-S_wet = 28291
+S_wet = 2500
 c_f = 0.0026
 def calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref):
     return c_f * (S_wet / s_ref)
-C_D_0 = calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref)
+#C_D_0 = calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref)
+C_D_0 = 0.01166
 print("Zero-lift drag coefficient C_D_0:", C_D_0)
 
 ##---configurations------
@@ -23,7 +24,7 @@ cL_landing = np.linspace(-2.6,2.6,100)
 # Clean configuration
 def calculate_induced_drag_coefficient(AR, e):
     return 1/(np.pi*AR*e)
-e_clean = 0.8
+e_clean = 0.820
 coef_clean = calculate_induced_drag_coefficient(AR, e_clean)
 print("Induced drag coefficient for clean configuration:", coef_clean)
 clean = C_D_0 + coef_clean*cL_clean*cL_clean
@@ -48,16 +49,17 @@ delta_CD0_gear = 0.015 # additional drag due to landing gear
 coef_gear = calculate_induced_drag_coefficient(AR, e_gear)
 landing_gear = C_D_0 + delta_CD0_gear + coef_gear*cL_landing*cL_landing
 
-plt.figure(figsize=(16,9))
-plt.title('Drag Polars')
-plt.xlabel("$C_D$")
-plt.ylabel("$C_L$")
-plt.plot(clean, cL_clean, label='Clean', linestyle='-', linewidth=2)
-plt.plot(takeoff, cL_takeoff, label='w. Takeoff flaps', linestyle='-', linewidth=2)
-plt.plot(landing_flaps, cL_landing, label='w. Landing flaps', linestyle='-', linewidth=2)
-plt.plot(landing_gear, cL_landing, label='w. Landing gear', linestyle='-', linewidth=2)
-plt.legend(loc='best')
-plt.show()
+
+#plt.figure(figsize=(16,9))
+#plt.title('Drag Polars')
+#plt.xlabel("$C_D$")
+#plt.ylabel("$C_L$")
+#plt.plot(clean, cL_clean, label='Clean', linestyle='-', linewidth=2)
+#plt.plot(takeoff, cL_takeoff, label='w. Takeoff flaps', linestyle='-', linewidth=2)
+#plt.plot(landing_flaps, cL_landing, label='w. Landing flaps', linestyle='-', linewidth=2)
+#plt.plot(landing_gear, cL_landing, label='w. Landing gear', linestyle='-', linewidth=2)
+#plt.legend(loc='best')
+#plt.show()
 
 
 ##----T/W and W/S Diagram-----
@@ -176,28 +178,28 @@ def inner_loop_weight(
     return TOGW_guess, converged, it, np.array(W0_history)
 
 # Fixed parameters for weight estimation
-L_D_max = 18
-R = 9150            # nmi
+L_D_max = 9
+R = 1000            # nmi
 E = 30 / 60         # min --> hr
 c = 0.52            # lb/(lbf hr)
-V = 251 * 1.94      # m/s --> knots
-S_ht = 1097
-S_vt = 709.9
-S_wet_fuselage = 11354
+V = 291 * 1.94      # m/s --> knots
+S_ht = 0
+S_vt = 74
+S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wing = 4605
-T_0 = 95000  # Example value for thrust per engine
+S_wing = 2400
+T_0 = 23000  # Example value for thrust per engine
 
-TOGW_guess = 500000  # Initial guess for Takeoff Gross Weight in pounds
+TOGW_guess = 55000  # Initial guess for Takeoff Gross Weight in pounds
 final_TOGW, converged, iterations, W0_history = inner_loop_weight(
     TOGW_guess,
     S_wing, S_ht, S_vt, S_wet_fuselage,
     num_engines, W_crew, W_payload, T_0
 )
 
-# ploy the convergence history
+# plot the convergence history
 plt.figure(figsize=(10,6))
 plt.plot(W0_history, marker='o')
 plt.title('Convergence of TOGW Estimate')
@@ -281,21 +283,21 @@ def outer_loop_thrust_for_one_constraint(
 
 
 # Fixed parameters for weight estimation
-L_D_max = 18
-R = 9150            # nmi
+L_D_max = 9
+R = 1000            # nmi
 E = 30 / 60         # min --> hr
 c = 0.52            # lb/(lbf hr)
-V = 251 * 1.94      # m/s --> knots
-S_ht = 1097
-S_vt = 709.9
-S_wet_fuselage = 11354
+V = 291 * 1.94      # m/s --> knots
+S_ht = 0
+S_vt = 74
+S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # Set grid of wing areas to analyze
 S_wing_grid = list(range(3000, 6000, 2))  # Example range of wing areas to analyze
 
-TOGW_guess_init = 500000  # Initial guess for Takeoff Gross Weight in pounds
-T_total_guess_init = 15000 * num_engines  # Initial guess for total thrust in pounds-force
+TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
+T_total_guess_init = 24000 * num_engines  # Initial guess for total thrust in pounds-force
 
 T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
     S_wing_grid=S_wing_grid,
@@ -310,9 +312,6 @@ T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_fina
     max_iter_T=200,
     relax=1
 )
-
-
-
 
 ##---plot---
 # Plot the resulting T vs S curve from the outer loop convergence
