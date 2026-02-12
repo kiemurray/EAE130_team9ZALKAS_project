@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 #change to our numbers
 AR = 2.06
-s = 46 
+s = 212 
 s_ref = 955
 
 #drag polar (change to our numbers)
@@ -11,7 +11,6 @@ S_wet = 2500
 c_f = 0.0026
 def calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref):
     return c_f * (S_wet / s_ref)
-
 #C_D_0 = calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref)
 C_D_0 = 0.01166
 print("Zero-lift drag coefficient C_D_0:", C_D_0)
@@ -180,10 +179,10 @@ def inner_loop_weight(
 
 # Fixed parameters for weight estimation
 L_D_max = 9
-R = 2000            # nmi
-E = 20 / 60         # min --> hr
-c = 0.7            # lb/(lbf hr)
-V = 490             # knots
+R = 1000            # nmi
+E = 30 / 60         # min --> hr
+c = 0.52            # lb/(lbf hr)
+V = 291 * 1.94      # m/s --> knots
 S_ht = 0
 S_vt = 74
 S_wet_fuselage = 700
@@ -252,24 +251,6 @@ def outer_loop_thrust_for_one_constraint(
 
             # Constraint: compute required T/W from W/S
             # For cruise as example:
-            rho = 5.85e-4          # slugs/ft^3 (ISA @ 40,000 ft)
-            a   = 968.1            # ft/s (ISA @ 40,000 ft)
-            M   = 0.84
-            V = M * a              # ft/s
-            C_D_0_cruise = C_D_0        # C_D_0 at cruise is the same as clean configuration
-            e_cruise = e_clean          # Assuming cruise configuration is similar to clean configuration
-
-            def calculate_cruise_constraint_coefficients(rho, V, C_D_0, AR, e):
-                q = 0.5 * rho * V**2   
-                coef_1 = q * C_D_0
-                coef_2 = 1/(np.pi * AR * e * q)
-                return coef_1, coef_2
-
-            coef_1_cruise_constraint, coef_2_cruise_constraint = calculate_cruise_constraint_coefficients(rho, V, C_D_0_cruise, AR, e_cruise)
-
-            print("Coefficient of cruise constraint (C_D_0 term):", coef_1_cruise_constraint)
-            print("Coefficient of cruise constraint (induced drag term):", coef_2_cruise_constraint)
-            
             TW_req = coef_1_cruise_constraint/WS + coef_2_cruise_constraint*WS
             # For takeoff as example:
             # TW_req = coef_takeoff_constraint*WS
