@@ -20,4 +20,13 @@ coef_1_cruise_constraint, coef_2_cruise_constraint = calculate_cruise_constraint
 
 print("Coefficient of cruise constraint (C_D_0 term):", coef_1_cruise_constraint)
 print("Coefficient of cruise constraint (induced drag term):", coef_2_cruise_constraint)
-            
+
+N_eng = 2  # Number of engines
+k_s = 1.2  
+C_L_max = 2.2
+G = 0.012  # Gradient (%)
+e = 0.8  # Oswald efficiency factor
+def calculate_climb_constraint_coefficient(N_eng, k_s, C_L_max, C_D_0, AR, e, G):
+    return (1/0.8) * (N_eng / (N_eng - 1)) * ((k_s**2) / C_L_max * C_D_0 + C_L_max / (np.pi * AR * e * k_s**2) + G)
+coef_1_climb_constraint = calculate_climb_constraint_coefficient(N_eng, k_s, C_L_max, C_D_0, AR, e, G)
+print("Coefficient of takeoff climb:", coef_1_climb_constraint)
