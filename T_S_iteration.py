@@ -74,24 +74,19 @@ landing_gear = C_D_0 + delta_CD0_gear + coef_gear*cL_landing*cL_landing
 ##-----weights-------
 num_pilot = 1
 avg_wt_person = 200  #lb
-W_payload = 2500     #lb
-
-W_crew = num_pilot * (avg_wt_person)
-print("W_crew: " + str(W_crew) + " lb")
-
-W_payload = W_crew + W_payload
+aim_120c = 356 #lb
+aim_9x = 188 #lb
+mk_83jdam = 1000 #lb 
+crew = 200 #lb
+#a2a_payload = 6*aim_120c + 2*aim_9x + crew
+strike_payload = 2*aim_9x + 4*mk_83jdam + crew
+W_crew = num_pilot*crew
+W_payload = strike_payload
 print("W_payload: " + str(W_payload) + " lb")
-
 
 
 ##----Inner loop-----
 def calculate_engine_weight(T_0):
-    """Calculate the single engine weight based on the given thrust using empirical relationships.
-    Args:
-        T_0 (float): Thrust in pounds-force (lbf).
-    Returns:
-        float: Estimated engine weight in pounds (lb).
-    """
     W_eng_dry = 0.521 * T_0**0.9
     W_eng_oil = 0.082 * T_0**0.65
     W_eng_rev = 0.034 * T_0
@@ -101,43 +96,44 @@ def calculate_engine_weight(T_0):
     return W_eng
 
 def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_engines):
-    W_wing = S_wing * 10
-    W_ht = S_ht * 5.5
-    W_vt = S_vt * 5.5
-    W_fuselage = S_wet_fuselage * 5
-    W_landing_gear = 0.043 * TOGW
+    W_wing = S_wing * 9
+    W_ht = S_ht * 4
+    W_vt = S_vt * 5.3
+    W_fuselage = S_wet_fuselage * 4.8
+    W_landing_gear = 0.045 * TOGW
     Engine_weight = calculate_engine_weight(T_0)
     W_engines = Engine_weight * num_engines * 1.3
     W_all_else = 0.17 * TOGW
     W_empty = W_wing + W_ht + W_vt + W_fuselage + W_landing_gear + W_engines + W_all_else
     return W_empty
 
-def calculate_weight_fraction(L_D_max, R, E, c, V):
+def calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash):
     """This function calculates the weight fractions for cruise and loiter/descent phases based on the Breguet range and endurance equations, and also other terms.
     Args:
         L_D_max (float): Maximum lift-to-drag ratio of the aircraft.
-        R (float): Range in nautical miles.
+        R (float): Combat range in nautical miles.
         E (float): Endurance in hours.
-        c (float): Specific fuel consumption in lb/(lbf hr).
+        ct (float): Specific fuel consumption in lb/(lbf hr).
         V (float): Velocity in knots."""
     
     L_D = 0.94 * L_D_max
+    warmup = 0.99
+    taxi = 0.99
+    takeoff = 0.99
+    climb = 0.96 
+    dash_ingress = np.exp((-50*ct_dash) / (v_dash*L_D))
+    dash_egress = dash_ingress
+    descent = 0.99
+    midmission_descent = 0.995
+    midmission_climb = 0.98
+    landing = 0.995
+    cruise = np.exp((-R*ct_cruise) / (v_cruise*L_D))
+    loiter = np.exp((-E*ct_cruise) / (L_D))
 
-    W3_W2 = np.exp((-R*c) / (V*L_D))  # cruise
-    # print("Cruise Fuel Fraction (W3/W2): " + str(round(W3_W2, 3)))
+    weight_fraction = warmup*taxi*takeoff*climb*cruise*midmission_descent*dash_ingress*dash_egress*midmission_climb*cruise*descent*loiter*landing 
 
-    W4_W3 = np.exp((-E*c) / (L_D))    # loiter/descent
-    # print("Loiter Fuel Fraction (W4/W3): " + str(round(W4_W3, 3)))
-
-    W1_W0 = 0.970   # engine start & takeoff
-    W2_W1 = 0.985   # climb
-    W5_W4 = 0.995   # landing
-
-    W5_W0 = W5_W4 * W4_W3 * W3_W2 * W2_W1 * W1_W0
-    # print("Final Fuel Fraction (W5/W0): " + str(round(W5_W0, 3)))
-
-    Wf_W0 = (1 - W5_W0) * 1.06    # compute fuel fraction
-    # print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
+    Wf_W0 = (1 - weight_fraction) * 1.06    # compute fuel fraction
+    print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
 
     return Wf_W0
 
@@ -155,7 +151,7 @@ def inner_loop_weight(
 
     while delta > err and it < max_iter:
         # 1) fuel fraction (could be constant or updated)
-        Wf_W0 = calculate_weight_fraction(L_D_max, R, E, c, V)
+        Wf_W0 = calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash)
         W_fuel = Wf_W0 * TOGW_guess
 
         # 2) empty weight based on current TOGW guess + geometry + thrust
@@ -179,19 +175,21 @@ def inner_loop_weight(
     return TOGW_guess, converged, it, np.array(W0_history)
 
 # Fixed parameters for weight estimation
-L_D_max = 9
-R = 2000            # nmi
+L_D_max = 10
+R = 1000            # nmi
 E = 20 / 60         # min --> hr
-c = 0.7            # lb/(lbf hr)
-V = 490             # knots
+ct_cruise = 0.7     # lb/(lbf hr)
+ct_dash = 0.7
+v_cruise = 490      # knots
+v_dash = 560        # knots
 S_ht = 0
 S_vt = 74
 S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wing = 2400
-T_0 = 23000  # Example value for thrust per engine
+S_wing = 1753
+T_0 = 23930  # Example value for thrust per engine
 
 TOGW_guess = 55000  # Initial guess for Takeoff Gross Weight in pounds
 final_TOGW, converged, iterations, W0_history = inner_loop_weight(
