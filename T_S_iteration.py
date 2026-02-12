@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 #change to our numbers
 AR = 2.06
-s = 212 
+s = 46 
 s_ref = 955
 
 #drag polar (change to our numbers)
@@ -11,6 +11,7 @@ S_wet = 2500
 c_f = 0.0026
 def calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref):
     return c_f * (S_wet / s_ref)
+
 #C_D_0 = calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref)
 C_D_0 = 0.01166
 print("Zero-lift drag coefficient C_D_0:", C_D_0)
@@ -179,10 +180,10 @@ def inner_loop_weight(
 
 # Fixed parameters for weight estimation
 L_D_max = 9
-R = 1000            # nmi
-E = 30 / 60         # min --> hr
+R = 2000            # nmi
+E = 20 / 60         # min --> hr
 c = 0.52            # lb/(lbf hr)
-V = 291 * 1.94      # m/s --> knots
+V = 490             # knots
 S_ht = 0
 S_vt = 74
 S_wet_fuselage = 700
