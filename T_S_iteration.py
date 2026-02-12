@@ -182,7 +182,7 @@ def inner_loop_weight(
 L_D_max = 9
 R = 2000            # nmi
 E = 20 / 60         # min --> hr
-c = 0.52            # lb/(lbf hr)
+c = 0.7            # lb/(lbf hr)
 V = 490             # knots
 S_ht = 0
 S_vt = 74
