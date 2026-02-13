@@ -3,7 +3,11 @@ import matplotlib.pyplot as plt
 
 #change to our numbers
 AR = 2.06
+<<<<<<< HEAD
+s = 212 
+=======
 span = 46 
+>>>>>>> bd98b9f91f6b54a73aa267624afc5cf081bf19ea
 s_ref = 955
 g = 32.174
 
@@ -61,10 +65,79 @@ landing_gear = C_D_0 + delta_CD0_gear + coef_gear*cL_landing*cL_landing
 #plt.plot(landing_gear, cL_landing, label='w. Landing gear', linestyle='-', linewidth=2)
 #plt.legend(loc='best')
 #plt.show()
+rho_rho_sl_takeoff = 0.95
+C_L_max_takeoff = 2.2
+BFL_takeoff = 10000
 
+def calculate_takeoff_field_length_coefficient(BFL, rho_ratio, C_L_max):
+    TOP_25_takeoff = BFL / 37.5
+    return 1 / (rho_ratio * C_L_max * TOP_25_takeoff)
+
+coef_takeoff_constraint = calculate_takeoff_field_length_coefficient(BFL_takeoff, rho_rho_sl_takeoff, C_L_max_takeoff)
+print("Coefficient of takeoff field length:", coef_takeoff_constraint)
+
+rho_rho_sl_landing = 0.95
+C_L_max_landing = 2.8
+s_a = 1000
+s_land = BFL_takeoff * 0.6
+landing_W_ratio = 0.65
+
+def calculate_landing_field_length_coefficient(rho_ratio, C_L_max, s_land, s_a, landing_W_ratio):
+    return rho_ratio * C_L_max * (s_land - s_a) / (80 * landing_W_ratio)
+
+coef_landing_constraint = calculate_landing_field_length_coefficient(rho_rho_sl_landing, C_L_max_landing, s_land, s_a, landing_W_ratio)
+print("Coefficient of landing field length:", coef_landing_constraint)
+
+rho = 5.85e-4          # slugs/ft^3 (ISA @ 40,000 ft)
+a   = 968.1            # ft/s (ISA @ 40,000 ft)
+M   = 0.84
+V = M * a              # ft/s
+C_D_0 = 0.01166
+e_clean = 0.820
+C_D_0_cruise = C_D_0        # C_D_0 at cruise is the same as clean configuration
+e_cruise = e_clean          # Assuming cruise configuration is similar to clean configuration
+AR = 2.06
+
+def calculate_cruise_constraint_coefficients(rho, V, C_D_0, AR, e):
+    q = 0.5 * rho * V**2   
+    coef_1 = q * C_D_0
+    coef_2 = 1/(np.pi * AR * e * q)
+    return coef_1, coef_2
+
+coef_1_cruise_constraint, coef_2_cruise_constraint = calculate_cruise_constraint_coefficients(rho, V, C_D_0_cruise, AR, e_cruise)
+
+N_eng = 2  # Number of engines
+k_s = 1.2  
+C_L_max = 2.2
+G = 0.012  # Gradient (%)
+e = 0.8  # Oswald efficiency factor
+def calculate_climb_constraint_coefficient(N_eng, k_s, C_L_max, C_D_0, AR, e, G):
+    return (1/0.8) * (N_eng / (N_eng - 1)) * ((k_s**2) / C_L_max * C_D_0 + C_L_max / (np.pi * AR * e * k_s**2) + G)
+coef_1_climb_constraint = calculate_climb_constraint_coefficient(N_eng, k_s, C_L_max, C_D_0, AR, e, G)
+print("Coefficient of takeoff climb:", coef_1_climb_constraint)
 
 ##----T/W and W/S Diagram-----
-#
+WS = np.linspace(1,300,100)
+
+TW_takeoff = coef_takeoff_constraint*WS
+TW_landing = coef_landing_constraint*np.ones(100)
+TW_climb = coef_1_climb_constraint*np.ones(100)
+TW_cruise = coef_1_cruise_constraint/WS + coef_2_cruise_constraint*WS
+
+
+
+plt.figure(figsize=(16,9))
+plt.title('T/W - W/S')
+plt.xlabel("W/S $(lb/ft^2)$")
+plt.ylabel("T/W")
+plt.plot(WS, TW_takeoff, label='Takeoff field length', linestyle='-', linewidth=2)
+plt.plot(TW_landing, np.linspace(0,1,100), label='Landing field length', linestyle='-', linewidth=2)
+plt.plot(WS, TW_climb, label='Takeoff climb', linestyle='-', linewidth=2)
+plt.plot(WS, TW_cruise, label='Cruise', linestyle='-', linewidth=2)
+
+plt.ylim(0, 0.5)
+plt.legend(loc='best')
+plt.show()
 #
 #
 #
@@ -388,15 +461,19 @@ T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_fina
 
 ##---plot---
 # Plot the resulting T vs S curve from the outer loop convergence
+<<<<<<< HEAD
+=======
 T_actual_777 = 220000
 S_actual_777 = 4605
 #print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
+>>>>>>> bd98b9f91f6b54a73aa267624afc5cf081bf19ea
 
 plt.figure(figsize=(16,9))
 plt.title('Converged T vs S for Cruise Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
-plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
+plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
+plt.plot(S_wing_grid, T_total_curve, label='Converged T for Manuever Constraint', marker='o')
 plt.legend(loc='best')
 plt.grid()
 plt.show()
