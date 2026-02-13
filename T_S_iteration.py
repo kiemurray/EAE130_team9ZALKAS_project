@@ -320,13 +320,13 @@ def outer_loop_thrust_for_one_constraint(
 
             # Constraint: compute required T/W from W/S
             # For cruise as example:
-            #TW_req = coef_1_cruise_constraint/WS + coef_2_cruise_constraint*WS
+            TW_req = coef_1_cruise_constraint/WS + coef_2_cruise_constraint*WS
 
             # For takeoff as example:
             # TW_req = coef_takeoff_constraint*WS
 
             # For Manuever as example:
-            TW_req = coef_1_maneuver_constraint/WS + coef_2_maneuver_constraint*WS
+            #TW_req = coef_1_maneuver_constraint/WS + coef_2_maneuver_constraint*WS
 
             # Required total thrust
             T_req = TW_req * W0
@@ -393,11 +393,10 @@ S_actual_777 = 4605
 #print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
 
 plt.figure(figsize=(16,9))
-plt.title('Converged T vs S for Manuever Constraint')
+plt.title('Converged T vs S for Cruise Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
-plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
-plt.plot(S_wing_grid, T_total_curve, label='Converged T for Manuever Constraint', marker='o')
+plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
 plt.legend(loc='best')
 plt.grid()
 plt.show()
