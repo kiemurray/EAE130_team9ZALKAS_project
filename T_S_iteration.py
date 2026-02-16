@@ -322,3 +322,29 @@ plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', 
 plt.legend(loc='best')
 plt.grid()
 plt.show()
+
+
+#Comparable Aircraft T/S
+T_J39C_dry=12000 #lbf
+T_J39C_wet=18000 #lbf
+S_J39C=320 #ft^2
+
+T_Su33_dry=33400 #lbf
+T_Su33_wet=56400 #lbf
+S_Su33=730 #ft^2
+
+#I didnt find dry thrust numbers for Su-34
+T_Su34_wet=60000 #lbf
+S_Su34=667.8 #ft^2
+
+T_Typhoon_dry=27000 #lbf
+T_Typhoon_wet=40400 #lbf
+S_Typhoon=551.1 #ft^2
+
+T_Rafale_M_dry=22500 #lbf
+T_Rafale_M_wet=34000 #lbf
+S_Rafale_M=492 #ft^2
+
+T_F18_E_dry=26000 #lbf
+T_F18_E_wet=44000 #lbf
+S_F18_E_M=500 #ft^2
