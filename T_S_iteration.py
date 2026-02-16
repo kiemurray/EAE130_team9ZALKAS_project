@@ -180,12 +180,12 @@ ct_dash = 0.7
 v_cruise = 490      # knots
 v_dash = 560        # knots
 S_ht = 0
-S_vt = 74
+S_vt = 45
 S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wing = 1000 #1753
+S_wing = 946 #based on vsp design v5
 T_0 = 23930  # Example value for thrust per engine
 
 TOGW_guess = 55000  # Initial guess for Takeoff Gross Weight in pounds
