@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import design_space
+import constraint_coeff
+
 
 #change to our numbers
 AR = 2.06
@@ -108,6 +111,7 @@ def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_e
     W_empty = W_wing + W_ht + W_vt + W_fuselage + W_landing_gear + W_engines + W_all_else
     return W_empty
 
+#Algorithm 3 in Metabook
 def calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash):
     """This function calculates the weight fractions for cruise and loiter/descent phases based on the Breguet range and endurance equations, and also other terms.
     Args:
@@ -138,7 +142,7 @@ def calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_das
 
     return Wf_W0
 
-
+#Algorithm 2 in Metabook 
 def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
     num_engines, w_crew, w_payload, T_0, err=1e-6, max_iter=200):
     
@@ -276,6 +280,59 @@ def outer_loop_thrust_for_one_constraint(
             W0, wconv, it_w, W0_hist)
 
 
+#Takes thrust array and outputs S array
+def outer_loop_W_S_curves(
+            engine_array,               #similar to other outer loop for S
+            TOGW_guess_init,
+            S_wing_guess_init,          #Honestly just take a swing at it
+            S_ht, 
+            S_vt, 
+            S_wet_fuselage,
+            num_engines, 
+            W_crew, 
+            W_payload,
+):
+    tol_T_rel=1e-3,          
+    max_iter_T=50
+    S_wing_grid = []    #Storing final S Values
+    T_grid = []         #Storing final Thrust values
+    S_wing_guess=S_wing_guess_init #give us a starting value
+    S_hist = []         #Shows iteration history
+    
+
+    for i in range(0,len(engine_array)): #basically just a linspace of possible thrust values
+        T_0 = engine_array[i] #Take thrust value from the array
+        S_hist.append(S_wing_guess)
+        T_grid.append(T_0)
+        
+        for k in range(max_iter_T):
+
+            #compute TOGW using inner loop code
+            W0, wconv, it_w, W0_hist = inner_loop_weight(
+                TOGW_guess_init, S_wing_guess_init, S_ht, S_vt, S_wet_fuselage,
+                num_engines, W_crew, W_payload, T_0
+            )
+
+            #add constraint inputs here
+
+
+
+            #constraint inputs to get (W_0/S)
+            W_S_constraint = design_space.W_S_takeoff #constraint input
+
+
+            S_wing_guess = W0/(W_S_constraint)
+            if abs(S_wing_guess - S_hist[i])/abs(S_hist[i]) < tol_T_rel:
+                break
+            
+        #now we have a converged S value for the thrust value from the array
+        S_wing_grid.append(S_wing_guess)
+        
+    
+    return(T_grid,S_wing_grid)
+
+
+
 # Fixed parameters for weight estimation
 L_D_max = 9
 R = 1000            # nmi
@@ -288,10 +345,17 @@ S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(3000, 6000, 2))  # Example range of wing areas to analyze
+S_wing_grid = list(range(3000, 6000, 2))    # Example range of wing areas to analyze
+# Set grid of thrust values to analyze
+T_engine_grid = list(range(0,100000,10000))     # used for the W/S driven constraint plots
+
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
 T_total_guess_init = 24000 * num_engines  # Initial guess for total thrust in pounds-force
+
+S_wing_guess=900
+
+T_grid,S_W_S_array=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload)
 
 T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
     S_wing_grid=S_wing_grid,
@@ -300,12 +364,24 @@ T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_fina
     num_engines=num_engines,
     S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
     W_crew=W_crew, W_payload=W_payload,
-    coef_1_cruise_constraint=coef_1_cruise_constraint,
-    coef_2_cruise_constraint=coef_2_cruise_constraint,
+    coef_1_cruise_constraint=constraint_coeff.coef_1_cruise_constraint,
+    coef_2_cruise_constraint=constraint_coeff.coef_2_cruise_constraint,
     tol_T_rel=1e-6,
     max_iter_T=200,
     relax=1
 )
+
+
+
+
+# plot the convergence history
+plt.figure(figsize=(10,6))
+plt.plot(S_W_S_array,T_grid, marker='o')
+plt.title('T_S Curve from W_S Curve ')
+plt.xlabel('S (ft^2)')
+plt.ylabel('T (lbf)')
+plt.grid()
+plt.show()
 
 ##---plot---
 # Plot the resulting T vs S curve from the outer loop convergence
