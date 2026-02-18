@@ -290,8 +290,8 @@ def outer_loop_W_S_curves(
             S_wet_fuselage,
             num_engines, 
             W_crew, 
-            W_payload,
-):
+            W_payload,):
+    
     tol_T_rel=1e-3,          
     max_iter_T=50
     S_wing_grid = []    #Storing final S Values
@@ -345,7 +345,7 @@ S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(3000, 6000, 2))    # Example range of wing areas to analyze
+S_wing_grid = list(range(200, 3000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
 T_engine_grid = list(range(0,100000,10000))     # used for the W/S driven constraint plots
 
@@ -385,15 +385,11 @@ plt.show()
 
 ##---plot---
 # Plot the resulting T vs S curve from the outer loop convergence
-T_actual_777 = 220000
-S_actual_777 = 4605
-print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
 
 plt.figure(figsize=(16,9))
 plt.title('Converged T vs S for Cruise Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
-plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
 plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
 plt.legend(loc='best')
 plt.grid()
