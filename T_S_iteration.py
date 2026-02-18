@@ -347,12 +347,11 @@ num_engines = 2  # Example number of engines
 # Set grid of wing areas to analyze
 S_wing_grid = list(range(200, 3000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
-T_engine_grid = list(range(0,100000,10000))     # used for the W/S driven constraint plots
+T_engine_grid = list(range(0,10000,10))     # used for the W/S driven constraint plots
 
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
 T_total_guess_init = 24000 * num_engines  # Initial guess for total thrust in pounds-force
-
 S_wing_guess=900
 
 T_grid,S_W_S_array=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload)
