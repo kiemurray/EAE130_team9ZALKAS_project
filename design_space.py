@@ -72,9 +72,11 @@ W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO
 SEROC_launch = 200/60                                                    #ft/s (200ft/min)
 #G = 0.024                                                                #2.4% for FAR25
 #T_W_climb = ks**2*CD0/CLmax_climb + CLmax_climb*k_to/(ks**2) + G
-T_W_climb = SEROC_launch*(CD0/k_cr)**(1/4)*(rho_to/2)**(1/2)*(W_S*wf_climb)**(-1/2)+2*(k_cr*CD0)**(1/2)
-T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
-
+def tw_climb(WS):
+    T_W_climb = SEROC_launch*(CD0/k_cr)**(1/4)*(rho_to/2)**(1/2)*(W_S*wf_climb)**(-1/2)+2*(k_cr*CD0)**(1/2)
+    T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
+    return T_W_climb
+T_W_climb = tw_climb(W_S)
 
 # Cruise and Dash 
 def cr_dash_constraint(v, rho, wf, T_ratio, WS):
@@ -124,22 +126,34 @@ T_W_dash30ideal = tw_30dashideal(W_S)
 ROC_ceiling = 100 / 60                                                     #ft/s (service ceiling from slides)
 ceiling_alt = 50000                                                        #ft chose reasonable value
 Tceiling_ratio = Tratio(ceiling_alt)
-T_W_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((W_S* mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) 
-T_W_ceiling *= mid_wf / Tceiling_ratio
+def tw_ceiling(WS):
+    TW_ceiling = ROC_ceiling*(CD0/k_cr)**(1/4)*((atmo_vals(ceiling_alt))[0]/2)**(1/2)*((WS* mid_wf))**(-1/2) + 2*(k_cr*CD0)**(1/2) 
+    TW_ceiling *= mid_wf / Tceiling_ratio
+    return TW_ceiling
+T_W_ceiling = tw_ceiling(W_S)
 
 # Maneuvering 
-def manuever_constraint (v, rho, wf, T_ratio, psi):
+def manuever_constraint (v, rho, wf, T_ratio, psi, WS):
     q = 0.5 * rho * v**2
     n = np.sqrt((psi * v / g)**2 + 1)
-    T_Wman = ((q * CD0) / (W_S*wf) + (k_cr * n**2 * W_S*wf) / (q))
+    T_Wman = ((q * CD0) / (WS*wf) + (k_cr * n**2 * WS*wf) / (q))
     return T_Wman * wf / T_ratio
+
+
 psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
 v_maneuver = v_cr    
-T20_Tto = Tratio(20000)                                                     # 20kft thrust / take off thrust
-T_W_maneuver = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi)
+T20_Tto = Tratio(20000)   
+def tw_maneuver(WS):
+    maneuverTW = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi, WS)
+    return maneuverTW                                                 # 20kft thrust / take off thrust
+T_W_maneuver = tw_maneuver(W_S)
 
-psi_ideal = 10 * np.pi/180                                                  # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
-T_W_maneuver_ideal = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi_ideal)
+psi_ideal = 10 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
+def tw_maneuverideal(WS):
+    maneuveridealTW = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi_ideal, WS)
+    return maneuveridealTW      
+T_W_maneuver_ideal = tw_maneuverideal(W_S)
+
 
 # Landing 
 v_engage56lb = 145                                                          # knots 
