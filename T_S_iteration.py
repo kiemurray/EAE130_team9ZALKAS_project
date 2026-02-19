@@ -138,7 +138,7 @@ def calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_das
     weight_fraction = warmup*taxi*takeoff*climb*cruise*midmission_descent*dash_ingress*dash_egress*midmission_climb*cruise*descent*loiter*landing 
 
     Wf_W0 = (1 - weight_fraction) * 1.06    # compute fuel fraction
-    print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
+    #print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
 
     return Wf_W0
 
@@ -160,7 +160,6 @@ def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
         W_empty = calculate_empty_weight(
             S_wing, S_ht, S_vt, S_wet_fuselage,
             TOGW_guess, T_0, num_engines)
-        print(f"Empty Weight: {W_empty} lbs")
 
         # 3) new gross weight
         W0_new = W_empty + w_crew + w_payload + W_fuel
@@ -190,12 +189,12 @@ S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wing = 946 #based on vsp design v5
+S_wingtest = 946 #based on vsp design v5
 T_0 = 23930  # Example value for thrust per engine
 
 TOGW_guess = 55000  # Initial guess for Takeoff Gross Weight in pounds
 final_TOGW, converged, iterations, W0_history = inner_loop_weight(
-    TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
+    TOGW_guess, S_wingtest, S_ht, S_vt, S_wet_fuselage,
     num_engines, W_crew, W_payload, T_0)
 
 # plot the convergence history
@@ -219,7 +218,7 @@ def outer_loop_thrust_for_one_constraint(
     num_engines,
     S_ht, S_vt, S_wet_fuselage,
     W_crew, W_payload,
-    coef_1_cruise_constraint, coef_2_cruise_constraint,
+    TWfunc,
     tol_T_rel=1e-3,          
     max_iter_T=50,
     relax=1.0                # optional damping: 0.3~1.0 (use <1 if oscillation)
@@ -232,7 +231,6 @@ def outer_loop_thrust_for_one_constraint(
 
     for S_wing in S_wing_grid:
 
-        # Initialize outer loop for this S
         T_total = T_total_guess_init
         T_hist = []
 
@@ -240,23 +238,18 @@ def outer_loop_thrust_for_one_constraint(
             # Convert total thrust to per-engine thrust for the weight model
             T_0 = T_total / num_engines
 
-            # Inner loop: converge weight for (S, T_0)
+            #get the weight (W0(S_wing))
             W0, wconv, it_w, W0_hist = inner_loop_weight(
-                TOGW_guess_init,
-                S_wing, S_ht, S_vt, S_wet_fuselage,
-                num_engines, W_crew, W_payload, T_0
-            )
+                TOGW_guess_init, S_wing, S_ht, S_vt, S_wet_fuselage,
+                num_engines, W_crew, W_payload, T_0)
 
-            # Wing loading from converged weight
+            #computer W0/S0
             WS = W0 / S_wing
 
-            # Constraint: compute required T/W from W/S
-            # For cruise as example:
-            TW_req = coef_1_cruise_constraint/WS + coef_2_cruise_constraint*WS
-            # For takeoff as example:
-            # TW_req = coef_takeoff_constraint*WS
+            #find TW
+            TW_req = TWfunc(WS)
 
-            # Required total thrust
+            #Required total thrust
             T_req = TW_req * W0
 
             # Store history
@@ -267,7 +260,7 @@ def outer_loop_thrust_for_one_constraint(
                 T_total = T_req
                 break
 
-            # Update thrust (optionally relaxed damping)
+            #update thrust to converge
             T_total = (1 - relax) * T_total + relax * T_req
 
         # Save results for this S
@@ -282,7 +275,7 @@ def outer_loop_thrust_for_one_constraint(
             T_total_history_allS,
             W0, wconv, it_w, W0_hist)
 
-#anthony is an idiot
+#anthony is an idiot!!!
 
 #Takes thrust array and outputs S array
 #ONLY TAKEOFF AND LANDING
@@ -354,19 +347,10 @@ def outer_loop_W_S_curves(
 
 
 
-# Fixed parameters for weight estimation
-L_D_max = 9
-R = 1000            # nmi
-E = 30 / 60         # min --> hr
-c = 0.52            # lb/(lbf hr)
-V = 291 * 1.94      # m/s --> knots
-S_ht = 0
-S_vt = 74
-S_wet_fuselage = 700
-num_engines = 2  # Example number of engines
+
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(3000, 6000, 2))    # Example range of wing areas to analyze
+S_wing_grid = list(range(100, 2000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
 T_engine_grid = list(range(0,40000,1000))     # used for the W/S driven constraint plots
 
@@ -381,49 +365,63 @@ T_grid,S_W_S_array_takeoff,S_W_S_array_landing=outer_loop_W_S_curves(T_engine_gr
 #This is the one that has been breaking
 #inner_loop_weight(TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,T_engine_grid[0])
 
-# T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
-#     S_wing_grid=S_wing_grid,
-#     TOGW_guess_init=TOGW_guess_init,
-#     T_total_guess_init=T_total_guess_init,
-#     num_engines=num_engines,
-#     S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
-#     W_crew=W_crew, W_payload=W_payload,
-#     coef_1_cruise_constraint=constraint_coeff.coef_1_cruise_constraint,
-#     coef_2_cruise_constraint=constraint_coeff.coef_2_cruise_constraint,
-#     tol_T_rel=1e-6,
-#     max_iter_T=200,
-#     relax=1
-# )
+#cruise constraint
+T_cruise, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
+    S_wing_grid=S_wing_grid,
+    TOGW_guess_init=TOGW_guess_init,
+    T_total_guess_init=T_total_guess_init,
+    num_engines=num_engines,
+    S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
+    W_crew=W_crew, W_payload=W_payload,
+    TWfunc= design_space.tw_cruise, 
+    tol_T_rel=1e-6,
+    max_iter_T=200,
+    relax=1)
 
-
-print("Takeoff Array Length: "+ str(len(S_W_S_array_takeoff))+"\nTakeoff Array: " + str(S_W_S_array_takeoff))
-print("Landing Array Length: "+ str(len(S_W_S_array_landing))+"\nLanding Array: " + str(S_W_S_array_landing))
-
-#plot the convergence history
-plt.figure(figsize=(10,6))
-plt.plot(S_W_S_array_takeoff,T_grid, marker='o', color='orange')
-plt.plot(S_W_S_array_landing,T_grid, marker='x',color='blue')
-plt.title('T_S Curve from W_S Curve ')
-plt.xlabel('S (ft^2)')
-plt.ylabel('T (lbf)')
-plt.grid()
-plt.show()
-
-##---plot---
-# Plot the resulting T vs S curve from the outer loop convergence
-T_actual_777 = 220000
-S_actual_777 = 4605
-print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
+#SL dash constraint
+T_SLdash, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
+    S_wing_grid=S_wing_grid,
+    TOGW_guess_init=TOGW_guess_init,
+    T_total_guess_init=T_total_guess_init,
+    num_engines=num_engines,
+    S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
+    W_crew=W_crew, W_payload=W_payload,
+    TWfunc= design_space.tw_SLdash, 
+    tol_T_rel=1e-6,
+    max_iter_T=200,
+    relax=1)
 
 plt.figure(figsize=(16,9))
 plt.title('Converged T vs S for Cruise Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
-plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
-#plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
+#plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
+plt.plot(S_wing_grid, T_cruise, label='Converged T for Cruise Constraint', marker='o')
+plt.plot(S_wing_grid, T_SLdash, label='Converged T for Cruise Constraint', marker='o')
 plt.legend(loc='best')
 plt.grid()
 plt.show()
+
+# print("Takeoff Array Length: "+ str(len(S_W_S_array_takeoff))+"\nTakeoff Array: " + str(S_W_S_array_takeoff))
+# print("Landing Array Length: "+ str(len(S_W_S_array_landing))+"\nLanding Array: " + str(S_W_S_array_landing))
+
+# #plot the convergence history
+# plt.figure(figsize=(10,6))
+# plt.plot(S_W_S_array_takeoff,T_grid, marker='o', color='orange')
+# plt.plot(S_W_S_array_landing,T_grid, marker='x',color='blue')
+# plt.title('T_S Curve from W_S Curve ')
+# plt.xlabel('S (ft^2)')
+# plt.ylabel('T (lbf)')
+# plt.grid()
+# plt.show()
+
+##---plot---
+# Plot the resulting T vs S curve from the outer loop convergence
+# T_actual_777 = 220000
+# S_actual_777 = 4605
+# print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
+
+
 
 
 #Comparable Aircraft T/S

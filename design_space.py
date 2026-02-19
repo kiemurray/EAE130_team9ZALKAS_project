@@ -77,34 +77,39 @@ T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #convert
 
 
 # Cruise and Dash 
-def cr_dash_constraint(v, rho, wf, T_ratio):
+def cr_dash_constraint(v, rho, wf, T_ratio, WS):
     q = 0.5 * rho * v**2
-    T_Wcr = (q * CD0) / (W_S*wf) + (k_cr * W_S*wf) / (q)
+    T_Wcr = (q * CD0) / (WS*wf) + (k_cr * WS*wf) / (q)
     return T_Wcr * wf / T_ratio
 
 mach_cruise = 0.85
-v_cr = mach_cruise * a_40                                                # ft/s Ma 0.8-0.85 at 40,000ft
-print("V cruise: "+str(v_cr))
-Tcr_Tto = Tratio(40000)                                                   
-T_W_cruise = cr_dash_constraint(v_cr, rho_40, cr_wf, Tcr_Tto)
+v_cr = mach_cruise * a_40     
+Tcr_Tto = Tratio(40000)   
+def tw_cruise (WS):
+     cruiseTW = cr_dash_constraint(v_cr, rho_40, cr_wf, Tcr_Tto, WS)
+     return  cruiseTW                                              
+T_W_cruise = tw_cruise(W_S)
 
 mach_dashSL = 0.85
 v_dashSL = mach_dashSL * a_SL                                             # Ma 0.85-0.9 at SL
 Tdashsl_Tto = 1
-T_W_dashSL = cr_dash_constraint(v_dashSL, rho_sl, mid_wf, Tdashsl_Tto)
+def tw_SLdash (WS):
+     SLdashTW = cr_dash_constraint(v_dashSL, rho_sl, mid_wf, Tdashsl_Tto, WS)
+     return  SLdashTW 
+T_W_dashSL = tw_SLdash(W_S)
 
 mach_dashSLideal = 0.9
 v_dashSLideal = mach_dashSL * a_SL      
-T_W_dashSLideal = cr_dash_constraint(v_dashSLideal, rho_sl, mid_wf, Tdashsl_Tto)
+T_W_dashSLideal = cr_dash_constraint(v_dashSLideal, rho_sl, mid_wf, Tdashsl_Tto, W_S)
 
 mach_dash30 = 1.6                                                          # 1.6-2.0 at 30kft
 v_dash30 = mach_dash30 * a_30          
 Tdash30_Tto = Tratio(30000)     
-T_W_dash30 = cr_dash_constraint(v_dash30, rho_30, dash30_wf, Tdash30_Tto)
+T_W_dash30 = cr_dash_constraint(v_dash30, rho_30, dash30_wf, Tdash30_Tto, W_S)
 
 mach_dash30ideal = 2.0                    
 v_dash30ideal = mach_dash30ideal * a_30          
-T_W_dash30ideal = cr_dash_constraint(v_dash30ideal, rho_30, dash30_wf, Tdash30_Tto)
+T_W_dash30ideal = cr_dash_constraint(v_dash30ideal, rho_30, dash30_wf, Tdash30_Tto, W_S)
 
 # Service Ceiling
 ROC_ceiling = 100 / 60                                                     #ft/s (service ceiling from slides)
