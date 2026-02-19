@@ -151,6 +151,7 @@ def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
     it = 0
 
     while delta > err and it < max_iter:
+        #print("TOGW Guess: "+str(TOGW_guess)+"\nS_wing: "+str(S_wing)+"\nT_0: " + str(T_0))
         # 1) fuel fraction (could be constant or updated)
         Wf_W0 = calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash)
         W_fuel = Wf_W0 * TOGW_guess
@@ -210,7 +211,7 @@ print("Final estimated TOGW:", final_TOGW, "lb")
 
 ##---outer loop---
 #T/W stuff ONLY
-#DO NOT FUCKING PUT LANDING AND TAKEOFF HERE
+#DO NOT PUT LANDING AND TAKEOFF HERE
 def outer_loop_thrust_for_one_constraint(
     S_wing_grid,
     TOGW_guess_init,
@@ -298,44 +299,58 @@ def outer_loop_W_S_curves(
             W_payload,
             FieldLength = 349
 ):
-    tol_T_rel=1e-3,          
-    max_iter_T=50
-    S_wing_grid = []    #Storing final S Values
+    tol_T_rel=1e-3          
+    max_iter_T=1 #change this so its higher
+    wing_landing_array = []    #Storing landing S Values
+    wing_takeoff_array = []    #Storing takeoff S Values
     T_grid = []         #Storing final Thrust values
-    S_wing_guess=S_wing_guess_init #give us a starting value
-    S_hist = []         #Shows iteration history
+    S_wing_guess_takeoff=S_wing_guess_init #give us a starting value
+    S_wing_guess_landing=S_wing_guess_init
+    S_hist_landing = []         #Shows iteration history for landing
+    S_hist_takeoff = []         #Shows iteration history for takeoff
     
 
     for i in range(0,len(engine_array)): #basically just a linspace of possible thrust values
         T_0 = engine_array[i] #Take thrust value from the array
-        S_hist.append(S_wing_guess)
+        S_hist_landing.append(S_wing_guess_landing)
+        S_hist_takeoff.append(S_wing_guess_takeoff)
         T_grid.append(T_0)
         
         for k in range(max_iter_T):
 
             #compute TOGW using inner loop code
-            W0, wconv, it_w, W0_hist = inner_loop_weight(
-                TOGW_guess_init, S_wing_guess_init, S_ht, S_vt, S_wet_fuselage,
+            W0_takeoff, wconv, it_w, W0_hist = inner_loop_weight(
+                TOGW_guess_init, S_wing_guess_takeoff, S_ht, S_vt, S_wet_fuselage,
                 num_engines, W_crew, W_payload, T_0
             )
 
-            #add constraint inputs here
-
-            W_0S_req = (0.95*design_space.CLmax_L/80)*(FieldLength)
-
             #constraint inputs to get (W_0/S)
-            W_S_constraint = design_space.W_S_takeoff #constraint input
+            W_S_constraint_takeoff = design_space.W_S_takeoff #constraint input
+            S_wing_guess_takeoff = W0_takeoff/(W_S_constraint_takeoff)
+            #print("S_wing_guess: " + str(S_Wing_guess))
+            if abs(S_wing_guess_takeoff - S_hist_takeoff[i])/abs(S_hist_takeoff[i]) < tol_T_rel:
+                break
+    
+        for k in range(max_iter_T):
 
-
-            S_wing_guess = W0/(W_S_constraint)
-            if abs(S_wing_guess - S_hist[i])/abs(S_hist[i]) < tol_T_rel:
+            #compute TOGW using inner loop code
+            W0_landing, wconv, it_w, W0_hist = inner_loop_weight(
+                TOGW_guess_init, S_wing_guess_init, S_ht, S_vt, S_wet_fuselage,
+                num_engines, W_crew, W_payload, T_0
+            )
+            #add constraint inputs here
+            W_S_constraint_landing = (0.95*design_space.CLmax_L/80)*(FieldLength)
+            S_wing_guess_landing = W0_landing/(W_S_constraint_landing)
+            if abs(S_wing_guess_landing - S_hist_landing[i])/abs(S_hist_landing[i]) < tol_T_rel:
                 break
             
         #now we have a converged S value for the thrust value from the array
-        S_wing_grid.append(S_wing_guess)
+        wing_takeoff_array.append(S_wing_guess_takeoff)
+        wing_landing_array.append(S_wing_guess_landing)
+        #print("S_Takeoff History: "+str(S_hist_takeoff))
         
     
-    return(T_grid,S_wing_grid)
+    return(T_grid,wing_takeoff_array,wing_landing_array)
 
 
 
@@ -353,36 +368,41 @@ num_engines = 2  # Example number of engines
 # Set grid of wing areas to analyze
 S_wing_grid = list(range(3000, 6000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
-T_engine_grid = list(range(0,100000,10000))     # used for the W/S driven constraint plots
+T_engine_grid = list(range(0,40000,1000))     # used for the W/S driven constraint plots
 
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
 T_total_guess_init = 24000 * num_engines  # Initial guess for total thrust in pounds-force
 
 S_wing_guess=900
+print("\nStarting Inner Loop Weight Calcs for aircraft\n")
+T_grid,S_W_S_array_takeoff,S_W_S_array_landing=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload)
 
-T_grid,S_W_S_array=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload)
+#This is the one that has been breaking
+#inner_loop_weight(TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,T_engine_grid[0])
 
-T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
-    S_wing_grid=S_wing_grid,
-    TOGW_guess_init=TOGW_guess_init,
-    T_total_guess_init=T_total_guess_init,
-    num_engines=num_engines,
-    S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
-    W_crew=W_crew, W_payload=W_payload,
-    coef_1_cruise_constraint=constraint_coeff.coef_1_cruise_constraint,
-    coef_2_cruise_constraint=constraint_coeff.coef_2_cruise_constraint,
-    tol_T_rel=1e-6,
-    max_iter_T=200,
-    relax=1
-)
+# T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
+#     S_wing_grid=S_wing_grid,
+#     TOGW_guess_init=TOGW_guess_init,
+#     T_total_guess_init=T_total_guess_init,
+#     num_engines=num_engines,
+#     S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
+#     W_crew=W_crew, W_payload=W_payload,
+#     coef_1_cruise_constraint=constraint_coeff.coef_1_cruise_constraint,
+#     coef_2_cruise_constraint=constraint_coeff.coef_2_cruise_constraint,
+#     tol_T_rel=1e-6,
+#     max_iter_T=200,
+#     relax=1
+# )
 
 
+print("Takeoff Array Length: "+ str(len(S_W_S_array_takeoff))+"\nTakeoff Array: " + str(S_W_S_array_takeoff))
+print("Landing Array Length: "+ str(len(S_W_S_array_landing))+"\nLanding Array: " + str(S_W_S_array_landing))
 
-
-# plot the convergence history
+#plot the convergence history
 plt.figure(figsize=(10,6))
-plt.plot(S_W_S_array,T_grid, marker='o')
+plt.plot(S_W_S_array_takeoff,T_grid, marker='o', color='orange')
+plt.plot(S_W_S_array_landing,T_grid, marker='x',color='blue')
 plt.title('T_S Curve from W_S Curve ')
 plt.xlabel('S (ft^2)')
 plt.ylabel('T (lbf)')
@@ -400,7 +420,7 @@ plt.title('Converged T vs S for Cruise Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
 plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
-plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
+#plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
 plt.legend(loc='best')
 plt.grid()
 plt.show()
