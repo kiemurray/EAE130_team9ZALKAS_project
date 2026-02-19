@@ -209,6 +209,8 @@ print("Final estimated TOGW:", final_TOGW, "lb")
 
 
 ##---outer loop---
+#T/W stuff ONLY
+#DO NOT FUCKING PUT LANDING AND TAKEOFF HERE
 def outer_loop_thrust_for_one_constraint(
     S_wing_grid,
     TOGW_guess_init,
@@ -281,6 +283,8 @@ def outer_loop_thrust_for_one_constraint(
 
 
 #Takes thrust array and outputs S array
+#ONLY TAKEOFF AND LANDING
+#DONT YOU DARE PUT ANYTHING ELSE IN THIS SACRED FUNCTION
 def outer_loop_W_S_curves(
             engine_array,               #similar to other outer loop for S
             TOGW_guess_init,
