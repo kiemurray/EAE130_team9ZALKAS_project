@@ -281,6 +281,7 @@ def outer_loop_thrust_for_one_constraint(
             T_total_history_allS,
             W0, wconv, it_w, W0_hist)
 
+#anthony is an idiot
 
 #Takes thrust array and outputs S array
 #ONLY TAKEOFF AND LANDING
