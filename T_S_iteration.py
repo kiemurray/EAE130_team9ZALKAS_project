@@ -391,13 +391,41 @@ T_SLdash, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0
     max_iter_T=200,
     relax=1)
 
+#SL dash ideal
+T_SLdashideal, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
+    S_wing_grid=S_wing_grid,
+    TOGW_guess_init=TOGW_guess_init,
+    T_total_guess_init=T_total_guess_init,
+    num_engines=num_engines,
+    S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
+    W_crew=W_crew, W_payload=W_payload,
+    TWfunc= design_space.tw_SLdashideal, 
+    tol_T_rel=1e-6,
+    max_iter_T=200,
+    relax=1)
+
+#30k ft dash
+T_30dash, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
+    S_wing_grid=S_wing_grid,
+    TOGW_guess_init=TOGW_guess_init,
+    T_total_guess_init=T_total_guess_init,
+    num_engines=num_engines,
+    S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
+    W_crew=W_crew, W_payload=W_payload,
+    TWfunc= design_space.tw_30dash, 
+    tol_T_rel=1e-6,
+    max_iter_T=200,
+    relax=1)
+
 plt.figure(figsize=(16,9))
 plt.title('Converged T vs S for Cruise Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
 #plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
-plt.plot(S_wing_grid, T_cruise, label='Converged T for Cruise Constraint', marker='o')
-plt.plot(S_wing_grid, T_SLdash, label='Converged T for Cruise Constraint', marker='o')
+plt.plot(S_wing_grid, T_cruise, label='Cruise Constraint')
+plt.plot(S_wing_grid, T_SLdash, label='SL Dash Constraint')
+plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash Constraint')
+plt.plot(S_wing_grid, T_30dash, label='30k ft Dash Constraint')
 plt.legend(loc='best')
 plt.grid()
 plt.show()
