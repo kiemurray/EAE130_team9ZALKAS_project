@@ -25,33 +25,33 @@ cL_clean = np.linspace(-0.9,0.9,100)
 cL_takeoff = np.linspace(-2,2,100)
 cL_landing = np.linspace(-2.6,2.6,100)
 
-# # Clean configuration
-# def calculate_induced_drag_coefficient(AR, e):
-#     return 1/(np.pi*AR*e)
-# e_clean = 0.820
-# coef_clean = calculate_induced_drag_coefficient(AR, e_clean)
-# print("Induced drag coefficient for clean configuration:", coef_clean)
-# clean = C_D_0 + coef_clean*cL_clean*cL_clean
+# Clean configuration
+#def calculate_induced_drag_coefficient(AR, e):
+#    return 1/(np.pi*AR*e)
+#e_clean = 0.820
+#coef_clean = calculate_induced_drag_coefficient(AR, e_clean)
+#print("Induced drag coefficient for clean configuration:", coef_clean)
+#clean = C_D_0 + coef_clean*cL_clean*cL_clean
 
-# # Takeoff configuration
-# e_takeoff = 0.75
-# delta_CD0_takeoff = 0.01 # additional drag due to takeoff flaps
-# coef_takeoff = calculate_induced_drag_coefficient(AR, e_takeoff)
-# print("Induced drag coefficient for takeoff configuration:", coef_takeoff)
-# takeoff = C_D_0 + delta_CD0_takeoff + coef_takeoff*cL_takeoff*cL_takeoff 
+# Takeoff configuration
+#e_takeoff = 0.75
+#delta_CD0_takeoff = 0.01 # additional drag due to takeoff flaps
+#coef_takeoff = calculate_induced_drag_coefficient(AR, e_takeoff)
+#print("Induced drag coefficient for takeoff configuration:", coef_takeoff)
+#takeoff = C_D_0 + delta_CD0_takeoff + coef_takeoff*cL_takeoff*cL_takeoff 
 
-# # Landing configuration
-# e_landing = 0.7
-# delta_CD0_landing = 0.055 # additional drag due to landing flaps and gear
-# coef_landing = calculate_induced_drag_coefficient(AR, e_landing)
-# print("Induced drag coefficient for landing configuration:", coef_landing)
-# landing_flaps = C_D_0 + delta_CD0_landing + coef_landing*cL_landing*cL_landing
+# Landing configuration
+#e_landing = 0.7
+#delta_CD0_landing = 0.055 # additional drag due to landing flaps and gear
+#coef_landing = calculate_induced_drag_coefficient(AR, e_landing)
+#print("Induced drag coefficient for landing configuration:", coef_landing)
+#landing_flaps = C_D_0 + delta_CD0_landing + coef_landing*cL_landing*cL_landing
 
-# # Additional drag due to landing gear only
-# e_gear = e_clean # Assuming landing gear does not affect the efficiency factor
-# delta_CD0_gear = 0.015 # additional drag due to landing gear
-# coef_gear = calculate_induced_drag_coefficient(AR, e_gear)
-# landing_gear = C_D_0 + delta_CD0_gear + coef_gear*cL_landing*cL_landing
+# Additional drag due to landing gear only
+#e_gear = e_clean # Assuming landing gear does not affect the efficiency factor
+#delta_CD0_gear = 0.015 # additional drag due to landing gear
+#coef_gear = calculate_induced_drag_coefficient(AR, e_gear)
+#landing_gear = C_D_0 + delta_CD0_gear + coef_gear*cL_landing*cL_landing
 
 
 #plt.figure(figsize=(16,9))
@@ -177,7 +177,7 @@ def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
 
 # Fixed parameters for weight estimation
 L_D_max = 10
-R = 950             # nmi
+R = 950            # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7
@@ -186,7 +186,7 @@ v_dash = 560        # knots
 S_ht = 0
 S_vt = 45
 S_wet_fuselage = 700
-num_engines = 2 
+num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
 S_wing = 946 #based on vsp design v5
@@ -290,8 +290,8 @@ def outer_loop_W_S_curves(
             S_wet_fuselage,
             num_engines, 
             W_crew, 
-            W_payload,):
-    
+            W_payload,
+):
     tol_T_rel=1e-3,          
     max_iter_T=50
     S_wing_grid = []    #Storing final S Values
@@ -345,13 +345,14 @@ S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(200, 3000, 2))    # Example range of wing areas to analyze
+S_wing_grid = list(range(3000, 6000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
-T_engine_grid = list(range(0,10000,10))     # used for the W/S driven constraint plots
+T_engine_grid = list(range(0,100000,10000))     # used for the W/S driven constraint plots
 
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
 T_total_guess_init = 24000 * num_engines  # Initial guess for total thrust in pounds-force
+
 S_wing_guess=900
 
 T_grid,S_W_S_array=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload)
@@ -367,7 +368,8 @@ T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_fina
     coef_2_cruise_constraint=constraint_coeff.coef_2_cruise_constraint,
     tol_T_rel=1e-6,
     max_iter_T=200,
-    relax=1)
+    relax=1
+)
 
 
 
@@ -383,11 +385,15 @@ plt.show()
 
 ##---plot---
 # Plot the resulting T vs S curve from the outer loop convergence
+T_actual_777 = 220000
+S_actual_777 = 4605
+print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
 
 plt.figure(figsize=(16,9))
 plt.title('Converged T vs S for Cruise Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
+plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
 plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
 plt.legend(loc='best')
 plt.grid()
