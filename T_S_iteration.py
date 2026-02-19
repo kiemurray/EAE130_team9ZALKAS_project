@@ -5,7 +5,7 @@ import constraint_coeff
 
 
 #change to our numbers
-AR = 2.06
+AR = 2.06 # sam is annoyed :D tetetetettete
 s = 46 
 s_ref = 955
 
