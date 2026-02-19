@@ -296,6 +296,7 @@ def outer_loop_W_S_curves(
             num_engines, 
             W_crew, 
             W_payload,
+            FieldLength = 349
 ):
     tol_T_rel=1e-3,          
     max_iter_T=50
@@ -320,7 +321,7 @@ def outer_loop_W_S_curves(
 
             #add constraint inputs here
 
-
+            W_0S_req = (0.95*design_space.CLmax_L/80)*(FieldLength)
 
             #constraint inputs to get (W_0/S)
             W_S_constraint = design_space.W_S_takeoff #constraint input
