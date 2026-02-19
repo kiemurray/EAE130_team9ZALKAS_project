@@ -319,7 +319,11 @@ def outer_loop_W_S_curves(
 
             #add constraint inputs here
 
-
+            def calculate_ceiling_constraint_coefficient(rho, V_fps, C_D_0, AR, e):
+             q = 0.5 * rho * V_fps**2
+             coef1 = q * C_D_0
+             coef2 = 1/(np.pi * AR * e * q)
+             return coef1, coef2
 
             #constraint inputs to get (W_0/S)
             W_S_constraint = design_space.W_S_takeoff #constraint input
@@ -335,8 +339,11 @@ def outer_loop_W_S_curves(
     
     return(T_grid,S_wing_grid)
 
+    c1_ceil, c2_ceil = calculate_ceiling_constraint_coefficient(rho, V_fps, C_D_0, AR, e_clean)
+    print(f"Ceiling Constraints - Coef1: {c1_ceil:.4f}, Coef2: {c2_ceil:.6f}")
 
-
+    TW_req_ceiling = (c1_ceil / WS_val) + (c2_ceil * WS_val) + G
+    T_req_ceiling = TW_req_ceiling * W0
 # Fixed parameters for weight estimation
 L_D_max = 9
 R = 1000            # nmi
@@ -381,6 +388,7 @@ T_total_curve, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_fina
 # plot the convergence history
 plt.figure(figsize=(10,6))
 plt.plot(S_W_S_array,T_grid, marker='o')
+plt.xlim(0, len(S_W_S_array))
 plt.title('T_S Curve from W_S Curve ')
 plt.xlabel('S (ft^2)')
 plt.ylabel('T (lbf)')
@@ -389,15 +397,11 @@ plt.show()
 
 ##---plot---
 # Plot the resulting T vs S curve from the outer loop convergence
-T_actual_777 = 220000
-S_actual_777 = 4605
-print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
 
 plt.figure(figsize=(16,9))
 plt.title('Converged T vs S for Cruise Constraint')
 plt.xlabel("Wing Area S (ft^2)")
 plt.ylabel("Total Thrust T (lbf)")
-plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
 plt.plot(S_wing_grid, T_total_curve, label='Converged T for Cruise Constraint', marker='o')
 plt.legend(loc='best')
 plt.grid()
