@@ -141,18 +141,15 @@ def manuever_constraint (v, rho, wf, T_ratio, psi, WS):
 
 
 psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
-v_maneuver = v_cr    
+psi_ideal = 10 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
+v_maneuver = v_cr    #ft/s
 T20_Tto = Tratio(20000)   
-def tw_maneuver(WS):
+def tw_maneuver(WS,v_maneuver):
     maneuverTW = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi, WS)
     return maneuverTW                                                 # 20kft thrust / take off thrust
-T_W_maneuver = tw_maneuver(W_S)
+T_W_maneuver = tw_maneuver(W_S,v_maneuver)
+T_W_maneuver_ideal = tw_maneuver(W_S,v_maneuver)
 
-psi_ideal = 10 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
-def tw_maneuverideal(WS):
-    maneuveridealTW = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi_ideal, WS)
-    return maneuveridealTW      
-T_W_maneuver_ideal = tw_maneuverideal(W_S)
 
 
 # Landing 
