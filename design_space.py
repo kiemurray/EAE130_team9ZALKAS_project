@@ -23,9 +23,9 @@ CLmax_climb = CLmax_TO
 # Weight Fractions
 cr_wf = 0.93148704          
 wf_climb =  0.970299
-mid_wf = 0.7806623694686121        
+mid_wf = 0.7792324662696907                
 dash30_wf = mid_wf         
-man_wf = 0.7792324662696907
+man_wf = mid_wf
 wf_landing = 0.6227770873721522
 
 # Density and Temp Formulas
@@ -53,7 +53,7 @@ rho_sl, a_SL = atmo_vals(0)[:2]
 rho_to = 0.00224392                                                     # slug/ft^3 (sea level but 89.8F)
 
 def Tratio(height):
-    return atmo_vals(height)[2]/atmo_vals(0)[2] * np.sqrt(atmo_vals(0)[3]/atmo_vals(height)[3])
+    return (atmo_vals(height)[0]/atmo_vals(0)[0])**0.6
 
 # Wing loading range
 W_S = np.linspace(0, 200, 500)                                          #lbf/ft^2
