@@ -235,9 +235,7 @@ def outer_loop_W_S_curves(
             S_wet_fuselage,
             num_engines, 
             W_crew, 
-            W_payload,
-            FieldLength = 349
-):
+            W_payload):
     tol_T_rel=1e-3          
     max_iter_T=1 #change this so its higher
     wing_landing_array = []    #Storing landing S Values
@@ -260,8 +258,7 @@ def outer_loop_W_S_curves(
             #compute TOGW using inner loop code
             W0_takeoff, wconv, it_w, W0_hist = inner_loop_weight(
                 TOGW_guess_init, S_wing_guess_takeoff, S_ht, S_vt, S_wet_fuselage,
-                num_engines, W_crew, W_payload, T_0
-            )
+                num_engines, W_crew, W_payload, T_0)
 
             #constraint inputs to get (W_0/S)
             W_S_constraint_takeoff = design_space.W_S_takeoff #constraint input
@@ -416,17 +413,17 @@ T_ceiling, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W
     relax=1)
 
 #SEROC climb
-#T_climb, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
-    # S_wing_grid=S_wing_grid,
-    # TOGW_guess_init=TOGW_guess_init,
-    # T_total_guess_init=T_total_guess_init,
-    # num_engines=num_engines,
-    # S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
-    # W_crew=W_crew, W_payload=W_payload,
-    # TWfunc= design_space.tw_climb, 
-    # tol_T_rel=1e-6,
-    # max_iter_T=500,
-    # relax=1)
+T_climb, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
+    S_wing_grid=S_wing_grid,
+    TOGW_guess_init=TOGW_guess_init,
+    T_total_guess_init=T_total_guess_init,
+    num_engines=num_engines,
+    S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
+    W_crew=W_crew, W_payload=W_payload,
+    TWfunc= design_space.tw_climb, 
+    tol_T_rel=1e-6,
+    max_iter_T=500,
+    relax=0.2)
 
 engine_array = T_engine_grid
 S_wing_guess_init = S_wing_guess
@@ -440,9 +437,7 @@ T_grid, wing_takeoff_array, wing_landing_array = outer_loop_W_S_curves(
     S_wet_fuselage,
     num_engines, 
     W_crew, 
-    W_payload,
-    FieldLength = 349
-)
+    W_payload)
 
 
 #Comparable Aircraft T/S
@@ -479,10 +474,11 @@ plt.plot(S_wing_grid, T_cruise, label='Cruise')
 plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
 plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
 plt.plot(S_wing_grid, T_30dash, label='30k ft Dash')
-plt.plot(S_wing_grid, T_30dash, label='Ideal 30k ft Dash')
+plt.plot(S_wing_grid, T_30dashideal, label='Ideal 30k ft Dash')
 plt.plot(S_wing_grid, T_maneuver, label='Maneuver')
 plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
 plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
+plt.plot(S_wing_grid, T_climb, label='SEROC Climb')
 plt.plot(wing_takeoff_array, T_grid, label = 'Takeoff')
 plt.plot(wing_landing_array, T_grid, label = 'Landing')
 #comparable aircraft points
@@ -514,7 +510,3 @@ plt.show()
 # plt.ylabel('T (lbf)')
 # plt.grid()
 # plt.show()
-
-
-
-
