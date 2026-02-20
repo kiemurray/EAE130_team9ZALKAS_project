@@ -352,7 +352,7 @@ def outer_loop_W_S_curves(
 # Set grid of wing areas to analyze
 S_wing_grid = list(range(100, 2000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
-T_engine_grid = list(range(0,150000,1000))     # used for the W/S driven constraint plots
+T_engine_grid = list(range(0,250000,1000))     # used for the W/S driven constraint plots
 
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
