@@ -332,7 +332,7 @@ def outer_loop_W_S_curves(
                 num_engines, W_crew, W_payload, T_0
             )
             #add constraint inputs here
-            W_S_constraint_landing = (0.95*design_space.CLmax_L/80)*(FieldLength)
+            W_S_constraint_landing = design_space.W_S_landing56lb
             S_wing_guess_landing = W0_landing/(W_S_constraint_landing)
             if abs(S_wing_guess_landing - S_hist_landing[i])/abs(S_hist_landing[i]) < tol_T_rel:
                 break
@@ -352,7 +352,7 @@ def outer_loop_W_S_curves(
 # Set grid of wing areas to analyze
 S_wing_grid = list(range(100, 2000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
-T_engine_grid = list(range(0,40000,1000))     # used for the W/S driven constraint plots
+T_engine_grid = list(range(0,150000,1000))     # used for the W/S driven constraint plots
 
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
@@ -482,6 +482,22 @@ T_ceiling, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W
     # max_iter_T=500,
     # relax=1)
 
+engine_array = T_engine_grid
+S_wing_guess_init = S_wing_guess
+
+T_grid, wing_takeoff_array, wing_landing_array = outer_loop_W_S_curves(
+    engine_array,               #similar to other outer loop for S
+    TOGW_guess_init,
+    S_wing_guess_init,          #Honestly just take a swing at it
+    S_ht, 
+    S_vt, 
+    S_wet_fuselage,
+    num_engines, 
+    W_crew, 
+    W_payload,
+    FieldLength = 349
+)
+
 
 plt.figure(figsize=(16,9))
 plt.title('Converged T vs S for Cruise Constraint')
@@ -496,6 +512,8 @@ plt.plot(S_wing_grid, T_30dash, label='Ideal 30k ft Dash')
 plt.plot(S_wing_grid, T_maneuver, label='Maneuver')
 plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
 plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
+plt.plot(wing_takeoff_array, T_grid, label = 'Takeoff')
+plt.plot(wing_landing_array, T_grid, label = 'Landing')
 #plt.plot(S_wing_grid, T_climb, label='SEROC')
 plt.legend(loc='best')
 plt.grid()
