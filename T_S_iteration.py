@@ -96,7 +96,7 @@ def calculate_engine_weight(T_0):
     W_eng_control = 0.26 * T_0**0.5
     W_eng_start = 9.33 * (W_eng_dry/1000) ** 1.078
     W_eng = W_eng_dry + W_eng_oil + W_eng_rev + W_eng_control + W_eng_start
-    W_eng = 3826 # actual F100 weight (from https://www.rtx.com/en/prattwhitney/products/military-engines/f100)
+    #W_eng = 3826 # actual F100 weight (from https://www.rtx.com/en/prattwhitney/products/military-engines/f100)
     return W_eng
 
 def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_engines):
@@ -177,7 +177,7 @@ def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
 
 # Fixed parameters for weight estimation
 L_D_max = 10
-R = 950            # nmi
+R = 700#950            # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7
@@ -350,7 +350,7 @@ def outer_loop_W_S_curves(
 
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(100, 2000, 2))    # Example range of wing areas to analyze
+S_wing_grid = list(range(100, 3000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
 T_engine_grid = list(range(0,250000,1000))     # used for the W/S driven constraint plots
 
@@ -499,48 +499,6 @@ T_grid, wing_takeoff_array, wing_landing_array = outer_loop_W_S_curves(
 )
 
 
-plt.figure(figsize=(16,9))
-plt.title('Converged T vs S for Cruise Constraint')
-plt.xlabel("Wing Area S (ft^2)")
-plt.ylabel("Total Thrust T (lbf)")
-#plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
-plt.plot(S_wing_grid, T_cruise, label='Cruise')
-plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
-plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
-plt.plot(S_wing_grid, T_30dash, label='30k ft Dash')
-plt.plot(S_wing_grid, T_30dash, label='Ideal 30k ft Dash')
-plt.plot(S_wing_grid, T_maneuver, label='Maneuver')
-plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
-plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
-plt.plot(wing_takeoff_array, T_grid, label = 'Takeoff')
-plt.plot(wing_landing_array, T_grid, label = 'Landing')
-#plt.plot(S_wing_grid, T_climb, label='SEROC')
-plt.legend(loc='best')
-plt.grid()
-plt.show()
-
-# print("Takeoff Array Length: "+ str(len(S_W_S_array_takeoff))+"\nTakeoff Array: " + str(S_W_S_array_takeoff))
-# print("Landing Array Length: "+ str(len(S_W_S_array_landing))+"\nLanding Array: " + str(S_W_S_array_landing))
-
-# #plot the convergence history
-# plt.figure(figsize=(10,6))
-# plt.plot(S_W_S_array_takeoff,T_grid, marker='o', color='orange')
-# plt.plot(S_W_S_array_landing,T_grid, marker='x',color='blue')
-# plt.title('T_S Curve from W_S Curve ')
-# plt.xlabel('S (ft^2)')
-# plt.ylabel('T (lbf)')
-# plt.grid()
-# plt.show()
-
-##---plot---
-# Plot the resulting T vs S curve from the outer loop convergence
-# T_actual_777 = 220000
-# S_actual_777 = 4605
-# print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
-
-
-
-
 #Comparable Aircraft T/S
 T_J39C_dry=12000 #lbf
 T_J39C_wet=18000 #lbf
@@ -565,3 +523,52 @@ S_Rafale_M=492 #ft^2
 T_F18_E_dry=26000 #lbf
 T_F18_E_wet=44000 #lbf
 S_F18_E_M=500 #ft^2
+
+
+plt.figure(figsize=(16,9))
+plt.title('Converged T vs S for Cruise Constraint')
+plt.xlabel("Wing Area S (ft^2)")
+plt.ylabel("Total Thrust T (lbf)")
+plt.plot(S_wing_grid, T_cruise, label='Cruise')
+plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
+plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
+plt.plot(S_wing_grid, T_30dash, label='30k ft Dash')
+plt.plot(S_wing_grid, T_30dash, label='Ideal 30k ft Dash')
+plt.plot(S_wing_grid, T_maneuver, label='Maneuver')
+plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
+plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
+plt.plot(wing_takeoff_array, T_grid, label = 'Takeoff')
+plt.plot(wing_landing_array, T_grid, label = 'Landing')
+#comparable aircraft points
+aircraft_points = [
+    (S_J39C, T_J39C_wet, "J39C"),
+    (S_Su33, T_Su33_wet, "Su-33"),
+    (S_Su34, T_Su34_wet, "Su-34"),
+    (S_Typhoon, T_Typhoon_wet, "Typhoon"),
+    (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
+    (S_F18_E_M, T_F18_E_wet, "F/A-18E"),]
+#plots and lables comparable aircraft
+for S, T, name in aircraft_points:
+    plt.plot(S, T, marker='^', markersize=5, color='black')
+    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points')
+#plt.plot(S_wing_grid, T_climb, label='SEROC')
+plt.legend(loc='best')
+plt.grid()
+plt.show()
+
+# print("Takeoff Array Length: "+ str(len(S_W_S_array_takeoff))+"\nTakeoff Array: " + str(S_W_S_array_takeoff))
+# print("Landing Array Length: "+ str(len(S_W_S_array_landing))+"\nLanding Array: " + str(S_W_S_array_landing))
+
+# #plot the convergence history
+# plt.figure(figsize=(10,6))
+# plt.plot(S_W_S_array_takeoff,T_grid, marker='o', color='orange')
+# plt.plot(S_W_S_array_landing,T_grid, marker='x',color='blue')
+# plt.title('T_S Curve from W_S Curve ')
+# plt.xlabel('S (ft^2)')
+# plt.ylabel('T (lbf)')
+# plt.grid()
+# plt.show()
+
+
+
+

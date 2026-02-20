@@ -23,9 +23,9 @@ CLmax_climb = CLmax_TO
 # Weight Fractions
 cr_wf = 0.93148704          
 wf_climb =  0.970299
-mid_wf = 0.7806623694686121        
+mid_wf = 0.7792324662696907        
 dash30_wf = mid_wf         
-man_wf = 0.7792324662696907
+man_wf = mid_wf
 wf_landing = 0.6227770873721522
 
 # Density and Temp Formulas
@@ -53,7 +53,7 @@ rho_sl, a_SL = atmo_vals(0)[:2]
 rho_to = 0.00224392                                                     # slug/ft^3 (sea level but 89.8F)
 
 def Tratio(height):
-    return atmo_vals(height)[2]/atmo_vals(0)[2] * np.sqrt(atmo_vals(0)[3]/atmo_vals(height)[3])
+    return (atmo_vals(height)[0]/atmo_vals(0)[0])**0.6
 
 # Wing loading range
 W_S = np.linspace(0, 200, 500)                                          #lbf/ft^2
@@ -113,7 +113,7 @@ Tdash30_Tto = Tratio(30000)
 def tw_30dash(WS):
      h30dashTW = cr_dash_constraint(v_dash30, rho_30, dash30_wf, Tdash30_Tto, WS)
      return  h30dashTW    
-T_W_dash30 = tw_30dash(W_S)
+T_W_dash30 = tw_30dash(W_S) 
 
 mach_dash30ideal = 2.0                    
 v_dash30ideal = mach_dash30ideal * a_30    
@@ -180,7 +180,6 @@ plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 #plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 plt.axvline(x=W_S_landing56lb, color='magenta', linewidth=2, label='Landing (Arrestor)')
-
 plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
@@ -206,7 +205,6 @@ plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
 plt.title('Aircraft Constraint Diagram', fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
-
 
 plt.xlim(0, 200)
 plt.ylim(0, 2.0)  
