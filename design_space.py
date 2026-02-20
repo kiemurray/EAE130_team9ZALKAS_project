@@ -23,9 +23,9 @@ CLmax_climb = CLmax_TO
 # Weight Fractions
 cr_wf = 0.93148704          
 wf_climb =  0.970299
-mid_wf = 0.7792324662696907        
+mid_wf = 0.7806623694686121        
 dash30_wf = mid_wf         
-man_wf = mid_wf
+man_wf = 0.7792324662696907
 wf_landing = 0.6227770873721522
 
 # Density and Temp Formulas
@@ -53,7 +53,7 @@ rho_sl, a_SL = atmo_vals(0)[:2]
 rho_to = 0.00224392                                                     # slug/ft^3 (sea level but 89.8F)
 
 def Tratio(height):
-    return (atmo_vals(height)[0]/atmo_vals(0)[0])**0.6
+    return atmo_vals(height)[2]/atmo_vals(0)[2] * np.sqrt(atmo_vals(0)[3]/atmo_vals(height)[3])
 
 # Wing loading range
 W_S = np.linspace(0, 200, 500)                                          #lbf/ft^2
@@ -73,7 +73,7 @@ SEROC_launch = 200/60                                                    #ft/s (
 #G = 0.024                                                                #2.4% for FAR25
 #T_W_climb = ks**2*CD0/CLmax_climb + CLmax_climb*k_to/(ks**2) + G
 def tw_climb(WS):
-    T_W_climb = SEROC_launch*(CD0/k_cr)**(1/4)*(rho_to/2)**(1/2)*(WS*wf_climb)**(-1/2)+2*(k_cr*CD0)**(1/2)
+    T_W_climb = SEROC_launch*(CD0/k_cr)**(1/4)*(rho_to/2)**(1/2)*(W_S*wf_climb)**(-1/2)+2*(k_cr*CD0)**(1/2)
     T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
     return T_W_climb
 T_W_climb = tw_climb(W_S)
@@ -113,7 +113,7 @@ Tdash30_Tto = Tratio(30000)
 def tw_30dash(WS):
      h30dashTW = cr_dash_constraint(v_dash30, rho_30, dash30_wf, Tdash30_Tto, WS)
      return  h30dashTW    
-T_W_dash30 = tw_30dash(W_S) 
+T_W_dash30 = tw_30dash(W_S)
 
 mach_dash30ideal = 2.0                    
 v_dash30ideal = mach_dash30ideal * a_30    
@@ -141,15 +141,18 @@ def manuever_constraint (v, rho, wf, T_ratio, psi, WS):
 
 
 psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
-psi_ideal = 10 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
 v_maneuver = v_cr    #ft/s
 T20_Tto = Tratio(20000)   
-def tw_maneuver(WS,v_maneuver):
+def tw_maneuver(WS):
     maneuverTW = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi, WS)
     return maneuverTW                                                 # 20kft thrust / take off thrust
-T_W_maneuver = tw_maneuver(W_S,v_maneuver)
-T_W_maneuver_ideal = tw_maneuver(W_S,v_maneuver)
+T_W_maneuver = tw_maneuver(W_S)
 
+psi_ideal = 10 * np.pi/180    # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
+def tw_maneuverideal(WS):
+    maneuveridealTW = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi_ideal, WS)
+    return maneuveridealTW      
+T_W_maneuver_ideal = tw_maneuverideal(W_S)
 
 
 # Landing 
@@ -173,10 +176,11 @@ s_lg = (W_TO*wf_landing*v_eng**2) / (g * 0.8 * F_hook)
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-#plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
+plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 #plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 plt.axvline(x=W_S_landing56lb, color='magenta', linewidth=2, label='Landing (Arrestor)')
+
 plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
@@ -202,6 +206,7 @@ plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
 plt.title('Aircraft Constraint Diagram', fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
+
 
 plt.xlim(0, 200)
 plt.ylim(0, 2.0)  

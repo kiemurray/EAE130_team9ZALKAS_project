@@ -19,6 +19,60 @@ def calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref):
 C_D_0 = 0.01166
 print("Zero-lift drag coefficient C_D_0:", C_D_0)
 
+##---configurations------
+# Adjust C_Lmax for each flight configuration
+cL_clean = np.linspace(-0.9,0.9,100)
+cL_takeoff = np.linspace(-2,2,100)
+cL_landing = np.linspace(-2.6,2.6,100)
+
+# Clean configuration
+#def calculate_induced_drag_coefficient(AR, e):
+#    return 1/(np.pi*AR*e)
+#e_clean = 0.820
+#coef_clean = calculate_induced_drag_coefficient(AR, e_clean)
+#print("Induced drag coefficient for clean configuration:", coef_clean)
+#clean = C_D_0 + coef_clean*cL_clean*cL_clean
+
+# Takeoff configuration
+#e_takeoff = 0.75
+#delta_CD0_takeoff = 0.01 # additional drag due to takeoff flaps
+#coef_takeoff = calculate_induced_drag_coefficient(AR, e_takeoff)
+#print("Induced drag coefficient for takeoff configuration:", coef_takeoff)
+#takeoff = C_D_0 + delta_CD0_takeoff + coef_takeoff*cL_takeoff*cL_takeoff 
+
+# Landing configuration
+#e_landing = 0.7
+#delta_CD0_landing = 0.055 # additional drag due to landing flaps and gear
+#coef_landing = calculate_induced_drag_coefficient(AR, e_landing)
+#print("Induced drag coefficient for landing configuration:", coef_landing)
+#landing_flaps = C_D_0 + delta_CD0_landing + coef_landing*cL_landing*cL_landing
+
+# Additional drag due to landing gear only
+#e_gear = e_clean # Assuming landing gear does not affect the efficiency factor
+#delta_CD0_gear = 0.015 # additional drag due to landing gear
+#coef_gear = calculate_induced_drag_coefficient(AR, e_gear)
+#landing_gear = C_D_0 + delta_CD0_gear + coef_gear*cL_landing*cL_landing
+
+
+#plt.figure(figsize=(16,9))
+#plt.title('Drag Polars')
+#plt.xlabel("$C_D$")
+#plt.ylabel("$C_L$")
+#plt.plot(clean, cL_clean, label='Clean', linestyle='-', linewidth=2)
+#plt.plot(takeoff, cL_takeoff, label='w. Takeoff flaps', linestyle='-', linewidth=2)
+#plt.plot(landing_flaps, cL_landing, label='w. Landing flaps', linestyle='-', linewidth=2)
+#plt.plot(landing_gear, cL_landing, label='w. Landing gear', linestyle='-', linewidth=2)
+#plt.legend(loc='best')
+#plt.show()
+
+
+##----T/W and W/S Diagram-----
+#
+#
+#
+#
+
+
 
 ##-----weights-------
 num_pilot = 1
@@ -42,7 +96,7 @@ def calculate_engine_weight(T_0):
     W_eng_control = 0.26 * T_0**0.5
     W_eng_start = 9.33 * (W_eng_dry/1000) ** 1.078
     W_eng = W_eng_dry + W_eng_oil + W_eng_rev + W_eng_control + W_eng_start
-    #W_eng = 3826 # actual F100 weight (from https://www.rtx.com/en/prattwhitney/products/military-engines/f100)
+    W_eng = 3826 # actual F100 weight (from https://www.rtx.com/en/prattwhitney/products/military-engines/f100)
     return W_eng
 
 def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_engines):
@@ -123,7 +177,7 @@ def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
 
 # Fixed parameters for weight estimation
 L_D_max = 10
-R = 700#950            # nmi
+R = 950            # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7
@@ -235,7 +289,9 @@ def outer_loop_W_S_curves(
             S_wet_fuselage,
             num_engines, 
             W_crew, 
-            W_payload):
+            W_payload,
+            FieldLength = 349
+):
     tol_T_rel=1e-3          
     max_iter_T=1 #change this so its higher
     wing_landing_array = []    #Storing landing S Values
@@ -258,7 +314,8 @@ def outer_loop_W_S_curves(
             #compute TOGW using inner loop code
             W0_takeoff, wconv, it_w, W0_hist = inner_loop_weight(
                 TOGW_guess_init, S_wing_guess_takeoff, S_ht, S_vt, S_wet_fuselage,
-                num_engines, W_crew, W_payload, T_0)
+                num_engines, W_crew, W_payload, T_0
+            )
 
             #constraint inputs to get (W_0/S)
             W_S_constraint_takeoff = design_space.W_S_takeoff #constraint input
@@ -293,9 +350,9 @@ def outer_loop_W_S_curves(
 
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(100, 3000, 2))    # Example range of wing areas to analyze
+S_wing_grid = list(range(100, 2000, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
-T_engine_grid = list(range(0,250000,1000))     # used for the W/S driven constraint plots
+T_engine_grid = list(range(0,150000,1000))     # used for the W/S driven constraint plots
 
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
@@ -413,17 +470,17 @@ T_ceiling, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W
     relax=1)
 
 #SEROC climb
-T_climb, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
-    S_wing_grid=S_wing_grid,
-    TOGW_guess_init=TOGW_guess_init,
-    T_total_guess_init=T_total_guess_init,
-    num_engines=num_engines,
-    S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
-    W_crew=W_crew, W_payload=W_payload,
-    TWfunc= design_space.tw_climb, 
-    tol_T_rel=1e-6,
-    max_iter_T=500,
-    relax=0.2)
+#T_climb, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_hist_final = outer_loop_thrust_for_one_constraint(
+    # S_wing_grid=S_wing_grid,
+    # TOGW_guess_init=TOGW_guess_init,
+    # T_total_guess_init=T_total_guess_init,
+    # num_engines=num_engines,
+    # S_ht=S_ht, S_vt=S_vt, S_wet_fuselage=S_wet_fuselage,
+    # W_crew=W_crew, W_payload=W_payload,
+    # TWfunc= design_space.tw_climb, 
+    # tol_T_rel=1e-6,
+    # max_iter_T=500,
+    # relax=1)
 
 engine_array = T_engine_grid
 S_wing_guess_init = S_wing_guess
@@ -437,7 +494,51 @@ T_grid, wing_takeoff_array, wing_landing_array = outer_loop_W_S_curves(
     S_wet_fuselage,
     num_engines, 
     W_crew, 
-    W_payload)
+    W_payload,
+    FieldLength = 349
+)
+
+
+plt.figure(figsize=(16,9))
+plt.title('Converged T vs S for Cruise Constraint')
+plt.xlabel("Wing Area S (ft^2)")
+plt.ylabel("Total Thrust T (lbf)")
+#plt.plot(S_actual_777, T_actual_777, label='Actual 777', marker='x', markersize=10, color='red')
+plt.plot(S_wing_grid, T_cruise, label='Cruise')
+plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
+plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
+plt.plot(S_wing_grid, T_30dash, label='30k ft Dash')
+plt.plot(S_wing_grid, T_30dash, label='Ideal 30k ft Dash')
+plt.plot(S_wing_grid, T_maneuver, label='Maneuver')
+plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
+plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
+plt.plot(wing_takeoff_array, T_grid, label = 'Takeoff')
+plt.plot(wing_landing_array, T_grid, label = 'Landing')
+#plt.plot(S_wing_grid, T_climb, label='SEROC')
+plt.legend(loc='best')
+plt.grid()
+plt.show()
+
+# print("Takeoff Array Length: "+ str(len(S_W_S_array_takeoff))+"\nTakeoff Array: " + str(S_W_S_array_takeoff))
+# print("Landing Array Length: "+ str(len(S_W_S_array_landing))+"\nLanding Array: " + str(S_W_S_array_landing))
+
+# #plot the convergence history
+# plt.figure(figsize=(10,6))
+# plt.plot(S_W_S_array_takeoff,T_grid, marker='o', color='orange')
+# plt.plot(S_W_S_array_landing,T_grid, marker='x',color='blue')
+# plt.title('T_S Curve from W_S Curve ')
+# plt.xlabel('S (ft^2)')
+# plt.ylabel('T (lbf)')
+# plt.grid()
+# plt.show()
+
+##---plot---
+# Plot the resulting T vs S curve from the outer loop convergence
+# T_actual_777 = 220000
+# S_actual_777 = 4605
+# print(f'Actual T for 777: {T_actual_777} lbf, Actual S for 777: {S_actual_777} ft^2')
+
+
 
 
 #Comparable Aircraft T/S
@@ -464,49 +565,3 @@ S_Rafale_M=492 #ft^2
 T_F18_E_dry=26000 #lbf
 T_F18_E_wet=44000 #lbf
 S_F18_E_M=500 #ft^2
-
-
-plt.figure(figsize=(16,9))
-plt.title('Converged T vs S for Cruise Constraint')
-plt.xlabel("Wing Area S (ft^2)")
-plt.ylabel("Total Thrust T (lbf)")
-plt.plot(S_wing_grid, T_cruise, label='Cruise')
-plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
-plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
-plt.plot(S_wing_grid, T_30dash, label='30k ft Dash')
-plt.plot(S_wing_grid, T_30dashideal, label='Ideal 30k ft Dash')
-plt.plot(S_wing_grid, T_maneuver, label='Maneuver')
-plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
-plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
-plt.plot(S_wing_grid, T_climb, label='SEROC Climb')
-plt.plot(wing_takeoff_array, T_grid, label = 'Takeoff')
-plt.plot(wing_landing_array, T_grid, label = 'Landing')
-#comparable aircraft points
-aircraft_points = [
-    (S_J39C, T_J39C_wet, "J39C"),
-    (S_Su33, T_Su33_wet, "Su-33"),
-    (S_Su34, T_Su34_wet, "Su-34"),
-    (S_Typhoon, T_Typhoon_wet, "Typhoon"),
-    (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
-    (S_F18_E_M, T_F18_E_wet, "F/A-18E"),]
-#plots and lables comparable aircraft
-for S, T, name in aircraft_points:
-    plt.plot(S, T, marker='^', markersize=5, color='black')
-    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points')
-#plt.plot(S_wing_grid, T_climb, label='SEROC')
-plt.legend(loc='best')
-plt.grid()
-plt.show()
-
-# print("Takeoff Array Length: "+ str(len(S_W_S_array_takeoff))+"\nTakeoff Array: " + str(S_W_S_array_takeoff))
-# print("Landing Array Length: "+ str(len(S_W_S_array_landing))+"\nLanding Array: " + str(S_W_S_array_landing))
-
-# #plot the convergence history
-# plt.figure(figsize=(10,6))
-# plt.plot(S_W_S_array_takeoff,T_grid, marker='o', color='orange')
-# plt.plot(S_W_S_array_landing,T_grid, marker='x',color='blue')
-# plt.title('T_S Curve from W_S Curve ')
-# plt.xlabel('S (ft^2)')
-# plt.ylabel('T (lbf)')
-# plt.grid()
-# plt.show()
