@@ -19,60 +19,6 @@ def calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref):
 C_D_0 = 0.01166
 print("Zero-lift drag coefficient C_D_0:", C_D_0)
 
-##---configurations------
-# Adjust C_Lmax for each flight configuration
-cL_clean = np.linspace(-0.9,0.9,100)
-cL_takeoff = np.linspace(-2,2,100)
-cL_landing = np.linspace(-2.6,2.6,100)
-
-# Clean configuration
-#def calculate_induced_drag_coefficient(AR, e):
-#    return 1/(np.pi*AR*e)
-#e_clean = 0.820
-#coef_clean = calculate_induced_drag_coefficient(AR, e_clean)
-#print("Induced drag coefficient for clean configuration:", coef_clean)
-#clean = C_D_0 + coef_clean*cL_clean*cL_clean
-
-# Takeoff configuration
-#e_takeoff = 0.75
-#delta_CD0_takeoff = 0.01 # additional drag due to takeoff flaps
-#coef_takeoff = calculate_induced_drag_coefficient(AR, e_takeoff)
-#print("Induced drag coefficient for takeoff configuration:", coef_takeoff)
-#takeoff = C_D_0 + delta_CD0_takeoff + coef_takeoff*cL_takeoff*cL_takeoff 
-
-# Landing configuration
-#e_landing = 0.7
-#delta_CD0_landing = 0.055 # additional drag due to landing flaps and gear
-#coef_landing = calculate_induced_drag_coefficient(AR, e_landing)
-#print("Induced drag coefficient for landing configuration:", coef_landing)
-#landing_flaps = C_D_0 + delta_CD0_landing + coef_landing*cL_landing*cL_landing
-
-# Additional drag due to landing gear only
-#e_gear = e_clean # Assuming landing gear does not affect the efficiency factor
-#delta_CD0_gear = 0.015 # additional drag due to landing gear
-#coef_gear = calculate_induced_drag_coefficient(AR, e_gear)
-#landing_gear = C_D_0 + delta_CD0_gear + coef_gear*cL_landing*cL_landing
-
-
-#plt.figure(figsize=(16,9))
-#plt.title('Drag Polars')
-#plt.xlabel("$C_D$")
-#plt.ylabel("$C_L$")
-#plt.plot(clean, cL_clean, label='Clean', linestyle='-', linewidth=2)
-#plt.plot(takeoff, cL_takeoff, label='w. Takeoff flaps', linestyle='-', linewidth=2)
-#plt.plot(landing_flaps, cL_landing, label='w. Landing flaps', linestyle='-', linewidth=2)
-#plt.plot(landing_gear, cL_landing, label='w. Landing gear', linestyle='-', linewidth=2)
-#plt.legend(loc='best')
-#plt.show()
-
-
-##----T/W and W/S Diagram-----
-#
-#
-#
-#
-
-
 
 ##-----weights-------
 num_pilot = 1
