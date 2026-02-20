@@ -176,7 +176,7 @@ s_lg = (W_TO*wf_landing*v_eng**2) / (g * 0.8 * F_hook)
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
+#plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 #plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 plt.axvline(x=W_S_landing56lb, color='magenta', linewidth=2, label='Landing (Arrestor)')
