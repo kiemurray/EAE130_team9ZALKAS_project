@@ -476,36 +476,36 @@ plt.plot(S_W_S_array_landing, T_grid, label = 'Landing')
 plt.plot(S_W_S_array_stall, T_grid, label = 'Stall')
 
 S_main = np.array(S_wing_grid)
-T_top = 100000  # your y-limit
+T_top = 100000
 T_lower_curve = np.array(T_maneuverideal)
 
-# --- Sort landing data ---
+# Sort landing data
 idx = np.argsort(T_grid)
 T_land_sorted = np.array(T_grid)[idx]
 S_land_sorted = np.array(S_W_S_array_landing)[idx]
 
-# --- Sort 30k dash ideal data ---
+# Sort 30k dash ideal data
 idx30 = np.argsort(T_30dashideal)
 T_30_sorted = np.array(T_30dashideal)[idx30]
-S_30_sorted = np.array(S_main)[idx30]  # S_wing_grid matches T_30dashideal
+S_30_sorted = np.array(S_main)[idx30]
 
-# --- Create mesh ---
+# Create mesh
 S_mesh, T_mesh = np.meshgrid(S_main, np.linspace(0, T_top, 400))
 
-# --- Interpolate landing S requirement at each T (left boundary) ---
+# Interpolate landing S requirement at each T (left boundary)
 S_landing_required = np.interp(T_mesh, T_land_sorted, S_land_sorted)
 
-# --- Interpolate 30k dash ideal S at each T (right boundary) ---
+# Interpolate 30k dash ideal S at each T (right boundary)
 S_30_required = np.interp(T_mesh, T_30_sorted, S_30_sorted)
 
-# --- Mask: above maneuver, right of landing, left of 30k dash ideal ---
+# Mask: above maneuver, right of landing, left of 30k dash ideal
 mask = (
     (T_mesh >= np.interp(S_mesh, S_main, T_lower_curve)) &  # above maneuver
     (S_mesh >= S_landing_required) &                        # right of landing
     (S_mesh <= S_30_required)                               # left of 30k dash ideal
 )
 
-# --- Shade ---
+# Shade
 plt.contourf(
     S_mesh,
     T_mesh,
