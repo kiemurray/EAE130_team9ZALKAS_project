@@ -489,11 +489,19 @@ idx30 = np.argsort(T_30dashideal)
 T_30_sorted = np.array(T_30dashideal)[idx30]
 S_30_sorted = np.array(S_main)[idx30]
 
+# Sort stall data
+idx_stall = np.argsort(T_grid)
+T_stall_sorted = np.array(T_grid)[idx_stall]
+S_stall_sorted = np.array(S_W_S_array_stall)[idx_stall]
+
 # Create mesh
 S_mesh, T_mesh = np.meshgrid(S_main, np.linspace(0, T_top, 400))
 
 # Interpolate landing S requirement at each T (left boundary)
 S_landing_required = np.interp(T_mesh, T_land_sorted, S_land_sorted)
+
+#interpolate stall S req
+S_stall_required = np.interp(T_mesh, T_stall_sorted, S_stall_sorted)
 
 # Interpolate 30k dash ideal S at each T (right boundary)
 S_30_required = np.interp(T_mesh, T_30_sorted, S_30_sorted)
@@ -501,9 +509,11 @@ S_30_required = np.interp(T_mesh, T_30_sorted, S_30_sorted)
 # Mask: above maneuver, right of landing, left of 30k dash ideal
 mask = (
     (T_mesh >= np.interp(S_mesh, S_main, T_lower_curve)) &  # above maneuver
-    (S_mesh >= S_landing_required) &                        # right of landing
+    (S_mesh >= np.maximum(S_landing_required, S_stall_required)) &  
     (S_mesh <= S_30_required)                               # left of 30k dash ideal
 )
+
+
 
 # Shade
 plt.contourf(
@@ -527,7 +537,15 @@ aircraft_points = [
 for S, T, name in aircraft_points:
     plt.plot(S, T, marker='^', markersize=5, color='black')
     plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points')
-#plt.plot(S_wing_grid, T_climb, label='SEROC')
+
+
+# Plot our aircraft point
+f_100_thrust = 23930 
+S_ZALKAS = 950 #ft^2
+T_ZALKAS = f_100_thrust * num_engines
+plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points')
+
 plt.legend(loc='upper right')
 plt.ylim(0,100000)
 plt.grid()
