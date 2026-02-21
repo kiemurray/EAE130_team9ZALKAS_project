@@ -23,7 +23,7 @@ CLmax_climb = CLmax_TO
 # Weight Fractions
 cr_wf = 0.93148704          
 wf_climb =  0.970299
-mid_wf = 0.7792324662696907        
+mid_wf = 0.7792324662696907                
 dash30_wf = mid_wf         
 man_wf = mid_wf
 wf_landing = 0.6227770873721522
@@ -64,7 +64,7 @@ v_stall *= 1.68781                                                      #ft/s
 W_S_stall = 0.5 * rho_sl * v_stall**2 * CLmax_L
 
 # Takeoff 
-v_to = 160 #knots
+v_to = 160 #knotsF
 v_to *= 1.68781 #conversion to ft/s
 W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO 
 
@@ -113,7 +113,7 @@ Tdash30_Tto = Tratio(30000)
 def tw_30dash(WS):
      h30dashTW = cr_dash_constraint(v_dash30, rho_30, dash30_wf, Tdash30_Tto, WS)
      return  h30dashTW    
-T_W_dash30 = tw_30dash(W_S) 
+T_W_dash30 = tw_30dash(W_S)
 
 mach_dash30ideal = 2.0                    
 v_dash30ideal = mach_dash30ideal * a_30    
@@ -141,7 +141,7 @@ def manuever_constraint (v, rho, wf, T_ratio, psi, WS):
 
 
 psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
-v_maneuver = v_cr    
+v_maneuver = v_cr    #ft/s
 T20_Tto = Tratio(20000)   
 def tw_maneuver(WS):
     maneuverTW = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi, WS)
@@ -155,11 +155,11 @@ def tw_maneuverideal(WS):
 T_W_maneuver_ideal = tw_maneuverideal(W_S)
 
 
-# Landing 
+# Traditional Runway Landing
 v_engage56lb = 145                                                          # knots 
 WOD = 15
 v_landing = v_engage56lb + WOD
-v_engage56lb *= 1.68781                                                     #ft/s
+v_landing *= 1.68781                                                     #ft/s
 
 W_S_landing56lb = 0.5 * rho_sl * v_landing**2 * CLmax_L
 W_S_landing56lb /= wf_landing
@@ -180,6 +180,7 @@ plt.figure(figsize=(12, 8))
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 #plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 plt.axvline(x=W_S_landing56lb, color='magenta', linewidth=2, label='Landing (Arrestor)')
+
 plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
@@ -205,6 +206,7 @@ plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
 plt.title('Aircraft Constraint Diagram', fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
+
 
 plt.xlim(0, 200)
 plt.ylim(0, 2.0)  
