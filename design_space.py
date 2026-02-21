@@ -155,11 +155,11 @@ def tw_maneuverideal(WS):
 T_W_maneuver_ideal = tw_maneuverideal(W_S)
 
 
-# Landing 
+# Traditional Runway Landing
 v_engage56lb = 145                                                          # knots 
 WOD = 15
 v_landing = v_engage56lb + WOD
-v_engage56lb *= 1.68781                                                     #ft/s
+v_landing *= 1.68781                                                     #ft/s
 
 W_S_landing56lb = 0.5 * rho_sl * v_landing**2 * CLmax_L
 W_S_landing56lb /= wf_landing
