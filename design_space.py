@@ -64,7 +64,7 @@ v_stall *= 1.68781                                                      #ft/s
 W_S_stall = 0.5 * rho_sl * v_stall**2 * CLmax_L
 
 # Takeoff 
-v_to = 160 #knots
+v_to = 160 #knotsF
 v_to *= 1.68781 #conversion to ft/s
 W_S_takeoff = 0.5 * rho_to * v_to**2 * CLmax_TO 
 
