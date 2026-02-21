@@ -281,6 +281,7 @@ def outer_loop_thrust_for_one_constraint(
             T_total_history_allS,
             W0, wconv, it_w, W0_hist)
 
+#anthony is an idiot
 
 #Takes thrust array and outputs S array
 #ONLY TAKEOFF AND LANDING
@@ -295,6 +296,7 @@ def outer_loop_W_S_curves(
             num_engines, 
             W_crew, 
             W_payload,
+            FieldLength = 349
 ):
     tol_T_rel=1e-3,          
     max_iter_T=50
@@ -319,11 +321,7 @@ def outer_loop_W_S_curves(
 
             #add constraint inputs here
 
-            def calculate_ceiling_constraint_coefficient(rho, V_fps, C_D_0, AR, e):
-             q = 0.5 * rho * V_fps**2
-             coef1 = q * C_D_0
-             coef2 = 1/(np.pi * AR * e * q)
-             return coef1, coef2
+
 
             #constraint inputs to get (W_0/S)
             W_S_constraint = design_space.W_S_takeoff #constraint input
