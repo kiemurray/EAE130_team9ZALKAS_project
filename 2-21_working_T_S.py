@@ -475,6 +475,7 @@ plt.plot(S_W_S_array_takeoff, T_grid, label = 'Takeoff')
 plt.plot(S_W_S_array_landing, T_grid, label = 'Landing')
 plt.plot(S_W_S_array_stall, T_grid, label = 'Stall')
 
+
 S_main = np.array(S_wing_grid)
 T_top = 100000
 T_lower_curve = np.array(T_maneuverideal)
@@ -528,6 +529,12 @@ for S, T, name in aircraft_points:
     plt.plot(S, T, marker='^', markersize=5, color='black')
     plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points')
 #plt.plot(S_wing_grid, T_climb, label='SEROC')
+# Plot our aircraft point
+f_100_thrust = 23930 
+S_ZALKAS = 950 #ft^2
+T_ZALKAS = f_100_thrust * num_engines
+plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points')
 plt.legend(loc='upper right')
 plt.ylim(0,100000)
 plt.grid()
