@@ -429,4 +429,115 @@ S_Rafale_M=492 #ft^2
 
 T_F18_E_dry=26000 #lbf
 T_F18_E_wet=44000 #lbf
+<<<<<<< HEAD
 S_F18_E_M=500 #ft^2
+=======
+S_F18_E_M=500 #ft^2
+
+
+plt.figure(figsize=(16,9))
+plt.title('Converged T vs S for Cruise Constraint')
+plt.xlabel("Wing Area S (ft^2)")
+plt.ylabel("Total Thrust T (lbf)")
+plt.plot(S_wing_grid, T_cruise, label='Cruise')
+plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
+plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
+plt.plot(S_wing_grid, T_30dash, label='30k ft Dash')
+plt.plot(S_wing_grid, T_30dashideal, label='Ideal 30k ft Dash')
+plt.plot(S_wing_grid, T_maneuver, label='Maneuver')
+plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
+plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
+plt.plot(S_wing_grid, T_climb, label='SEROC Climb')
+plt.plot(S_W_S_array_takeoff, T_grid, label = 'Takeoff')
+plt.plot(S_W_S_array_landing, T_grid, label = 'Landing')
+plt.plot(S_W_S_array_stall, T_grid, label = 'Stall')
+
+S_main = np.array(S_wing_grid)
+T_top = 100000
+T_lower_curve = np.array(T_maneuverideal)
+
+# Sort landing data
+idx = np.argsort(T_grid)
+T_land_sorted = np.array(T_grid)[idx]
+S_land_sorted = np.array(S_W_S_array_landing)[idx]
+
+# Sort 30k dash ideal data
+idx30 = np.argsort(T_30dashideal)
+T_30_sorted = np.array(T_30dashideal)[idx30]
+S_30_sorted = np.array(S_main)[idx30]
+
+# Sort stall data
+idx_stall = np.argsort(T_grid)
+T_stall_sorted = np.array(T_grid)[idx_stall]
+S_stall_sorted = np.array(S_W_S_array_stall)[idx_stall]
+
+# Create mesh
+S_mesh, T_mesh = np.meshgrid(S_main, np.linspace(0, T_top, 400))
+
+# Interpolate landing S requirement at each T (left boundary)
+S_landing_required = np.interp(T_mesh, T_land_sorted, S_land_sorted)
+
+#interpolate stall S req
+S_stall_required = np.interp(T_mesh, T_stall_sorted, S_stall_sorted)
+
+# Interpolate 30k dash ideal S at each T (right boundary)
+S_30_required = np.interp(T_mesh, T_30_sorted, S_30_sorted)
+
+# Mask: above maneuver, right of landing, left of 30k dash ideal
+mask = (
+    (T_mesh >= np.interp(S_mesh, S_main, T_lower_curve)) &  # above maneuver
+    (S_mesh >= np.maximum(S_landing_required, S_stall_required)) &  
+    (S_mesh <= S_30_required)                               # left of 30k dash ideal
+)
+
+
+
+# Shade
+plt.contourf(
+    S_mesh,
+    T_mesh,
+    mask,
+    levels=[0.5, 1],
+    alpha=0.25,
+    colors=['yellow']
+)
+
+#comparable aircraft points
+aircraft_points = [
+    (S_J39C, T_J39C_wet, "J39C"),
+    (S_Su33, T_Su33_wet, "Su-33"),
+    (S_Su34, T_Su34_wet, "Su-34"),
+    (S_Typhoon, T_Typhoon_wet, "Typhoon"),
+    (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
+    (S_F18_E_M, T_F18_E_wet, "F/A-18E"),]
+#plots and lables comparable aircraft
+for S, T, name in aircraft_points:
+    plt.plot(S, T, marker='^', markersize=5, color='black')
+    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points')
+
+
+# Plot our aircraft point
+f_100_thrust = 23930 
+S_ZALKAS = 950 #ft^2
+T_ZALKAS = f_100_thrust * num_engines
+plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points')
+
+plt.legend(loc='upper right')
+plt.ylim(0,100000)
+plt.grid()
+plt.show()
+
+# print("Takeoff Array Length: "+ str(len(S_W_S_array_takeoff))+"\nTakeoff Array: " + str(S_W_S_array_takeoff))
+# print("Landing Array Length: "+ str(len(S_W_S_array_landing))+"\nLanding Array: " + str(S_W_S_array_landing))
+
+# #plot the convergence history
+# plt.figure(figsize=(10,6))
+# plt.plot(S_W_S_array_takeoff,T_grid, marker='o', color='orange')
+# plt.plot(S_W_S_array_landing,T_grid, marker='x',color='blue')
+# plt.title('T_S Curve from W_S Curve ')
+# plt.xlabel('S (ft^2)')
+# plt.ylabel('T (lbf)')
+# plt.grid()
+# plt.show()
+>>>>>>> 796c6f0be10c6dd8788bebe32b64a18845c20fbc
