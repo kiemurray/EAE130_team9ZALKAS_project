@@ -73,7 +73,7 @@ SEROC_launch = 200/60                                                    #ft/s (
 #G = 0.024                                                                #2.4% for FAR25
 #T_W_climb = ks**2*CD0/CLmax_climb + CLmax_climb*k_to/(ks**2) + G
 def tw_climb(WS):
-    T_W_climb = SEROC_launch*(CD0/k_cr)**(1/4)*(rho_to/2)**(1/2)*(W_S*wf_climb)**(-1/2)+2*(k_cr*CD0)**(1/2)
+    T_W_climb = SEROC_launch*(CD0/k_cr)**(1/4)*(rho_to/2)**(1/2)*(WS*wf_climb)**(-1/2)+2*(k_cr*CD0)**(1/2)
     T_W_climb = (1/0.8)*(1/0.94)*(n_eng/(n_eng-1))*(wf_climb)*T_W_climb     #converts back to TO condition
     return T_W_climb
 T_W_climb = tw_climb(W_S)
@@ -176,7 +176,7 @@ s_lg = (W_TO*wf_landing*v_eng**2) / (g * 0.8 * F_hook)
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
+#plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 #plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
 plt.axvline(x=W_S_landing56lb, color='magenta', linewidth=2, label='Landing (Arrestor)')
