@@ -236,11 +236,13 @@ def outer_loop_W_S_curves(
             num_engines, 
             W_crew, 
             W_payload):
+    
+
     tol_T_rel=1e-3          
-    max_iter_T=1 #change this so its higher
+    max_iter_T=100 #change this so its higher
     wing_landing_array = []    #Storing landing S Values
     wing_takeoff_array = []    #Storing takeoff S Values
-    T_grid = []         #Storing final Thrust values
+    T_grid = []                #Storing final Thrust values
     S_wing_guess_takeoff=S_wing_guess_init #give us a starting value
     S_wing_guess_landing=S_wing_guess_init
     S_hist_landing = []         #Shows iteration history for landing
