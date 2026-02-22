@@ -97,7 +97,7 @@ def calculate_engine_weight(T_0):
     W_eng_start = 9.33 * (W_eng_dry/1000) ** 1.078
     W_eng = W_eng_dry + W_eng_oil + W_eng_rev + W_eng_control + W_eng_start
     #W_eng = 3826 # actual F100 weight (from https://www.rtx.com/en/prattwhitney/products/military-engines/f100)
-    #W_eng= EngineChosen.weight
+    W_eng= EngineChosen.weight
     return W_eng
 
 def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_engines):
@@ -463,11 +463,11 @@ T_climb, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_
 
 T_grid,S_W_S_array_takeoff=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_takeoff)
 
-T_grid,S_W_S_array_landing=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing_runway)
+T_grid,S_W_S_array_landing_runway=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing_runway)
 
 T_grid,S_W_S_array_stall=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_stall)
 
-#T_grid,S_W_S_array_stall=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing_runway)
+T_grid, S_W_S_array_landing_arrestor = outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing56lb)
 
 # Arrestor Function (I tried to plot the fully integrated function but it wouldnt converge, if anyone else wants to give it a try i can send you my derivation)
 #A = (cv.s_L_G * cv.g * cv.rho_sl * cv.CD0) / (final_TOGW * cv.wf_landing)
@@ -535,17 +535,23 @@ plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
 plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
 plt.plot(S_wing_grid, T_climb, label='SEROC Climb')
 plt.plot(S_W_S_array_takeoff, T_grid, label = 'Takeoff')
-plt.plot(S_W_S_array_landing, T_grid, label = 'Landing')
+plt.plot(S_W_S_array_landing_runway, T_grid, label = 'Landing on 3000ft Runway')
+plt.plot(S_W_S_array_landing_arrestor, T_grid, label = 'Arrestor Landing')
 plt.plot(S_W_S_array_stall, T_grid, label = 'Stall')
 
 S_main = np.array(S_wing_grid)
 T_top = 100000
 T_lower_curve = np.array(T_maneuverideal)
 
-# Sort landing data
+# Sort runway landing data
 idx = np.argsort(T_grid)
 T_land_sorted = np.array(T_grid)[idx]
-S_land_sorted = np.array(S_W_S_array_landing)[idx]
+S_land_runway_sorted = np.array(S_W_S_array_landing_runway)[idx]
+
+# Sort arrestor landing data
+idx = np.argsort(T_grid)
+T_land_sorted = np.array(T_grid)[idx]
+S_land_arrestor_sorted = np.array(S_W_S_array_landing_arrestor)[idx]
 
 # Sort 30k dash ideal data
 idx30 = np.argsort(T_30dashideal)
@@ -562,8 +568,11 @@ S_stall_sorted = np.array(S_W_S_array_stall)[idx_stall]
 # Create mesh
 S_mesh, T_mesh = np.meshgrid(S_main, np.linspace(0, T_top, 400))
 
-# Interpolate landing S requirement at each T (left boundary)
-S_landing_required = np.interp(T_mesh, T_land_sorted, S_land_sorted)
+# Interpolate runway landing S requirement at each T (left boundary)
+S_landing_runway_required = np.interp(T_mesh, T_land_sorted, S_land_runway_sorted)
+
+# Interpolate arrestor landing S requirement at each T 
+S_landing_arrestor_required = np.interp(T_mesh, T_land_sorted, S_land_arrestor_sorted)
 
 #interpolate stall S req
 S_stall_required = np.interp(T_mesh, T_stall_sorted, S_stall_sorted)
@@ -574,7 +583,7 @@ S_30_required = np.interp(T_mesh, T_30_sorted, S_30_sorted)
 # Mask: above maneuver, right of landing, left of 30k dash ideal
 mask = (
     (T_mesh >= np.interp(S_mesh, S_main, T_lower_curve)) &  # above maneuver
-    (S_mesh >= np.maximum(S_landing_required, S_stall_required)) &  
+    (S_mesh >= np.maximum(S_landing_runway_required, S_stall_required)) &  
     (S_mesh <= S_30_required)                               # left of 30k dash ideal
 )
 
