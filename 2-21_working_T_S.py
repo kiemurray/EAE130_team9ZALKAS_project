@@ -459,9 +459,9 @@ S_F18_E_M=500 #ft^2
 
 
 plt.figure(figsize=(16,9))
-plt.title('Converged T vs S for Cruise Constraint')
-plt.xlabel("Wing Area S (ft^2)")
-plt.ylabel("Total Thrust T (lbf)")
+plt.title('Converged T vs S for Cruise Constraint', fontsize='22')
+plt.xlabel("Wing Area S (ft^2)", fontsize='18')
+plt.ylabel("Total Thrust T (lbf)", fontsize='18')
 plt.plot(S_wing_grid, T_cruise, label='Cruise')
 plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
 plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
@@ -535,7 +535,7 @@ S_ZALKAS = 950 #ft^2
 T_ZALKAS = f_100_thrust * num_engines
 plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points')
-plt.legend(loc='upper right')
+plt.legend(loc='upper right', fontsize='14')
 plt.ylim(0,100000)
 plt.grid()
 plt.show()
