@@ -171,13 +171,20 @@ s_lg = 349                                                                #ft, a
 S_wet = 2500                                                              #ft^2, assumed wetted area of the aircraft
 v_engage = 130 * 1.68781                                                  #ft/s, assumed engagement speed of the arresting hook (115 knots)
 
+W_S_landing56lb = 0.5 * rho_sl * v_engage**2 * CLmax_L
+W_S_landing56lb /= wf_landing
+
+
 #W_S_landing = (s_lg * g * rho_sl * S_wet * CD0) / (np.log(1 + (0.5*rho_sl*S_wet*v_eng**2*CD0)/0.8*F_hook))
+
+
+
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-#plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
+plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Arrestor Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
-plt.axvline(x=W_S_landing_runway, color='magenta', linewidth=2, label='Landing (Runway)')
+plt.axvline(x=W_S_landing_runway, color='magenta', linewidth=2, label='Landing (3000ft Runway)')
 plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
