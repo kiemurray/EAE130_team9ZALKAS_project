@@ -4,11 +4,21 @@ import design_space
 import constraint_coeff
 import code_variables as cv
 
+class Engines:
+    #initialize engine class
+    def __init__(self,name,T_wet,weight):
+        self.name = name
+        self.T_wet = T_wet
+        self.weight = weight
+        self.T_W = T_wet/weight
+
+
+
 
 #change to our numbers
 AR = 2.06
 s = 46 
-s_ref = 955
+#s_ref = 955
 
 #drag polar (change to our numbers)
 S_wet = 2500
@@ -20,6 +30,15 @@ def calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref):
 C_D_0 = 0.01166
 print("Zero-lift drag coefficient C_D_0:", C_D_0)
 
+
+#https://www.rtx.com/en/prattwhitney/products/military-engines/f100
+F100_229 = Engines("F100-229",29160,3826)
+
+#https://www.mtu.de/engines/military-aircraft-engines/fighter-aircraft/f414/
+F414 = Engines("F414",22000,2450)
+
+#https://www.rtx.com/en/prattwhitney/products/military-engines/f135
+F135 = Engines("F135",43000,6422)
 
 ##-----weights-------
 num_pilot = 1
@@ -34,6 +53,40 @@ W_crew = num_pilot*crew
 W_payload = strike_payload
 print("W_payload: " + str(W_payload) + " lb")
 
+# Fixed parameters for weight estimation
+L_D_max = 10
+R = 950            # nmi
+E = 20 / 60         # min --> hr
+ct_cruise = 0.7     # lb/(lbf hr)
+ct_dash = 0.7
+v_cruise = 490      # knots
+v_dash = 560        # knots
+S_ht = 0
+S_vt = 45
+S_wet_fuselage = 700
+num_engines = 2  # Example number of engines
+
+
+
+
+# Aircraft Design Point
+S_ZALKAS = 700 #ft^2
+T_ZALKAS = 23000 * num_engines
+EngineChosen = F414
+
+# The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
+S_wingtest = 700 #Changing to fit requirements
+T_0 = EngineChosen.T_wet  # Example value for thrust per engine
+
+TOGW_guess = 50000  # Initial guess for Takeoff Gross Weight in pounds
+
+
+
+
+
+
+
+
 
 ##----Inner loop-----
 def calculate_engine_weight(T_0):
@@ -44,7 +97,7 @@ def calculate_engine_weight(T_0):
     W_eng_start = 9.33 * (W_eng_dry/1000) ** 1.078
     W_eng = W_eng_dry + W_eng_oil + W_eng_rev + W_eng_control + W_eng_start
     #W_eng = 3826 # actual F100 weight (from https://www.rtx.com/en/prattwhitney/products/military-engines/f100)
-    W_eng= 2700
+    W_eng= EngineChosen.weight
     return W_eng
 
 def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_engines):
@@ -123,24 +176,7 @@ def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
     converged = (delta <= err)
     return TOGW_guess, converged, it, np.array(W0_history)
 
-# Fixed parameters for weight estimation
-L_D_max = 10
-R = 950            # nmi
-E = 20 / 60         # min --> hr
-ct_cruise = 0.7     # lb/(lbf hr)
-ct_dash = 0.7
-v_cruise = 490      # knots
-v_dash = 560        # knots
-S_ht = 0
-S_vt = 45
-S_wet_fuselage = 700
-num_engines = 2  # Example number of engines
 
-# The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wingtest = 700 #based on vsp design v5
-T_0 = 22000  # Example value for thrust per engine
-
-TOGW_guess = 50000  # Initial guess for Takeoff Gross Weight in pounds
 final_TOGW, converged, iterations, W0_history = inner_loop_weight(
     TOGW_guess, S_wingtest, S_ht, S_vt, S_wet_fuselage,
     num_engines, W_crew, W_payload, T_0)
@@ -276,9 +312,9 @@ def outer_loop_W_S_curves(
 
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(100, 3000, 2))    # Example range of wing areas to analyze
+S_wing_grid = list(range(100, 1500, 2))    # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
-T_engine_grid = list(range(0,250000,1000))     # used for the W/S driven constraint plots
+T_engine_grid = list(range(0,90000,1000))     # used for the W/S driven constraint plots
 
 
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
@@ -568,17 +604,12 @@ for S, T, name in aircraft_points:
     plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points')
 
 
-# Plot our aircraft point
-f_100_thrust = 23930
-f_100_229_thrust_wet=29160
-f_414_thrust = 22000
-S_ZALKAS = 700 #ft^2
-T_ZALKAS = f_414_thrust * num_engines
+
 plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points')
 
 plt.legend(loc='upper right')
-plt.ylim(0,100000)
+plt.ylim(0,80000)
 plt.grid()
 plt.show()
 
