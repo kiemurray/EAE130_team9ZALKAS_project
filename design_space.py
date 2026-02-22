@@ -182,9 +182,9 @@ W_S_landing56lb /= wf_landing
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Arrestor Landing')
+plt.axvline(W_S_landing56lb, color='magenta', linewidth=2, label='Arrestor Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
-plt.axvline(x=W_S_landing_runway, color='magenta', linewidth=2, label='Landing (3000ft Runway)')
+plt.axvline(W_S_landing_runway, color='magenta', linestyle='--', linewidth=2, label='Landing (3000ft Runway)')
 plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')

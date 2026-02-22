@@ -525,23 +525,23 @@ plt.figure(figsize=(16,9))
 plt.title('Converged T vs S',fontsize=28)
 plt.xlabel("Wing Area S (ft²)",fontsize=28)
 plt.ylabel("Total Thrust T (lbf)",fontsize=28)
-plt.plot(S_wing_grid, T_cruise, label='Cruise')
-plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
-plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
-plt.plot(S_wing_grid, T_30dash, label='30k ft Dash')
-plt.plot(S_wing_grid, T_30dashideal, label='Ideal 30k ft Dash')
-plt.plot(S_wing_grid, T_maneuver, label='Maneuver')
-plt.plot(S_wing_grid, T_maneuverideal, label='Ideal Maneuver')
-plt.plot(S_wing_grid, T_ceiling, label='Ceiling (50k ft)')
-plt.plot(S_wing_grid, T_climb, label='SEROC Climb')
-plt.plot(S_W_S_array_takeoff, T_grid, label = 'Takeoff')
-plt.plot(S_W_S_array_landing_runway, T_grid, label = 'Landing on 3000ft Runway')
-plt.plot(S_W_S_array_landing_arrestor, T_grid, label = 'Arrestor Landing')
-plt.plot(S_W_S_array_stall, T_grid, label = 'Stall')
+plt.plot(S_wing_grid, T_cruise, color='blue', linewidth=2, label='Cruise')
+plt.plot(S_wing_grid, T_SLdash, color='cyan', linewidth=2, label='SL Dash')
+plt.plot(S_wing_grid, T_SLdashideal, color='cyan', linewidth=2,linestyle='--', label='Ideal SL Dash')
+plt.plot(S_wing_grid, T_30dash, color='limegreen',  linewidth=2,label='30k ft Dash')
+plt.plot(S_wing_grid, T_30dashideal, color='limegreen',  linewidth=2, linestyle='--', label='Ideal 30k ft Dash')
+plt.plot(S_wing_grid, T_maneuver, color='red', linewidth=2,label='Maneuver')
+plt.plot(S_wing_grid, T_maneuverideal, color='red', linewidth=2, linestyle='--', label='Ideal Maneuver')
+plt.plot(S_wing_grid, T_ceiling, color='darkgreen', linewidth=2, label='Ceiling (50k ft)')
+plt.plot(S_wing_grid, T_climb, color='orange', linewidth=2, label='SEROC Climb')
+plt.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeoff')
+plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing on 3000ft Runway')
+plt.plot(S_W_S_array_landing_arrestor, T_grid, color='magenta', linewidth=2, label = 'Arrestor Landing')
+plt.plot(S_W_S_array_stall, T_grid, color='purple', linewidth=2, label = 'Stall')
 
 S_main = np.array(S_wing_grid)
 T_top = 100000
-T_lower_curve = np.array(T_maneuverideal)
+T_lower_curve = np.array(T_maneuver)
 
 # Sort runway landing data
 idx = np.argsort(T_grid)
@@ -553,9 +553,9 @@ idx = np.argsort(T_grid)
 T_land_sorted = np.array(T_grid)[idx]
 S_land_arrestor_sorted = np.array(S_W_S_array_landing_arrestor)[idx]
 
-# Sort 30k dash ideal data
-idx30 = np.argsort(T_30dashideal)
-T_30_sorted = np.array(T_30dashideal)[idx30]
+# Sort 30k dash data
+idx30 = np.argsort(T_30dash)
+T_30_sorted = np.array(T_30dash)[idx30]
 S_30_sorted = np.array(S_main)[idx30]
 
 # Sort stall data
@@ -577,13 +577,13 @@ S_landing_arrestor_required = np.interp(T_mesh, T_land_sorted, S_land_arrestor_s
 #interpolate stall S req
 S_stall_required = np.interp(T_mesh, T_stall_sorted, S_stall_sorted)
 
-# Interpolate 30k dash ideal S at each T (right boundary)
+# Interpolate 30k dash  S at each T (right boundary)
 S_30_required = np.interp(T_mesh, T_30_sorted, S_30_sorted)
 
 # Mask: above maneuver, right of landing, left of 30k dash ideal
 mask = (
     (T_mesh >= np.interp(S_mesh, S_main, T_lower_curve)) &  # above maneuver
-    (S_mesh >= np.maximum(S_landing_runway_required, S_stall_required)) &  
+    (S_mesh >= (S_stall_required)) &  
     (S_mesh <= S_30_required)                               # left of 30k dash ideal
 )
 
