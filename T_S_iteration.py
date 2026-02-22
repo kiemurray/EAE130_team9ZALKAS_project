@@ -70,8 +70,8 @@ num_engines = 2  # Example number of engines
 
 
 # Aircraft Design Point
-S_ZALKAS = 700 #ft^2
-T_ZALKAS = 23000 * num_engines
+S_ZALKAS = 650 #ft^2
+T_ZALKAS = 18500 * num_engines
 EngineChosen = F414
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
@@ -522,9 +522,9 @@ S_F18_E_M=500 #ft^2
 
 
 plt.figure(figsize=(16,9))
-plt.title('Converged T vs S for Cruise Constraint')
-plt.xlabel("Wing Area S (ft^2)")
-plt.ylabel("Total Thrust T (lbf)")
+plt.title('Converged T vs S',fontsize=28)
+plt.xlabel("Wing Area S (ft²)",fontsize=28)
+plt.ylabel("Total Thrust T (lbf)",fontsize=28)
 plt.plot(S_wing_grid, T_cruise, label='Cruise')
 plt.plot(S_wing_grid, T_SLdash, label='SL Dash')
 plt.plot(S_wing_grid, T_SLdashideal, label='Ideal SL Dash')
@@ -601,14 +601,14 @@ aircraft_points = [
 #plots and lables comparable aircraft
 for S, T, name in aircraft_points:
     plt.plot(S, T, marker='^', markersize=5, color='black')
-    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points')
+    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
 
 
 
 plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
-plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points')
+plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
 
-plt.legend(loc='upper right')
+plt.legend(loc='upper right',fontsize=16)
 plt.ylim(0,80000)
 plt.grid()
 plt.show()
