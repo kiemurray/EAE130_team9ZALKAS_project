@@ -138,9 +138,9 @@ num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
 S_wingtest = 700 #based on vsp design v5
-T_0 = 23930  # Example value for thrust per engine
+T_0 = 22000  # Example value for thrust per engine
 
-TOGW_guess = 55000  # Initial guess for Takeoff Gross Weight in pounds
+TOGW_guess = 50000  # Initial guess for Takeoff Gross Weight in pounds
 final_TOGW, converged, iterations, W0_history = inner_loop_weight(
     TOGW_guess, S_wingtest, S_ht, S_vt, S_wet_fuselage,
     num_engines, W_crew, W_payload, T_0)
