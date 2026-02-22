@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import design_space
 import constraint_coeff
+import code_variables as cv
 
 
 #change to our numbers
@@ -426,11 +427,37 @@ T_climb, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_
 
 T_grid,S_W_S_array_takeoff=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_takeoff)
 
-T_grid,S_W_S_array_landing=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing56lb)
+T_grid,S_W_S_array_landing=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing_runway)
 
 T_grid,S_W_S_array_stall=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_stall)
 
-T_grid,S_W_S_array_stall=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing_runway)
+#T_grid,S_W_S_array_stall=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing_runway)
+
+# Arrestor Function (I tried to plot the fully integrated function but it wouldnt converge, if anyone else wants to give it a try i can send you my derivation)
+#A = (cv.s_L_G * cv.g * cv.rho_sl * cv.CD0) / (final_TOGW * cv.wf_landing)
+#B = 0.8 * cv.F_hook
+#C = 0.5 * cv.rho_sl * cv.V_engage**2 * cv.CD0
+
+#def f(S):
+#    return A*S - np.log((B + C*S)/B)
+
+#print("A =", A)
+#print("C/B =", C/B)
+
+# Solve in reasonable wing-area bounds
+#S_min = brentq(f, 50, 2000)
+
+# Arrestor (Simplified Equation) (also does not work, going to an even more simplified equation lol)
+#S_needed = ((-final_TOGW * cv.wf_landing * cv.V_engage**2) - (1.6 * cv.s_L_G * cv.g * cv.F_hook)) / (cv.s_L_G * cv.g * cv.rho_sl * cv.V_engage**2 * cv.CD0)
+
+# Simplified Arrestor (angry)
+s_L_G = (final_TOGW * cv.wf_landing * cv.V_engage**2) / (cv.g * 1.6 * cv.F_hook)
+
+print('Your Arrestor Landing Distance is:', s_L_G, 'ft')
+if s_L_G > cv.s_L_G:
+    print('Your plane will fall off the ship, reduce weight/landing speed')
+else:
+    print('Your plane will not fall off the ship, congrats! You have avoided a multimillion dollar disaster')
 
 #Comparable Aircraft T/S
 T_J39C_dry=12000 #lbf

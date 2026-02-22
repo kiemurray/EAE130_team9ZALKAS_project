@@ -173,8 +173,6 @@ v_engage = 130 * 1.68781                                                  #ft/s,
 
 #W_S_landing = (s_lg * g * rho_sl * S_wet * CD0) / (np.log(1 + (0.5*rho_sl*S_wet*v_eng**2*CD0)/0.8*F_hook))
 
-s_lg = (W_TO*wf_landing*v_engage**2) / (g * 0.8 * F_hook)
-
 # PLOTS
 plt.figure(figsize=(12, 8))
 #plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
