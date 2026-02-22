@@ -429,9 +429,7 @@ S_Rafale_M=492 #ft^2
 
 T_F18_E_dry=26000 #lbf
 T_F18_E_wet=44000 #lbf
-<<<<<<< HEAD
-S_F18_E_M=500 #ft^2
-=======
+
 S_F18_E_M=500 #ft^2
 
 
@@ -540,4 +538,3 @@ plt.show()
 # plt.ylabel('T (lbf)')
 # plt.grid()
 # plt.show()
->>>>>>> 796c6f0be10c6dd8788bebe32b64a18845c20fbc

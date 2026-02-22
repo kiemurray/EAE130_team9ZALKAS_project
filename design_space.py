@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import code_variables as cv
 
 #constants 
 g = 32.174                                                            # ft/s^2
@@ -161,8 +162,8 @@ WOD = 15
 v_landing = v_engage56lb + WOD
 v_landing *= 1.68781                                                     #ft/s
 
-W_S_landing56lb = 0.5 * rho_sl * v_landing**2 * CLmax_L
-W_S_landing56lb /= wf_landing
+W_S_landing_runway = ((cv.s_L - cv.s_a) * (cv.rho_10/cv.rho_sl) * cv.CLmax_L) / 80
+W_S_landing_runway /= cv.wf_landing
 
 # Arrestor Landing (will be check for later, probably not on the constraint diagram)
 F_hook = 120000                                                           #lbf
@@ -179,7 +180,7 @@ plt.figure(figsize=(12, 8))
 #plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 #plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
-plt.axvline(x=W_S_landing56lb, color='magenta', linewidth=2, label='Landing (Arrestor)')
+plt.axvline(x=W_S_landing_runway, color='magenta', linewidth=2, label='Landing (Runway)')
 
 plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
