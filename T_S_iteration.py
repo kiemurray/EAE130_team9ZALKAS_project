@@ -44,7 +44,7 @@ def calculate_engine_weight(T_0):
     W_eng_start = 9.33 * (W_eng_dry/1000) ** 1.078
     W_eng = W_eng_dry + W_eng_oil + W_eng_rev + W_eng_control + W_eng_start
     #W_eng = 3826 # actual F100 weight (from https://www.rtx.com/en/prattwhitney/products/military-engines/f100)
-    W_eng= 4000
+    W_eng= 2700
     return W_eng
 
 def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_engines):
@@ -125,7 +125,7 @@ def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
 
 # Fixed parameters for weight estimation
 L_D_max = 10
-R = 700#950            # nmi
+R = 950            # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7
@@ -137,7 +137,7 @@ S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wingtest = 946 #based on vsp design v5
+S_wingtest = 700 #based on vsp design v5
 T_0 = 23930  # Example value for thrust per engine
 
 TOGW_guess = 55000  # Initial guess for Takeoff Gross Weight in pounds
@@ -284,7 +284,7 @@ T_engine_grid = list(range(0,250000,1000))     # used for the W/S driven constra
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
 T_total_guess_init = 24000 * num_engines  # Initial guess for total thrust in pounds-force
 
-S_wing_guess=900
+S_wing_guess=700
 print("\nStarting Inner Loop Weight Calcs for aircraft\n")
 
 
@@ -569,9 +569,11 @@ for S, T, name in aircraft_points:
 
 
 # Plot our aircraft point
-f_100_thrust = 23930 
-S_ZALKAS = 950 #ft^2
-T_ZALKAS = f_100_thrust * num_engines
+f_100_thrust = 23930
+f_100_229_thrust_wet=29160
+f_414_thrust = 22000
+S_ZALKAS = 700 #ft^2
+T_ZALKAS = f_414_thrust * num_engines
 plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points')
 
