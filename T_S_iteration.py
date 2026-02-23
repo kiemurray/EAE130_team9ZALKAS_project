@@ -70,8 +70,8 @@ num_engines = 2  # Example number of engines
 
 
 # Aircraft Design Point
-S_ZALKAS = 650 #ft^2
-T_ZALKAS = 18500 * num_engines
+S_ZALKAS = 700 #ft^2
+T_ZALKAS = 22000 * num_engines
 EngineChosen = F414
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
@@ -91,13 +91,14 @@ TOGW_guess = 50000  # Initial guess for Takeoff Gross Weight in pounds
 ##----Inner loop-----
 def calculate_engine_weight(T_0):
     W_eng_dry = 0.521 * T_0**0.9
+    W_eng_dry = EngineChosen.weight
     W_eng_oil = 0.082 * T_0**0.65
     W_eng_rev = 0.034 * T_0
     W_eng_control = 0.26 * T_0**0.5
     W_eng_start = 9.33 * (W_eng_dry/1000) ** 1.078
     W_eng = W_eng_dry + W_eng_oil + W_eng_rev + W_eng_control + W_eng_start
     #W_eng = 3826 # actual F100 weight (from https://www.rtx.com/en/prattwhitney/products/military-engines/f100)
-    W_eng= EngineChosen.weight
+    #W_eng= EngineChosen.weight
     return W_eng
 
 def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_engines):
@@ -633,9 +634,9 @@ aircraft_points = [
     (S_Gripen, T_Gripen_wet, "Gripen E"),
     (S_F15C, T_F15C_wet, "F-15C")]
 #plots and labels comparable aircraft
-#for S, T, name in aircraft_points:
-    #plt.plot(S, T, marker='^', markersize=5, color='black')
-    #plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
+for S, T, name in aircraft_points:
+    plt.plot(S, T, marker='^', markersize=5, color='black')
+    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
 
 
 
