@@ -520,6 +520,26 @@ T_F18_E_dry=26000 #lbf
 T_F18_E_wet=44000 #lbf
 S_F18_E_M=500 #ft^2
 
+T_F35C_dry = 28000 #lbf
+T_F35C_wet = 43000 #lbf
+S_F35C = 668 #ft^2
+
+T_F16C_dry = 17000 #lbf
+T_F16C_wet = 29000 #lbf
+S_F16C = 300 #ft^2
+
+T_F22A_dry = 52000 #lbf
+T_F22A_wet = 70000 #lbf
+S_F22A = 840 #ft^2
+
+T_Gripen_dry = 13000 #lbf
+T_Gripen_wet = 22000 #lbf
+S_Gripen = 320 #ft^2
+
+T_F15C_dry = 30000 #lbf
+T_F15C_wet = 48000 #lbf
+S_F15C = 608 #ft^2
+
 
 plt.figure(figsize=(16,9))
 plt.title('Converged T vs S',fontsize=28)
@@ -606,8 +626,13 @@ aircraft_points = [
     (S_Su34, T_Su34_wet, "Su-34"),
     (S_Typhoon, T_Typhoon_wet, "Typhoon"),
     (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
-    (S_F18_E_M, T_F18_E_wet, "F/A-18E"),]
-#plots and lables comparable aircraft
+    (S_F18_E_M, T_F18_E_wet, "F/A-18E"),
+    (S_F35C, T_F35C_wet, "F35-C"),
+    (S_F16C, T_F16C_wet, "F-16C"),
+    (S_F22A, T_F22A_wet, "F-22A"),
+    (S_Gripen, T_Gripen_wet, "Gripen E"),
+    (S_F15C, T_F15C_wet, "F-15C")]
+#plots and labels comparable aircraft
 for S, T, name in aircraft_points:
     plt.plot(S, T, marker='^', markersize=5, color='black')
     plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
