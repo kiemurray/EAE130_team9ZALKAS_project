@@ -75,7 +75,7 @@ T_ZALKAS = 22000 * num_engines
 EngineChosen = F414
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wingtest = 650 #Changing to fit requirements
+S_wingtest = 700 #Changing to fit requirements
 T_0 = EngineChosen.T_wet  # Example value for thrust per engine
 
 TOGW_guess = 50000  # Initial guess for Takeoff Gross Weight in pounds
@@ -321,7 +321,7 @@ T_engine_grid = list(range(0,90000,1000))     # used for the W/S driven constrai
 TOGW_guess_init = 55000  # Initial guess for Takeoff Gross Weight in pounds
 T_total_guess_init = 24000 * num_engines  # Initial guess for total thrust in pounds-force
 
-S_wing_guess=650
+S_wing_guess=700
 print("\nStarting Inner Loop Weight Calcs for aircraft\n")
 
 
