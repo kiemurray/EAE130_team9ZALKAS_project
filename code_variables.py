@@ -129,7 +129,13 @@ rho_30, a_30 = atmo_vals(30000)[:2]
 rho_20, a_20 = atmo_vals(20000)[:2]
 rho_10, a_10 = atmo_vals(10000)[:2]
 rho_sl, a_SL = atmo_vals(0)[:2]
-rho_to = 0.00224392         
+rho_to = 0.00224392    
+
+#fuel volume things
+rho_jp5 = 51.1              #lb/ft^3   
+packing_factor_shallow_fuselage = 0.8
+packing_factor_deep_fuselage = 0.85
+packing_factor_wing_fuselage = 0.75
 
 # thrust ratio at altitude
 def Tratio(height):

@@ -182,6 +182,8 @@ final_TOGW, converged, iterations, W0_history = inner_loop_weight(
     TOGW_guess, S_wingtest, S_ht, S_vt, S_wet_fuselage,
     num_engines, W_crew, W_payload, T_0)
 
+
+
 # plot the convergence history
 plt.figure(figsize=(10,6))
 plt.plot(W0_history, marker='o')
@@ -313,7 +315,7 @@ def outer_loop_W_S_curves(
 
 
 # Set grid of wing areas to analyze
-S_wing_grid = list(range(100, 1500, 2))    # Example range of wing areas to analyze
+S_wing_grid = list(range(100, 1500, 2))       # Example range of wing areas to analyze
 # Set grid of thrust values to analyze
 T_engine_grid = list(range(0,90000,1000))     # used for the W/S driven constraint plots
 
@@ -660,3 +662,15 @@ plt.show()
 # plt.ylabel('T (lbf)')
 # plt.grid()
 # plt.show()
+
+
+
+
+
+#calculating fuel volume for A5
+fuel_weight = final_TOGW*calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash)
+fuel_only_volume = fuel_weight / cv.rho_jp5
+
+print(f"Final TOGW: {final_TOGW} lbs")
+print(f"Final Fuel Weight: {fuel_weight} lbs")
+print(f"Unpacked Fuel Volume: {fuel_only_volume} ft^3")
