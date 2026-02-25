@@ -70,7 +70,7 @@ num_engines = 2  # Example number of engines
 
 
 # Aircraft Design Point
-S_ZALKAS = 700 #ft^2
+S_ZALKAS = 785 #ft^2
 T_ZALKAS = 22000 * num_engines
 EngineChosen = F414
 
@@ -179,7 +179,7 @@ def inner_loop_weight(TOGW_guess, S_wing, S_ht, S_vt, S_wet_fuselage,
 
 
 final_TOGW, converged, iterations, W0_history = inner_loop_weight(
-    TOGW_guess, S_wingtest, S_ht, S_vt, S_wet_fuselage,
+    TOGW_guess, S_ZALKAS, S_ht, S_vt, S_wet_fuselage,
     num_engines, W_crew, W_payload, T_0)
 
 
@@ -670,7 +670,12 @@ plt.show()
 #calculating fuel volume for A5
 fuel_weight = final_TOGW*calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash)
 fuel_only_volume = fuel_weight / cv.rho_jp5
+fuel_vol_wings = 109.4 * cv.packing_factor_wing #109.4 is tank vol, reports fuel vol only
+fuel_left_to_pack = fuel_only_volume - fuel_vol_wings 
+fuselage_tank_vol_needed = fuel_left_to_pack / cv.packing_factor_deep_fuselage
 
 print(f"Final TOGW: {final_TOGW} lbs")
 print(f"Final Fuel Weight: {fuel_weight} lbs")
 print(f"Unpacked Fuel Volume: {fuel_only_volume} ft^3")
+print(f"Fuel in Wings: {fuel_vol_wings} ft^3")
+print(f"Fuselage tank volume needed: {fuselage_tank_vol_needed} ft^3")

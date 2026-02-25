@@ -135,7 +135,7 @@ rho_to = 0.00224392
 rho_jp5 = 51.1              #lb/ft^3   
 packing_factor_shallow_fuselage = 0.8
 packing_factor_deep_fuselage = 0.85
-packing_factor_wing_fuselage = 0.75
+packing_factor_wing= 0.75
 
 # thrust ratio at altitude
 def Tratio(height):
