@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import code_variables as cv
 
 #constants 
 g = 32.174                                                            # ft/s^2
@@ -161,26 +162,29 @@ WOD = 15
 v_landing = v_engage56lb + WOD
 v_landing *= 1.68781                                                     #ft/s
 
-W_S_landing56lb = 0.5 * rho_sl * v_landing**2 * CLmax_L
-W_S_landing56lb /= wf_landing
+W_S_landing_runway = ((cv.s_L - cv.s_a) * (cv.rho_10/cv.rho_sl) * cv.CLmax_L) / 80
+W_S_landing_runway /= cv.wf_landing
 
 # Arrestor Landing (will be check for later, probably not on the constraint diagram)
 F_hook = 120000                                                           #lbf
 s_lg = 349                                                                #ft, assumed length of landing runway w/ arresting wire
 S_wet = 2500                                                              #ft^2, assumed wetted area of the aircraft
-v_eng = 130 * 1.68781                                                     #ft/s, assumed engagement speed of the arresting hook (115 knots)
+v_engage = 130 * 1.68781                                                  #ft/s, assumed engagement speed of the arresting hook (115 knots)
+
+W_S_landing56lb = 0.5 * rho_sl * v_engage**2 * CLmax_L
+W_S_landing56lb /= wf_landing
+
 
 #W_S_landing = (s_lg * g * rho_sl * S_wet * CD0) / (np.log(1 + (0.5*rho_sl*S_wet*v_eng**2*CD0)/0.8*F_hook))
 
-s_lg = (W_TO*wf_landing*v_eng**2) / (g * 0.8 * F_hook)
+
+
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-#plt.axvline(W_S_landing56lb, color='pink', linewidth=2, label='Landing')
+plt.axvline(W_S_landing56lb, color='magenta', linewidth=2, label='Arrestor Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
-#plt.axhline(T_W_climb, color='tab:orange', linewidth=2, label='Climb (SEROC)')
-plt.axvline(x=W_S_landing56lb, color='magenta', linewidth=2, label='Landing (Arrestor)')
-
+#plt.axvline(W_S_landing_runway, color='magenta', linestyle='--', linewidth=2, label='Landing (3000ft Runway)')
 plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
 plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
@@ -190,7 +194,7 @@ plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8,
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-plt.plot(68, 0.92, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
+plt.plot( (56411.39/675), (22000*2/56411.39), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
 design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
