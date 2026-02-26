@@ -70,7 +70,7 @@ num_engines = 2  # Example number of engines
 
 
 # Aircraft Design Point
-S_ZALKAS = 785 #ft^2
+S_ZALKAS = 675 #ft^2
 T_ZALKAS = 22000 * num_engines
 EngineChosen = F414
 
@@ -558,7 +558,7 @@ plt.plot(S_wing_grid, T_maneuverideal, color='red', linewidth=2, linestyle='--',
 plt.plot(S_wing_grid, T_ceiling, color='darkgreen', linewidth=2, label='Ceiling (50k ft)')
 plt.plot(S_wing_grid, T_climb, color='orange', linewidth=2, label='SEROC Climb')
 plt.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeoff')
-plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing on 3000ft Runway')
+#plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing on 3000ft Runway')
 plt.plot(S_W_S_array_landing_arrestor, T_grid, color='magenta', linewidth=2, label = 'Arrestor Landing')
 plt.plot(S_W_S_array_stall, T_grid, color='purple', linewidth=2, label = 'Stall')
 
@@ -630,7 +630,7 @@ aircraft_points = [
     (S_Typhoon, T_Typhoon_wet, "Typhoon"),
     (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
     (S_F18_E_M, T_F18_E_wet, "F/A-18E"),
-    (S_F35C, T_F35C_wet, "F35-C"),
+    #(S_F35C, T_F35C_wet, "F35-C"),
     (S_F16C, T_F16C_wet, "F-16C"),
     (S_F22A, T_F22A_wet, "F-22A"),
     (S_Gripen, T_Gripen_wet, "Gripen E"),
