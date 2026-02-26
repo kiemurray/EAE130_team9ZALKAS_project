@@ -670,7 +670,7 @@ plt.show()
 #calculating fuel volume for A5
 fuel_weight = final_TOGW*calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash)
 fuel_only_volume = fuel_weight / cv.rho_jp5
-fuel_vol_wings = 109.4 * cv.packing_factor_wing #109.4 is tank vol, reports fuel vol only
+fuel_vol_wings = 149.5 * cv.packing_factor_wing #reports fuel vol only
 fuel_left_to_pack = fuel_only_volume - fuel_vol_wings 
 fuselage_tank_vol_needed = fuel_left_to_pack / cv.packing_factor_deep_fuselage
 
