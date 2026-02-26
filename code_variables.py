@@ -85,7 +85,8 @@ V_engage= 130 * 1.68781                 # ft/s, speed at which arrestor is engag
 CD0=0.01166                             # clean, used for cruise
 
 W_TO = 55700
-AR = 2.066
+AR_w = 2.066
+AR_h = []       # aspect ratio of horizontal stabilizer
 n_eng = 2
 
 # oswald efficiency factors for different configurations
@@ -94,9 +95,9 @@ e_cr = 0.82                             #cruise
 e_land = 0.725                          #landing
 
 # induced drag factors for different configurations
-k_to = 1 / (np.pi * AR * e_to)          #takeoff
-k_cr = 1 / (np.pi * AR * e_cr)          #cruise
-k_land = 1 / (np.pi * AR * e_land)      #landing
+k_to = 1 / (np.pi * AR_w * e_to)          #takeoff
+k_cr = 1 / (np.pi * AR_w * e_cr)          #cruise
+k_land = 1 / (np.pi * AR_w * e_land)      #landing
 
 # climb ratio (climb speed over stall speed)
 ks = 1.2
@@ -211,3 +212,34 @@ V_man=V_cruise
 W_S_stall = 0.5 * rho_sl * V_stall**2 * CLmax_L  # wing loading at stall
 W_S_TO = 0.5 * rho_sl * V_TO**2 * CLmax_TO       # wing loading at takeoff
 W_S_landing_56lb= 0.5 * rho_sl * V_landing**2 * CLmax_L/wf_landing   # wing loading at speed where 56 lb of thrust is required for maneuvering constraint
+
+# 2/25 Lab Code Variables
+# geometric variables
+
+# empennage sizing
+# vertical tail
+c_vt =[]        # vertical tail volume coefficient
+L_vt = []       # vertical tail moment arm (ft)
+
+# wing
+b_w = 39.81724        # wing span tip-to-tip (ft)
+c_w = 19.45522        # wing chord (ft)
+S_w = 685             # wing area (ft^2)
+
+# horizontal tail
+c_ht = []       # horizontal tail volume coefficient
+L_ht = []       # horizontal tail moment arm (ft)
+
+lambda_w = 40   # Sweep angle of wing (degrees)
+lambda_h = 45   # Sweep angle of horizontal tail (degrees)
+
+eta_w = []      # difference factor between the theoretical section lift curve slope for the wing
+eta_h = []      # difference factor between the theoretical section lift curve slope for the horizontal tail
+
+Kf = []         # empirical factor
+Lf = 45         # fuselage length (ft)
+Wid_fuse = 15         # maximum width of fuselage (ft)
+
+x_cg = []       # aircraft center of gravity (ft) assumed
+x_25MAC = []    # distance from nose to 25% MAC (ft) assumed
+
