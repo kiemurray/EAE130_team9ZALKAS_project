@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import code_variables as cv
 
 def m_to_ft(m):
     return m * 3.28084
@@ -9,8 +10,8 @@ def sqm_to_sqft(sq_m):
 
 # empennage sizing
 # given values for vertical tail
-c_vt = 0.065 # vertical tail volume coefficient
-L_vt = m_to_ft(31.65) # vertical tail moment arm (m) ----> (ft)
+c_vt = cv.c_vt # vertical tail volume coefficient
+L_vt = cv.L_vt # vertical tail moment arm (ft)
 
 # given values for wing
 b_w = m_to_ft(60.9)         # wing span tip-to-tip (m) ---> (ft)
@@ -21,28 +22,28 @@ S_w = sqm_to_sqft(427.8)    # wing area (m^2) -----> (ft^2)
 c_ht = 0.891        # horizontal tail volume coefficient
 L_ht = m_to_ft(32.95)   # horizontal tail moment arm (m) ----> (ft)
 
-S_vt = (c_vt * b_w * S_w)/L_vt       # estimated vertical tail area (ft^2)
-S_ht = (c_ht * c_w * S_w)/L_ht       # estimated horizontal tail area (ft^2)
+S_vt = cv.S_vt      # estimated vertical tail area (ft^2)
+S_ht = cv.S_ht       # estimated horizontal tail area (ft^2)
 
-S_vt_actual = sqm_to_sqft(53.23)    # actual vertical tail area (m^2) ----> (ft^2)
-S_ht_actual = sqm_to_sqft(101.26)   # actual horizontal tail area ""
+# S_vt_actual = sqm_to_sqft(53.23)    # actual vertical tail area (m^2) ----> (ft^2)
+# S_ht_actual = sqm_to_sqft(101.26)   # actual horizontal tail area ""
 
 print("Estimated Vertical Tail Area = {} ft^2".format(S_vt))
-print("Actual Vertical Tail Area = {} ft^2".format(S_vt_actual))
+# print("Actual Vertical Tail Area = {} ft^2".format(S_vt_actual))
 print("Estimated Horizontal Tail Area = {} ft^2".format(S_ht))
-print("Actual Horizontal Tail Area = {} ft^2".format(S_ht_actual))
+# print("Actual Horizontal Tail Area = {} ft^2".format(S_ht_actual))
 
 
-AR_w = 8.67 # Aspect ratio of wing
-lambda_w = math.radians(31.6)   # Sweep angle of wing (radians)
+AR_w = cv.AR_w # Aspect ratio of wing
+lambda_w = math.radians(cv.lambda_w)   # Sweep angle of wing (radians)
 
-AR_h = 4.5 # Aspect ratio of horizontal stabilizer 
-lambda_h = math.radians(35)     # Sweep angle of horizontal tail (radians)
+AR_h = cv.AR_h # Aspect ratio of horizontal stabilizer 
+lambda_h = math.radians(cv.lambda_h)     # Sweep angle of horizontal tail (radians)
 
-eta_w = 0.97    # Difference factor between the theoretical section lift curve slope for the wing
-eta_h = 0.9     # Difference factor between th theoretical section lift curve slope for the horizontal tail
+eta_w = cv.eta_w    # Difference factor between the theoretical section lift curve slope for the wing
+eta_h = cv.eta_h     # Difference factor between th theoretical section lift curve slope for the horizontal tail
 
-M = 0.87    # Mach number
+M = cv.M_cruise    # Mach number
 
 def lift_curve_slope(AR,eta,lambda_,Ma):
     CL = (2 * np.pi * AR)/(((2) + (np.sqrt((((AR/eta)**2) * (1 + (np.tan(lambda_))**2 - Ma**2)) + (4)))))
@@ -61,15 +62,15 @@ CL_a_h = CL_a_h0 / (1 - de_dalpha)
 print("Lift curve slope of horizontal tail corrected for downwash = {} / radian".format(CL_a_h))
 
 Kf = 0.344      # Empirical factor (assumed)
-Lf = m_to_ft(72.88)     # Fuselage Length (m) ----> (ft)
-Wf = m_to_ft(6.2)       # maximum width of fuselage (m) ----> (ft)
+Lf = cv.Lf     # Fuselage Length (ft)
+Wf = cv.Wid_fuse       # maximum width of fuselage (ft)
 
 dCmf_dCL = (Kf * (Wf ** 2) * Lf) / (S_w * c_w * CL_a_w)
 print("dCmf_dCL = {}".format(dCmf_dCL))
 
 
-x_cg = 135          # Aircraft center of gravity (ft) assumed
-x_25MAC = 106       # Distance from nose to 25% MAC (ft) assumed
+x_cg = cv.x_cg          # Aircraft center of gravity (ft) assumed
+x_25MAC = cv.x_25MAC    # Distance from nose to 25% MAC (ft) assumed
 
 SM = (x_cg-x_25MAC) / (c_w) - (CL_a_h * S_ht * L_ht) / (CL_a_w * S_w * c_w) + dCmf_dCL
 print("SM = {}".format(-SM))
