@@ -86,7 +86,7 @@ CD0=0.01166                             # clean, used for cruise
 
 W_TO = 55700
 AR_w = 2.066
-AR_h = []       # aspect ratio of horizontal stabilizer
+AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
 n_eng = 2
 
 # oswald efficiency factors for different configurations
@@ -218,8 +218,8 @@ W_S_landing_56lb= 0.5 * rho_sl * V_landing**2 * CLmax_L/wf_landing   # wing load
 
 # empennage sizing
 # vertical tail
-c_vt =[]        # vertical tail volume coefficient
-L_vt = []       # vertical tail moment arm (ft)
+c_vt = 0.094        # vertical tail volume coefficient
+L_vt = 14.4         # vertical tail moment arm (ft)
 
 # wing
 b_w = 39.81724        # wing span tip-to-tip (ft)
@@ -227,18 +227,18 @@ c_w = 19.45522        # wing chord (ft)
 S_w = 685             # wing area (ft^2)
 
 # horizontal tail
-c_ht = []       # horizontal tail volume coefficient
-L_ht = []       # horizontal tail moment arm (ft)
+c_ht = 0.3        # horizontal tail volume coefficient
+L_ht = 15.4       # horizontal tail moment arm (ft)
 
 lambda_w = 40   # Sweep angle of wing (degrees)
 lambda_h = 45   # Sweep angle of horizontal tail (degrees)
 
-eta_w = []      # difference factor between the theoretical section lift curve slope for the wing
-eta_h = []      # difference factor between the theoretical section lift curve slope for the horizontal tail
+eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
+eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
 
-Kf = []         # empirical factor
+Kf = 0.344      # empirical factor
 Lf = 45         # fuselage length (ft)
-Wid_fuse = 15         # maximum width of fuselage (ft)
+Wid_fuse = 15   # maximum width of fuselage (ft)
 
 x_cg = []       # aircraft center of gravity (ft) assumed
 x_25MAC = []    # distance from nose to 25% MAC (ft) assumed

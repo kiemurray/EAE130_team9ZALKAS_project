@@ -46,7 +46,7 @@ eta_h = cv.eta_h     # Difference factor between th theoretical section lift cur
 M = cv.M_cruise    # Mach number
 
 def lift_curve_slope(AR,eta,lambda_,Ma):
-    CL = (2 * np.pi * AR)/(((2) + (np.sqrt((((AR/eta)**2) * (1 + (np.tan(lambda_))**2 - Ma**2)) + (4)))))
+    CL = (2 * np.pi * AR)/(((2) + (np.sqrt((((AR / eta)**2) * (1 + (np.tan(lambda_))**2 - Ma**2)) + (4)))))
     return CL
 
 CL_a_w = lift_curve_slope(AR_w,eta_w,lambda_w,M)
@@ -69,9 +69,9 @@ dCmf_dCL = (Kf * (Wf ** 2) * Lf) / (S_w * c_w * CL_a_w)
 print("dCmf_dCL = {}".format(dCmf_dCL))
 
 
-x_cg = cv.x_cg          # Aircraft center of gravity (ft) assumed
-x_25MAC = cv.x_25MAC    # Distance from nose to 25% MAC (ft) assumed
+# x_cg = cv.x_cg          # Aircraft center of gravity (ft) assumed
+# x_25MAC = cv.x_25MAC    # Distance from nose to 25% MAC (ft) assumed
 
-SM = (x_cg-x_25MAC) / (c_w) - (CL_a_h * S_ht * L_ht) / (CL_a_w * S_w * c_w) + dCmf_dCL
-print("SM = {}".format(-SM))
+# SM = (x_cg-x_25MAC) / (c_w) - (CL_a_h * S_ht * L_ht) / (CL_a_w * S_w * c_w) + dCmf_dCL
+# print("SM = {}".format(-SM))
 
