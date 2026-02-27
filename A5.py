@@ -135,9 +135,9 @@ def solve_Sv_for_target_Cn_beta(Cn_beta_target, Cn_beta_wf, CL_alpha_v, lt, Sw, 
 if __name__ == "__main__":
     # Example numbers have to replace with our actual #s
     C_m_ac = -0.02
-    x_ac = 1.2        # m from leading edge
-    x_cg = 1.0        # m from leading edge
-    c = 1.5           # mean aerodynamic chord (m)
+    x_ac = 1.2        # ft from leading edge
+    x_cg = 1.0        # ft from leading edge
+    c = 1.5           # mean aerodynamic chord (ft)
     CL_alpha_wing = 5.7    # per rad
     a2d_tail = 2.0 * np.pi # per rad (section)
     AR_tail = 4.0
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     SM = static_margin(x_NP, x_cg, c)
 
     print(f"Cm_alpha = {Cm_alpha_val:.6f} per rad")
-    print(f"Neutral point x_NP = {x_NP:.4f} m")
+    print(f"Neutral point x_NP = {x_NP:.4f} ft")
     print(f"Static margin (fraction of c) = {SM:.4f}")
 
     # Vertical tail example
@@ -173,7 +173,7 @@ if __name__ == "__main__":
 
     try:
         Sv_needed = solve_Sv_for_target_Cn_beta(Cn_beta_target, Cn_beta_wf, CL_alpha_v, l_t, Sw, b, S, AR)
-        print(f"Estimated vertical tail area Sv = {Sv_needed:.4f} m^2")
+        print(f"Estimated vertical tail area Sv = {Sv_needed:.4f} ft^2")
     except ValueError as e:
         print("Could not find Sv:", e)
 
