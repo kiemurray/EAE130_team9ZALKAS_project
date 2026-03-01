@@ -1,8 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-# We have to figure out what Sw, Chord, AR, lt, Xcg, Xac, CL alpha w, and CM alpha f pwr. Also the 
+# We have to figure out what Sw, Chord, AR, lt, Xcg, Xac, CL alpha, and CM alpha f pwr. 
 # Convert
+# Sw = Wing area (ft^2)
+#c = Mean aerodynamic Chord (ft)
+# AR = Aspect Ratio
+#lt = Tail Moment Arm (Distance from CG to tail AC)
+#Xcg = Distance from Wing Leading Edge to CG (ft)
+#Xac = Distance from Wing Leading Edge to AC (ft)\
+#CL, alpha,w = Wing Lift Curve Slope
+#CM,α,f= pitching moment caused by the fuselage
+#CM,α,pwr is the pitching moment caused by the engine
+
+def per_deg_to_per_rad(per_deg):
+    return per_deg * (180.0 / np.pi)
+
 # ---------- longitudinal_stability ----------
 def downwash_derivative(CL_alpha_wing, AR_wing):
     """
@@ -26,7 +39,7 @@ def lift_curve_3d(a_2d, AR, e=1.0):
     Returns:
       a_3d : 3D lift-curve slope (per rad)
     """
-    return a_2d / (1.0 + a_2d / (np.pi * AR * e))
+    return a_2d / (1.0 + (a_2d / (np.pi * AR * e)))
 
 
 def tail_volume_coefficient(S_t, l_t, S, c):
@@ -146,6 +159,7 @@ if __name__ == "__main__":
     S_t = 2.0
     l_t = 4.5
     S = 25.0
+    Sw = S
 
     CL_alpha_tail = lift_curve_3d(a2d_tail, AR_tail, e_tail)
     V_H = tail_volume_coefficient(S_t, l_t, S, c)
@@ -177,4 +191,104 @@ if __name__ == "__main__":
     except ValueError as e:
         print("Could not find Sv:", e)
 
-" cnB is the static directional stability derivative defining the change in the aircraft's yawing moment coefficient ( in response to a change in the sideslip angle. A positive value indicates stability, meaning the aircraft produces a restoring moment to realign its nose with the relative wind.)"
+           # ---------------- Cm vs alpha curves 
+alpha_deg = np.linspace(0, 10, 201)         # 0..10 deg like the example
+alpha_rad = np.deg2rad(alpha_deg)
+
+# pick trim point B at 5 deg (so both curves cross Cm=0 at alpha_trim)
+alpha_trim_deg = 5.0
+alpha_trim_rad = math.radians(alpha_trim_deg)
+
+# choose Cm0 so Cm(alpha_trim) = 0 for the stable curve:
+# Cm_stable = Cm0 + Cm_alpha_val*alpha  -> 0 = Cm0 + Cm_alpha_val*alpha_trim  => Cm0 = -Cm_alpha_val*alpha_trim
+Cm0 = -Cm_alpha_val * alpha_trim_rad
+
+# stable (negative slope)
+Cm_stable = Cm0 + Cm_alpha_val * alpha_rad
+
+# unstable (positive slope) - flip sign of slope
+Cm_unstable = Cm0 - Cm_alpha_val * alpha_rad
+
+# plot
+plt.figure(figsize=(6,3.6))                 # compact, like your example
+plt.plot(alpha_deg, Cm_stable, color='green', lw=2, label='Stable Aircraft')
+plt.plot(alpha_deg, Cm_unstable, color='red', lw=2, label='Unstable Aircraft')
+
+# trim (Cm=0) dotted line
+plt.axhline(0.0, color='0.2', linestyle=':', linewidth=1)
+
+# Points A, B, C (alpha positions chosen to mimic the example)
+alpha_A = 2.0
+alpha_B = alpha_trim_deg
+alpha_C = 8.0
+
+Cm_A = Cm0 + Cm_alpha_val * math.radians(alpha_A)    # stable curve value at A (but plot markers on Cm=0 line in example)
+Cm_B = 0.0
+Cm_C = Cm0 + Cm_alpha_val * math.radians(alpha_C)
+
+# Draw circular markers like example (blue hollow circles on Cm=0)
+plt.plot(alpha_A, 0.0, marker='o', markersize=7, markeredgecolor='blue', markerfacecolor='white')
+plt.plot(alpha_B, 0.0, marker='o', markersize=7, markeredgecolor='blue', markerfacecolor='red')   # B colored to emphasise
+plt.plot(alpha_C, 0.0, marker='o', markersize=7, markeredgecolor='blue', markerfacecolor='white')
+
+# annotate A B C slightly above/below marker
+plt.text(alpha_A - 0.6, -0.04, 'A', color='blue', fontsize=10)
+plt.text(alpha_B - 0.1, -0.04, 'B', color='blue', fontsize=10)
+plt.text(alpha_C - 0.1, -0.04, 'C', color='blue', fontsize=10)
+
+# axes / limits / ticks to match the look
+plt.xlim(0, 10)
+plt.ylim(-0.4, 0.4)
+plt.xticks(np.arange(0, 11, 1))
+plt.yticks(np.linspace(-0.4, 0.4, 5))
+
+plt.xlabel(r'$\alpha$ (deg)')
+plt.ylabel(r'$C_m$')
+plt.title('')
+plt.legend(loc='upper right', frameon=True)
+plt.grid(False)
+plt.gca().spines['top'].set_visible(False)
+plt.gca().spines['right'].set_visible(False)
+
+plt.tight_layout()
+plt.show()
+
+# ---------------- Directional stability output (Cn vs beta) ----------------
+
+# compute current vertical tail volume coefficient using your Sv result
+Vv = vertical_tail_volume_coefficient(Sv_needed, l_t, Sw, b)
+
+# sideslip downwash factor
+sideslip_factor = sideslip_downwash_factor(Sv_needed, Sw, AR)
+
+# actual slope Cn_beta from YOUR airplane numbers
+Cn_beta_deriv = Cn_beta_total(Cn_beta_wf, CL_alpha_v, Vv, sideslip_factor)
+
+print(f"Directional stability derivative Cn_beta = {Cn_beta_deriv:.6f} per rad")
+
+# beta range
+beta = np.linspace(-1.0, 1.0, 300)
+
+# stable (restoring yaw moment)
+Cn_stable = Cn_beta_deriv * beta
+
+# unstable (sign flipped)
+Cn_unstable = -Cn_beta_deriv * beta
+
+# plot
+plt.figure(figsize=(6,4.5))
+plt.plot(beta, Cn_stable, 'g-', linewidth=2, label='Stable Aircraft')
+plt.plot(beta, Cn_unstable, 'r-', linewidth=2, label='Unstable Aircraft')
+
+plt.axhline(0, color='k', linestyle='--')
+plt.axvline(0, color='k')
+
+plt.xlabel(r'$\beta$')
+plt.ylabel(r'$C_N$')
+plt.title('C_N vs Sideslip β')
+plt.legend(loc='upper left')
+plt.xlim(-1,1)
+
+plt.tight_layout()
+plt.show()    
+
