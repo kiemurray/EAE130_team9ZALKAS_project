@@ -1,15 +1,17 @@
 import numpy as np
 
 #Inputs
-We = 55697              #Empty weight (lb) 
-Tmax = 41000             #Engine max thrust lbs
+W0 = 56412
+We = W0*(2.34*W0**-0.13)*1.04 #Empty weight for fighter using Raymer table 3.1
+print(f"Empty Weight: {We} lbs")
+Tmax = 22000             #Engine max thrust lbs F414
 Neng = 2                 #Number of engines per aircraft
 
 Tturbine_inlet = 4060    #Turbine inlet temperature Rankine 
-Vmax = 1050              #Maximum velocity (knots)
+Vmax = 1150              #Maximum velocity (knots)
 Q = 500                  #Production quantity
 FTA = 4                  #Number of flight test aircraft
-Mmax = 1.8               #Max Mach number of aircraft
+Mmax = 2.0               #Max Mach number of aircraft
 
 #Labor costs wrapped rate (includes benefits and overhead) in 2026$(raymer)
 CPI_1986_to_2026 = 2.94
@@ -45,7 +47,7 @@ C_mfg_hours  = HM * RM * material_fudge_factor
 C_QC_hours   = HQC * RM * material_fudge_factor
 
 #Engine production cost 
-Ceng = 20.4*1e6 #actual F135 engine price
+Ceng = 10*1e6 #approximate F414 engine price
 Ceng_total = Ceng * Neng
 print(f"\nEngine production cost per engine: ${Ceng/1e6:.2f} million")
 print(f"Total engine cost per aircraft:    ${Ceng_total/1e6:.2f} million")
