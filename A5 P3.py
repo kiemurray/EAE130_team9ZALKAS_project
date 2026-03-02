@@ -65,7 +65,7 @@ def solve_Sv_for_target_Cn_beta(
     S_ref: float,
     b: float,
     AR_wing: float,
-    max_iter: int = 120
+    max_iter: int = 200
 ) -> float:
     """
     Bisection solve for Sv such that Cn_beta_total == Cn_beta_target (all per rad).
@@ -79,11 +79,10 @@ def solve_Sv_for_target_Cn_beta(
     flo, fhi = f(lo), f(hi)
     if flo * fhi > 0:
         raise ValueError("Bisection bracket failed. Check target/units or adjust bracket limits.")
-
     for _ in range(max_iter):
         mid = 0.5 * (lo + hi)
         fmid = f(mid)
-        if abs(fmid) < 1e-12:
+        if abs(fmid) < 1e-9 or (hi - lo) < 1e-9:  # converged
             return mid
         if flo * fmid < 0:
             hi, fhi = mid, fmid
@@ -150,7 +149,7 @@ if __name__ == "__main__":
 
     # Absolute coordinates from OpenVSP:
     x_wing_le_abs = -17.190   # wing XLoc from your earlier XForm 
-    x_cg_abs = -9.229         # your actual CG (absolute)
+    x_cg_abs = -12.716         # your actual CG (absolute)
 
     # Convert CG to wing-LE datum (so x=0 at wing LE)
     x_cg = x_cg_abs - x_wing_le_abs  # = 3.878...
@@ -200,15 +199,15 @@ if __name__ == "__main__":
     print(f"Tail AC abs ≈ {x_ac_v_abs:.3f}")
     print(f"lt = x_ac_v_abs - x_cg_abs = {lt:.3f}")
 
-    Cn_beta_target_deg = 0.10   # <-- CHANGE if needed
+    Cn_beta_target_deg = 0.01   # <-- CHANGE if needed
     Cn_beta_target = per_deg_to_per_rad(Cn_beta_target_deg)  # convert to per rad
 
     # Baseline wing-fuselage yaw stability (placeholder; set if known)
     Cn_beta_wf = 0.0  # per rad
 
-    # Vertical tail lift curve slope (placeholder; can be refined with its AR)
-    CL_alpha_v = 2.0 * np.pi  # per rad
-
+    # Vertical tail geometry (from OpenVSP)
+    AR_v = 1.8
+    CL_alpha_v = CL_alpha_low_AR(AR_v)
     # Solve for Sv and plot Cn vs beta
     #Beta is just wind coming from the right or left, Positive B = right, negative B = left
     #cnb > 0 slope postive means stable and other way around means unstable
