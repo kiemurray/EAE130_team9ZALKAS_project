@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import math
 
 # Unit conversions
 
@@ -92,60 +92,50 @@ def solve_Sv_for_target_Cn_beta(
 
     return 0.5 * (lo + hi)
 
+
 # Plotting 
 def plot_Cm_vs_alpha(Cm_alpha_per_rad: float, alpha_trim_deg: float = 5.0):
-    alpha_rad = np.linspace(np.deg2rad(-0.4), np.deg2rad(10), 201)
+    alpha_deg = np.linspace(-5, 15, 201)
+    alpha_rad = np.deg2rad(alpha_deg)
     alpha_trim_rad = np.deg2rad(alpha_trim_deg)
 
-    m = abs(Cm_alpha_per_rad)
-    Cm_alpha_stable = -m
-    Cm_alpha_unstable = +m
-
-    Cm0 = -Cm_alpha_stable * alpha_trim_rad  # stable passes through trim
-
-    Cm_stable = Cm0 + Cm_alpha_stable * alpha_rad
-    Cm_unstable = Cm0 + Cm_alpha_unstable * alpha_rad
+    Cm0 = -Cm_alpha_per_rad * alpha_trim_rad
+    Cm = Cm0 + Cm_alpha_per_rad * alpha_rad
 
     plt.figure(figsize=(6, 3.6))
-    plt.plot(alpha_rad, Cm_stable, 'g-', linewidth=2, label='Stable Aircraft')
-    plt.plot(alpha_rad, Cm_unstable, 'r-', linewidth=2, label='Unstable Aircraft')
+    color = 'g' if Cm_alpha_per_rad < 0 else 'r'
+    label = r'Stable ($Cm_{\alpha}$ < 0)' if Cm_alpha_per_rad < 0 else r'Unstable ($Cm_{\alpha}$ > 0)'
+    plt.plot(np.rad2deg(alpha_rad), Cm, color=color, linewidth=2, label=label)
     plt.axhline(0, color='black', linewidth=1)
-
-    # markers at A,B,C (still in degrees, converted to rad)
-    alpha_A, alpha_B, alpha_C = map(np.deg2rad, [3, 5, 7])
-    plt.plot([alpha_A, alpha_B, alpha_C], [0, 0, 0],
-             'o', markeredgecolor='blue', markerfacecolor='white')
-    plt.text(alpha_A, 0.02, 'A')
-    plt.text(alpha_B, 0.02, 'B')
-    plt.text(alpha_C, 0.02, 'C')
-
-    plt.xlim(np.deg2rad(-0.4), np.deg2rad(10))
-    plt.ylim(-0.4, 0.4)
-    plt.xlabel(r'$\alpha$ (rad)')
+    plt.axvline(alpha_trim_deg, color='gray', linestyle='--', label=f'Trim α={alpha_trim_deg}°')
+    plt.xlabel(r'$\alpha$ (deg)')
     plt.ylabel(r'$C_m$')
+    plt.title(rf'Cm vs $\alpha$  |  $Cm_{{\alpha}}$ = {per_rad_to_per_deg(Cm_alpha_per_rad):.4f} /deg')    
     plt.legend(loc='upper right')
-    plt.grid(False)
+    plt.grid(True)
     plt.tight_layout()
     plt.show()
+
 
 def plot_Cn_vs_beta(Cn_beta_per_rad: float):
-    beta = np.linspace(-1.0, 1.0, 300)
-    Cn_stable = Cn_beta_per_rad * beta
-    Cn_unstable = -Cn_beta_per_rad * beta
+    beta_deg = np.linspace(-30, 30, 300)
+    beta_rad = np.deg2rad(beta_deg)
+
+    Cn = Cn_beta_per_rad * beta_rad
 
     plt.figure(figsize=(6, 4.5))
-    plt.plot(beta, Cn_stable, 'g-', linewidth=2, label='Stable Aircraft')
-    plt.plot(beta, Cn_unstable, 'r-', linewidth=2, label='Unstable Aircraft')
-    plt.axhline(0, color='k', linestyle='--')
-    plt.axvline(0, color='k')
-    plt.xlabel(r'$\beta$ (rad)')
-    plt.ylabel(r'$C_N$')
-    plt.title('C_N vs Sideslip β')
+    color = 'g' if Cn_beta_per_rad > 0 else 'r'
+    label = r'Stable ($Cn_{\beta}$ > 0)' if Cn_beta_per_rad > 0 else r'Unstable ($Cn_{\beta}$ < 0)'
+    plt.plot(beta_deg, Cn, color=color, linewidth=2, label=label)
+    plt.axhline(0, color='black', linewidth=1)
+    plt.axvline(0, color='black', linewidth=1)
+    plt.xlabel(r'$\beta$ (deg)')
+    plt.ylabel(r'$C_n$')
+    plt.title(rf'$C_n$ vs $\beta$  |  $Cn_{{\beta}}$ = {per_rad_to_per_deg(Cn_beta_per_rad):.4f} /deg')
     plt.legend(loc='upper left')
-    plt.xlim(-1, 1)
+    plt.grid(True)
     plt.tight_layout()
     plt.show()
-
 
 # MAIN
 
@@ -155,11 +145,11 @@ if __name__ == "__main__":
     # OpenVSP geometry (MAINWING) 
     S = 684.1245
     b = 41.0
-    c = 19.90706  # MAC length
+    c = 19.90529  # MAC length
     AR = b**2 / S
 
     # Absolute coordinates from OpenVSP:
-    x_wing_le_abs = -13.107   # wing XLoc from your earlier XForm 
+    x_wing_le_abs = -17.190   # wing XLoc from your earlier XForm 
     x_cg_abs = -9.229         # your actual CG (absolute)
 
     # Convert CG to wing-LE datum (so x=0 at wing LE)
@@ -196,7 +186,7 @@ if __name__ == "__main__":
    
     # OpenVSP geometry (VERTICAL TAIL / Stabilators)
     # From tail XForm + Plan:
-    XLoc_v_abs = 8.598
+    XLoc_v_abs = 5.598
     MAC_v = 5.01667
 
     # Tail AC approx at quarter-chord
