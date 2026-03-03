@@ -56,6 +56,44 @@ def Cn_beta_total(Cn_beta_wf: float, CL_alpha_v: float, Vv: float, sideslip_fact
     Cnβ = Cnβ,wf + CLα,v * Vv * (1 + dσ/dβ)
     """
     return Cn_beta_wf + CL_alpha_v * Vv * sideslip_factor
+def solve_dihedral_for_target_Cn_beta(
+    Cn_beta_target: float,
+    Cn_beta_wf: float,
+    CL_alpha_v: float,
+    S_physical: float,   # actual panel area from OpenVSP
+    lt: float,
+    S_ref: float,
+    b: float,
+    AR_wing: float,
+) -> float:
+    """
+    Solve for dihedral angle Γ (deg) such that the vertical projection
+    Sv = S_physical * cos(Γ) achieves the target Cn_beta.
+    """
+    def f(gamma_rad: float) -> float:
+        Sv = S_physical * np.cos(gamma_rad)          # vertical projection
+        factor = sideslip_downwash_factor(Sv, S_ref, AR_wing)
+        Vv = vertical_tail_volume_coefficient(Sv, lt, S_ref, b)
+        return Cn_beta_total(Cn_beta_wf, CL_alpha_v, Vv, factor) - Cn_beta_target
+
+    lo, hi = 0.0, np.deg2rad(89.9)   # 0 = pure vertical, 90 = pure horizontal
+
+    if f(lo) < 0:
+        raise ValueError("Even a fully vertical tail (Γ=0) cannot achieve target Cn_beta — increase S_physical, span, or chord.")
+    if f(hi) > 0:
+        raise ValueError("Target Cn_beta is too low — even Γ=90° exceeds it.")
+
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        fmid = f(mid)
+        if abs(fmid) < 1e-9 or (hi - lo) < 1e-9:
+            return np.rad2deg(mid)
+        if f(lo) * fmid < 0:
+            hi = mid
+        else:
+            lo = mid
+
+    return np.rad2deg(0.5 * (lo + hi))
 
 def solve_Sv_for_target_Cn_beta(
     Cn_beta_target: float,
@@ -199,7 +237,7 @@ if __name__ == "__main__":
     print(f"Tail AC abs ≈ {x_ac_v_abs:.3f}")
     print(f"lt = x_ac_v_abs - x_cg_abs = {lt:.3f}")
 
-    Cn_beta_target_deg = 0.01   # <-- CHANGE if needed
+    Cn_beta_target_deg = 0.001   # <-- CHANGE if needed
     Cn_beta_target = per_deg_to_per_rad(Cn_beta_target_deg)  # convert to per rad
 
     # Baseline wing-fuselage yaw stability (placeholder; set if known)
@@ -230,9 +268,34 @@ if __name__ == "__main__":
         print(f"Sv_needed = {Sv_needed:.4f} (same area units as S)")
         print(f"Achieved Cn_beta = {Cn_beta:.6f} per rad = {per_rad_to_per_deg(Cn_beta):.6f} per deg")
 
+        # Physical tail panel from OpenVSP
+        span_v       = 9.0
+        root_chord_v = 7.0
+        tip_chord_v  = 3.0
+        S_physical   = 0.5 * (root_chord_v + tip_chord_v) * span_v
+
+        dihedral_deg = solve_dihedral_for_target_Cn_beta(
+            Cn_beta_target=Cn_beta_target,
+            Cn_beta_wf=Cn_beta_wf,
+            CL_alpha_v=CL_alpha_v,
+            S_physical=S_physical,
+            lt=lt,
+            S_ref=S,
+            b=b,
+            AR_wing=AR
+        )
+
+        Sv_vert  = S_physical * np.cos(np.deg2rad(dihedral_deg))
+        Sv_horiz = S_physical * np.sin(np.deg2rad(dihedral_deg))
+
+        print(f"\n---- V-Tail Geometry ----")
+        print(f"S_physical (panel) = {S_physical:.4f}")
+        print(f"Dihedral angle     = {dihedral_deg:.2f} deg")
+        print(f"Sv_vertical        = {Sv_vert:.4f}  (contributes to Cn_beta)")
+        print(f"Sv_horizontal      = {Sv_horiz:.4f}  (contributes to Cm/roll)")
+
         # ---------------- PLOT 2: Cn vs beta ----------------
         plot_Cn_vs_beta(Cn_beta)
 
     except ValueError as e:
-        print("Could not solve for Sv:", e)
-        print("No Cn vs beta plot produced.")
+        print("Could not solve:", e)
