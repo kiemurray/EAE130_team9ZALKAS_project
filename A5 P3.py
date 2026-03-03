@@ -186,8 +186,8 @@ if __name__ == "__main__":
     AR = b**2 / S
 
     # Absolute coordinates from OpenVSP:
-    x_wing_le_abs = -17.190   # wing XLoc from your earlier XForm 
-    x_cg_abs = -12.716         # your actual CG (absolute)
+    x_wing_le_abs = 17.810   # wing XLoc from your earlier XForm 
+    x_cg_abs = 22.505        # your actual CG (absolute)
 
     # Convert CG to wing-LE datum (so x=0 at wing LE)
     x_cg = x_cg_abs - x_wing_le_abs  # = 3.878...
@@ -223,8 +223,8 @@ if __name__ == "__main__":
    
     # OpenVSP geometry (VERTICAL TAIL / Stabilators)
     # From tail XForm + Plan:
-    XLoc_v_abs = 5.598
-    MAC_v = 5.01667
+    XLoc_v_abs = 31.746
+    MAC_v = 9.40923
 
     # Tail AC approx at quarter-chord
     x_ac_v_abs = XLoc_v_abs + 0.25 * MAC_v
