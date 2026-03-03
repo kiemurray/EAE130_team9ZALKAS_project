@@ -193,8 +193,11 @@ if __name__ == "__main__":
     x_cg = x_cg_abs - x_wing_le_abs  # = 3.878...
 
     # Wing-body AC assumption (subsonic): ~ 25% MAC from wing LE
-    x_ac = 0.25 * c
+    x_le_mac_abs = 19.2  # e.g. might be ~24-26 ft aft of nose
+    x_ac_abs = x_le_mac_abs + 0.25 * c
 
+    # Then convert to wing-LE datum:
+    x_ac = x_ac_abs - x_wing_le_abs
     # Wing-body pitching moment about AC 
     Cm_ac = -0.03
 
@@ -269,9 +272,9 @@ if __name__ == "__main__":
         print(f"Achieved Cn_beta = {Cn_beta:.6f} per rad = {per_rad_to_per_deg(Cn_beta):.6f} per deg")
 
         # Physical tail panel from OpenVSP
-        span_v       = 9.0
-        root_chord_v = 7.0
-        tip_chord_v  = 3.0
+        span_v       = 24
+        root_chord_v = 13.2
+        tip_chord_v  = 3.96
         S_physical   = 0.5 * (root_chord_v + tip_chord_v) * span_v
 
         dihedral_deg = solve_dihedral_for_target_Cn_beta(
