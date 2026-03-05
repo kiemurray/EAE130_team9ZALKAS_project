@@ -296,7 +296,7 @@ if __name__ == "__main__":
         print(f"Dihedral angle     = {dihedral_deg:.2f} deg")
         print(f"Sv_vertical        = {Sv_vert:.4f}  (contributes to Cn_beta)")
         print(f"Sv_horizontal      = {Sv_horiz:.4f}  (contributes to Cm/roll)")
-
+        print("Vertical tail volume coefficent = {}".format(Vv))
         # ---------------- PLOT 2: Cn vs beta ----------------
         plot_Cn_vs_beta(Cn_beta)
 
