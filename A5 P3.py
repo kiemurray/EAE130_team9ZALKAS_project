@@ -181,8 +181,8 @@ if __name__ == "__main__":
    
     # OpenVSP geometry (MAINWING) 
     S = 684.1245
-    b = 41.0
-    c = 19.90529  # MAC length
+    b = 45.3
+    c = 13  # MAC length
     AR = b**2 / S
 
     # Absolute coordinates from OpenVSP:
@@ -247,7 +247,7 @@ if __name__ == "__main__":
     Cn_beta_wf = 0.0  # per rad
 
     # Vertical tail geometry (from OpenVSP)
-    AR_v = 1.8
+    AR_v = 1.28
     CL_alpha_v = CL_alpha_low_AR(AR_v)
     # Solve for Sv and plot Cn vs beta
     #Beta is just wind coming from the right or left, Positive B = right, negative B = left
@@ -272,7 +272,7 @@ if __name__ == "__main__":
         print(f"Achieved Cn_beta = {Cn_beta:.6f} per rad = {per_rad_to_per_deg(Cn_beta):.6f} per deg")
 
         # Physical tail panel from OpenVSP
-        span_v       = 24
+        span_v       = 22
         root_chord_v = 13.2
         tip_chord_v  = 3.96
         S_physical   = 0.5 * (root_chord_v + tip_chord_v) * span_v
@@ -291,11 +291,15 @@ if __name__ == "__main__":
         Sv_vert  = S_physical * np.cos(np.deg2rad(dihedral_deg))
         Sv_horiz = S_physical * np.sin(np.deg2rad(dihedral_deg))
 
+        Sv_tail = (Sv_vert + Sv_horiz) * 0.90
+
         print(f"\n---- V-Tail Geometry ----")
         print(f"S_physical (panel) = {S_physical:.4f}")
         print(f"Dihedral angle     = {dihedral_deg:.2f} deg")
         print(f"Sv_vertical        = {Sv_vert:.4f}  (contributes to Cn_beta)")
         print(f"Sv_horizontal      = {Sv_horiz:.4f}  (contributes to Cm/roll)")
+        print(f"V-Tail Area        = {Sv_tail:.4f}")
+        print(f"Volume Coefficient = {Vv:.4f}")
 
         # ---------------- PLOT 2: Cn vs beta ----------------
         plot_Cn_vs_beta(Cn_beta)
