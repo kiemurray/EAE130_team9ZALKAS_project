@@ -27,8 +27,8 @@ print(f"RQC:{RQC:.2f} $/hr")
 
 
 #Estimated avionics cost 
-W_avionics = 2000   #lbs [RFP]
-Cavionics = W_avionics*2500*CPI_1986_to_2026 #$2000/lb FY86(raymer txtbook estimation but seems too low) should be up to 25% of flyway cost
+W_avionics = 2500   #lbs [RFP]
+Cavionics = W_avionics*2000*CPI_1986_to_2026 #$2000/lb FY86 [Raymer] should be up to 25% of flyway cost
 
 #Man Hours
 HE = 4.86 * We**0.777 * Vmax**0.894 * Q**0.163 #Engineering hours 
