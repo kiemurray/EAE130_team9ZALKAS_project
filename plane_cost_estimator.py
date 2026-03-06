@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 #Inputs
 W0 = 56411.4
@@ -69,13 +70,68 @@ flyaway_unit = (C_mfg_hours/Q + C_QC_hours/Q + Ceng_total + Cavionics + C_Materi
 #unit = (RDTE + 500*flyaway_unit)/500 *investment_cost_factor (doesnt apply for military)
 print(f"\nRDT&E cost:   ${RDTE/1e9:.2f} billion")
 print(f"Flyaway cost: ${flyaway_unit/1e6:.2f} million/unit")
-print(f"Material cost: ${investment_cost_factor*C_Material/Q/1e6:.2f} million/unit")
-print(f"QC cost: ${investment_cost_factor*C_QC_hours/Q/1e6:.2f} million/unit")
-print(f"Manufacturing cost: ${investment_cost_factor*C_mfg_hours/Q/1e6:.2f} million/unit")
-print(f"Engine cost: ${investment_cost_factor*Ceng_total/1e6:.2f} million/unit")
-print(f"Avionics cost: ${investment_cost_factor*Cavionics/1e6:.2f} million/unit")
 
 
 
+# Per-unit cost components (including investment factor)
+material_unit = investment_cost_factor * C_Material / Q
+qc_unit = investment_cost_factor * C_QC_hours / Q
+manufacturing_unit = investment_cost_factor * C_mfg_hours / Q
+engine_unit = investment_cost_factor * Ceng_total
+avionics_unit = investment_cost_factor * Cavionics
+
+print(f"Material cost: ${material_unit/1e6:.2f} million/unit")
+print(f"QC cost: ${qc_unit/1e6:.2f} million/unit")
+print(f"Manufacturing cost: ${manufacturing_unit/1e6:.2f} million/unit")
+print(f"Engine cost: ${engine_unit/1e6:.2f} million/unit")
+print(f"Avionics cost: ${avionics_unit/1e6:.2f} million/unit")
+
+labels = [
+    "Materials",
+    "QC Labor",
+    "Manufacturing Labor",
+    "Engines",
+    "Avionics"
+]
+
+sizes = [
+    material_unit,
+    qc_unit,
+    manufacturing_unit,
+    engine_unit,
+    avionics_unit
+]
+
+colors = [
+    "#7BA8C9",  
+    "#7CC79D", 
+    "#C89ED9",  
+    "#FF8F85", 
+    "#FFD27A"   
+]
 
 
+# Function to show percent + cost
+def autopct_format(values):
+    def my_format(pct):
+        total = sum(values)
+        val = pct * total / 100
+        return f"{pct:.1f}%\n(${val/1e6:.1f}M)"
+    return my_format
+
+plt.figure(figsize=(8,8))
+
+plt.pie(
+    sizes,
+    labels=labels,
+    colors=colors,
+    autopct=autopct_format(sizes),
+    startangle=90,
+    pctdistance=0.75,
+    textprops={'fontsize':15}
+)
+
+plt.title("Per-Unit Aircraft Flyaway Cost Breakdown", fontsize=18, weight='bold')
+plt.axis('equal')
+plt.tight_layout()
+plt.show()
