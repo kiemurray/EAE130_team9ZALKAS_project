@@ -26,7 +26,7 @@ wf_descent= 0.99
 wf_middescent = 0.995
 
 # Landing Parameters
-s_L = 3000 # total landing distance (this is assuming an extremely short landing distance, something like this would be competetive with the Gripen. This value can always be increased later if it becomes a problem)
+s_L = 5000 # total landing distance 
 s_a = 450 # ground clearance distance, taken from STOL requirements
 s_L_G = 349 # carrier ground roll distance for landing, assumed to be 349 ft
 F_hook = 120000
