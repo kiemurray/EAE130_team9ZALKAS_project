@@ -558,7 +558,7 @@ plt.plot(S_wing_grid, T_maneuverideal, color='red', linewidth=2, linestyle='--',
 plt.plot(S_wing_grid, T_ceiling, color='darkgreen', linewidth=2, label='Ceiling (50k ft)')
 plt.plot(S_wing_grid, T_climb, color='orange', linewidth=2, label='SEROC Climb')
 plt.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeoff')
-#plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing on 3000ft Runway')
+plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing')
 plt.plot(S_W_S_array_landing_arrestor, T_grid, color='magenta', linewidth=2, label = 'Arrestor Landing')
 plt.plot(S_W_S_array_stall, T_grid, color='purple', linewidth=2, label = 'Stall')
 
