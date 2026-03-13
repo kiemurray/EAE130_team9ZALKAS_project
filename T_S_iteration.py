@@ -55,13 +55,13 @@ print("W_payload: " + str(W_payload) + " lb")
 
 # Fixed parameters for weight estimation
 L_D_max = 10
-R = 950            # nmi
+R = 950             # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7
 v_cruise = 490      # knots
 v_dash = 560        # knots
-S_ht = 0
+S_ht = 0 
 S_vt = 45
 S_wet_fuselage = 700
 num_engines = 2  # Example number of engines

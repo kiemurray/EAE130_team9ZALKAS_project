@@ -42,7 +42,7 @@ print(f"Manufacturing hours: {HM:.1f} hrs")
 print(f"QC hours:            {HQC:.1f} hrs")
 
 #Labor costs
-material_fudge_factor = 1.5 #covers complexity of non aluminum parts (raymer)
+material_fudge_factor = 2.0 #covers complexity of non aluminum parts (raymer)
 C_eng_hours = HE * RE * material_fudge_factor
 C_tool_hours = HT * RT * material_fudge_factor
 C_mfg_hours  = HM * RM * material_fudge_factor
@@ -64,7 +64,7 @@ print(f"Flight test cost:         ${C_Flight_test/1e6:.2f} million")
 print(f"Materials cost:           ${C_Material/1e6:.2f} million")
 
 #need to find RDTE and unit costs still:
-investment_cost_factor = 1.2 #from raymer, profit margin
+investment_cost_factor = 1.15 #from raymer, profit margin
 RDTE = C_eng_hours+ C_Flight_test + C_Dev + C_tool_hours
 flyaway_unit = (C_mfg_hours/Q + C_QC_hours/Q + Ceng_total + Cavionics + C_Material/Q) * investment_cost_factor
 #unit = (RDTE + 500*flyaway_unit)/500 *investment_cost_factor (doesnt apply for military)
