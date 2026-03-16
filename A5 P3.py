@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import code_variables as cv
 
 # Unit conversions
 
@@ -147,6 +148,7 @@ def plot_Cm_vs_alpha(Cm_alpha_per_rad: float, alpha_trim_deg: float = 5.0):
     plt.axvline(alpha_trim_deg, color='gray', linestyle='--', label=f'Trim α={alpha_trim_deg}°')
     plt.xlabel(r'$\alpha$ (deg)')
     plt.ylabel(r'$C_m$')
+    plt.xlim(-5,15)
     plt.title(rf'Cm vs $\alpha$  |  $Cm_{{\alpha}}$ = {per_rad_to_per_deg(Cm_alpha_per_rad):.4f} /deg')    
     plt.legend(loc='upper right')
     plt.grid(True)
@@ -170,6 +172,7 @@ def plot_Cn_vs_beta(Cn_beta_per_rad: float):
     plt.ylabel(r'$C_n$')
     plt.title(rf'$C_n$ vs $\beta$  |  $Cn_{{\beta}}$ = {per_rad_to_per_deg(Cn_beta_per_rad):.4f} /deg')
     plt.legend(loc='upper left')
+    plt.xlim(-30,30)
     plt.grid(True)
     plt.tight_layout()
     plt.show()
@@ -180,9 +183,9 @@ if __name__ == "__main__":
 
    
     # OpenVSP geometry (MAINWING) 
-    S = 684.1245
-    b = 45.3
-    c = 13  # MAC length
+    S = cv.S_w
+    b = cv.b_w
+    c = cv.c_w # MAC length
     AR = b**2 / S
 
     # Absolute coordinates from OpenVSP:
