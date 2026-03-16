@@ -26,14 +26,14 @@ wf_descent= 0.99
 wf_middescent = 0.995
 
 # Landing Parameters
-s_L = 3000 # total landing distance (this is assuming an extremely short landing distance, something like this would be competetive with the Gripen. This value can always be increased later if it becomes a problem)
+s_L = 5000 # total landing distance 
 s_a = 450 # ground clearance distance, taken from STOL requirements
 s_L_G = 349 # carrier ground roll distance for landing, assumed to be 349 ft
 F_hook = 120000
 
 # weight estimation fixed parameters
 L_D_max=10 
-R = 700#950            # nmi
+R = 950            # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7   # lb/(lbf hr) for dash, assumed to be the same as cruise
@@ -82,7 +82,7 @@ V_engage= 130 * 1.68781                 # ft/s, speed at which arrestor is engag
 
 
 # drag coefficients and factors
-CD0=0.01166                             # clean, used for cruise
+CD0=0.01036                             # clean, used for cruise
 
 W_TO = 55700
 AR_w = 2.066

@@ -55,13 +55,13 @@ print("W_payload: " + str(W_payload) + " lb")
 
 # Fixed parameters for weight estimation
 L_D_max = 10
-R = 950            # nmi
+R = 950             # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7
 v_cruise = 490      # knots
 v_dash = 560        # knots
-S_ht = 0
+S_ht = 0 
 S_vt = 45
 S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
@@ -558,7 +558,7 @@ plt.plot(S_wing_grid, T_maneuverideal, color='red', linewidth=2, linestyle='--',
 plt.plot(S_wing_grid, T_ceiling, color='darkgreen', linewidth=2, label='Ceiling (50k ft)')
 plt.plot(S_wing_grid, T_climb, color='orange', linewidth=2, label='SEROC Climb')
 plt.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeoff')
-#plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing on 3000ft Runway')
+plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing')
 plt.plot(S_W_S_array_landing_arrestor, T_grid, color='magenta', linewidth=2, label = 'Arrestor Landing')
 plt.plot(S_W_S_array_stall, T_grid, color='purple', linewidth=2, label = 'Stall')
 
