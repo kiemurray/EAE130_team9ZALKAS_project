@@ -222,8 +222,8 @@ c_vt = 0.094        # vertical tail volume coefficient
 L_vt = 14.4         # vertical tail moment arm (ft)
 
 # wing
-b_w = 39.81724        # wing span tip-to-tip (ft)
-c_w = 19.45522        # wing chord (ft)
+b_w = 41.026226        # wing span tip-to-tip (ft)
+c_w = 19.918018        # wing chord (ft)
 S_w = 685             # wing area (ft^2)
 
 # horizontal tail
@@ -240,6 +240,6 @@ Kf = 0.344      # empirical factor
 Lf = 45         # fuselage length (ft)
 Wid_fuse = 15   # maximum width of fuselage (ft)
 
-x_cg = []       # aircraft center of gravity (ft) assumed
+x_cg =  23.8094      # aircraft center of gravity (ft) assumed
 x_25MAC = []    # distance from nose to 25% MAC (ft) assumed
 

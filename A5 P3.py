@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import code_variables as cv
 
 # Unit conversions
 
@@ -147,6 +148,7 @@ def plot_Cm_vs_alpha(Cm_alpha_per_rad: float, alpha_trim_deg: float = 5.0):
     plt.axvline(alpha_trim_deg, color='gray', linestyle='--', label=f'Trim α={alpha_trim_deg}°')
     plt.xlabel(r'$\alpha$ (deg)')
     plt.ylabel(r'$C_m$')
+    plt.xlim(-5,15)
     plt.title(rf'Cm vs $\alpha$  |  $Cm_{{\alpha}}$ = {per_rad_to_per_deg(Cm_alpha_per_rad):.4f} /deg')    
     plt.legend(loc='upper right')
     plt.grid(True)
@@ -170,6 +172,7 @@ def plot_Cn_vs_beta(Cn_beta_per_rad: float):
     plt.ylabel(r'$C_n$')
     plt.title(rf'$C_n$ vs $\beta$  |  $Cn_{{\beta}}$ = {per_rad_to_per_deg(Cn_beta_per_rad):.4f} /deg')
     plt.legend(loc='upper left')
+    plt.xlim(-30,30)
     plt.grid(True)
     plt.tight_layout()
     plt.show()
@@ -180,20 +183,20 @@ if __name__ == "__main__":
 
    
     # OpenVSP geometry (MAINWING) 
-    S = 684.1245
-    b = 45.3
-    c = 13  # MAC length
+    S = cv.S_w
+    b = cv.b_w
+    c = cv.c_w # MAC length
     AR = b**2 / S
 
     # Absolute coordinates from OpenVSP:
-    x_wing_le_abs = 17.810   # wing XLoc from your earlier XForm 
-    x_cg_abs = 22.505        # your actual CG (absolute)
+    x_wing_le_abs = 17.815   # wing XLoc from your earlier XForm 
+    x_cg_abs = cv.x_cg       # your actual CG (absolute)
 
     # Convert CG to wing-LE datum (so x=0 at wing LE)
     x_cg = x_cg_abs - x_wing_le_abs  # = 3.878...
 
     # Wing-body AC assumption (subsonic): ~ 25% MAC from wing LE
-    x_le_mac_abs = 19.2  # e.g. might be ~24-26 ft aft of nose
+    x_le_mac_abs = 24.29125  # e.g. might be ~24-26 ft aft of nose
     x_ac_abs = x_le_mac_abs + 0.25 * c
 
     # Then convert to wing-LE datum:
@@ -226,8 +229,8 @@ if __name__ == "__main__":
    
     # OpenVSP geometry (VERTICAL TAIL / Stabilators)
     # From tail XForm + Plan:
-    XLoc_v_abs = 31.746
-    MAC_v = 9.40923
+    XLoc_v_abs = 35.781
+    MAC_v = 9.218
 
     # Tail AC approx at quarter-chord
     x_ac_v_abs = XLoc_v_abs + 0.25 * MAC_v
@@ -247,7 +250,7 @@ if __name__ == "__main__":
     Cn_beta_wf = 0.0  # per rad
 
     # Vertical tail geometry (from OpenVSP)
-    AR_v = 1.28
+    AR_v = 1.84969
     CL_alpha_v = CL_alpha_low_AR(AR_v)
     # Solve for Sv and plot Cn vs beta
     #Beta is just wind coming from the right or left, Positive B = right, negative B = left
