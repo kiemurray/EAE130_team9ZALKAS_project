@@ -180,39 +180,39 @@ W_S_landing56lb /= wf_landing
 
 
 
-# PLOTS
-plt.figure(figsize=(12, 8))
-plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
-plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
-#plt.axvline(W_S_landing_runway, color='magenta', linestyle='--', linewidth=2, label='Landing (3000ft Runway)')
-plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
-plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
-plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
-plt.plot(W_S, T_W_dashSLideal, color='cyan', linestyle='--', linewidth=2, label='Dash SL Ideal (M0.9)')
-plt.plot(W_S, T_W_dash30, color='limegreen',  linewidth=2, label='Dash 30k ft (M1.6)')
-plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8, label='Dash 30k ft Ideal (M2.0)')
-plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
-plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
-diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-plt.plot( (56411.39/675), (22000*2/56411.39), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
-plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
-plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
-design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
+# # PLOTS
+# plt.figure(figsize=(12, 8))
+# plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
+# plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
+# #plt.axvline(W_S_landing_runway, color='magenta', linestyle='--', linewidth=2, label='Landing (3000ft Runway)')
+# plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
+# plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
+# plt.plot(W_S, T_W_dashSL, color='cyan', linewidth=2, label='Dash SL (M0.85)')
+# plt.plot(W_S, T_W_dashSLideal, color='cyan', linestyle='--', linewidth=2, label='Dash SL Ideal (M0.9)')
+# plt.plot(W_S, T_W_dash30, color='limegreen',  linewidth=2, label='Dash 30k ft (M1.6)')
+# plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8, label='Dash 30k ft Ideal (M2.0)')
+# plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
+# plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
+# diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
+# plt.plot( (56411.39/675), (22000*2/56411.39), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
+# plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
+# plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
+# design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
 
-plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
-                 where=(W_S <= W_S_stall), 
-                 color='yellow', 
-                 alpha=0.3, 
-                 zorder=1,
-                 label='Design Window')
-plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=18)
-plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
-plt.title('Aircraft Constraint Diagram', fontsize=20)
-plt.grid(True, alpha=0.4)
-plt.legend(fontsize=14, loc='upper right')
+# plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
+#                  where=(W_S <= W_S_stall), 
+#                  color='yellow', 
+#                  alpha=0.3, 
+#                  zorder=1,
+#                  label='Design Window')
+# plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=18)
+# plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
+# plt.title('Aircraft Constraint Diagram', fontsize=20)
+# plt.grid(True, alpha=0.4)
+# plt.legend(fontsize=14, loc='upper right')
 
 
-plt.xlim(0, 200)
-plt.ylim(0, 2.0)  
+# plt.xlim(0, 200)
+# plt.ylim(0, 2.0)  
 
-plt.show()
+# plt.show()
