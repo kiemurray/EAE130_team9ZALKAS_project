@@ -66,11 +66,11 @@ print(f"Materials cost:           ${C_Material/1e6:.2f} million")
 #need to find RDTE and unit costs still:
 investment_cost_factor = 1.15 #from raymer, profit margin
 RDTE = C_eng_hours+ C_Flight_test + C_Dev + C_tool_hours
-flyaway_unit = (C_mfg_hours/Q + C_QC_hours/Q + Ceng_total + Cavionics + C_Material/Q) * investment_cost_factor
-#unit = (RDTE + 500*flyaway_unit)/500 *investment_cost_factor (doesnt apply for military)
+flyaway_unit = C_mfg_hours/Q + C_QC_hours/Q + Ceng_total + Cavionics + C_Material/Q 
+unit_procurement =  (C_mfg_hours/Q + C_QC_hours/Q + Ceng_total + Cavionics + C_Material/Q) * investment_cost_factor
 print(f"\nRDT&E cost:   ${RDTE/1e9:.2f} billion")
 print(f"Flyaway cost: ${flyaway_unit/1e6:.2f} million/unit")
-
+print(f"Unit procurement cost: ${unit_procurement/1e6:.2f} million/unit")
 
 
 # Per-unit cost components (including investment factor)
@@ -131,7 +131,7 @@ plt.pie(
     textprops={'fontsize':15}
 )
 
-plt.title("Per-Unit Aircraft Flyaway Cost Breakdown", fontsize=18, weight='bold')
+plt.title("Unit Procurement Cost Breakdown", fontsize=18, weight='bold')
 plt.axis('equal')
 plt.tight_layout()
 plt.show()
