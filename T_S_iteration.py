@@ -679,3 +679,11 @@ print(f"Final Fuel Weight: {fuel_weight} lbs")
 print(f"Unpacked Fuel Volume: {fuel_only_volume} ft^3")
 print(f"Fuel in Wings: {fuel_vol_wings} ft^3")
 print(f"Fuselage tank volume needed: {fuselage_tank_vol_needed} ft^3")
+
+#Stall Speed from Wing Area and Weight (ft/s)
+V_stall_clean_calc = (2*final_TOGW/(cv.rho_sl*S_ZALKAS*cv.CLmax_climb))**(1/2)
+V_stall_landing_calc = (2*final_TOGW/(cv.rho_sl*S_ZALKAS*cv.CLmax_L))**(1/2)
+#Roskam
+v_stall_Roskam=(2*final_TOGW/(cv.rho_sl*S_ZALKAS*1.1*cv.CLmax_L))**(1/2)
+print(f"V_stall (clean) (ft/s)= {V_stall_clean_calc} \nV_stall (landing) (ft/s) = {V_stall_landing_calc}\nV_stall (landing) (Roskam) (ft/s) {v_stall_Roskam}")
+print(f"V_stall (clean) = {cv.ft_s_to_knots(V_stall_clean_calc)} \nV_stall (landing) = {cv.ft_s_to_knots(V_stall_landing_calc)}\nV_stall (landing) (Roskam) (knots) = {cv.ft_s_to_knots(v_stall_Roskam)}")

@@ -108,6 +108,9 @@ ks = 1.2
 def knots_to_ft_per_s(knots):
     return knots * 1.68781
 
+def ft_s_to_knots(ft_s):
+    return ft_s / 1.68781
+
 # values at atmospheric conditions
 def atmo_vals(height):
     if height < 36152:                                                 #feet
