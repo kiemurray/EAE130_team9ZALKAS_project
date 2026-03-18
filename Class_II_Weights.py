@@ -84,14 +84,17 @@ print("Tail Weight:", W_tail, "lbf")
 
 # Fuselage Weight
 W_fuselage = (0.499 * K_dwf * W_dg**0.35 * N_z**0.25 * L_f**0.5 * D_f**0.849 * W_f**0.685)
+W_fuselage = 0.90 * W_fuselage # Advanced Composites
 print("Fuselage Weight:", W_fuselage, "lbf")
 
 # Rear Landing Gear
 W_rear_landing_gear = K_cb * K_tpg * (W_l * N_l)**0.25 * L_m**0.973
+W_rear_landing_gear = 0.95 * W_rear_landing_gear # Advanced Composites
 print("Rear Landing Gear:", W_rear_landing_gear, "lbf")
 
 # Nose Landing Gear Weight
 W_nose_landing_gear = (W_l * N_l)**0.290 * L_n**0.5 * N_nw**0.525
+W_nose_landing_gear = 0.95 * W_nose_landing_gear # Advanced Composites
 print("Nose Gear Weight:", W_nose_landing_gear, "lbf")
 
 # Engine Mounts Weight
