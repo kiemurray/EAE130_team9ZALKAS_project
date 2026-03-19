@@ -189,10 +189,12 @@ fuselage_cg = 0.26 * L_f # ft
 wing_cg = 29.9 # ft
 empennage_cg = 42.3 # ft
 engine_cg = 40.3 # ft
+engine_cooling_cg = 40.3 # ft
 inlet_cg = 26.5 # ft
 forward_gear_cg = 10.1 # ft
 rear_gear_cg = 33.8 # ft
 avionics_cg = 6.9 # ft
+AC_cg = 16.1 # ft
 AIM_120_cg = 19.8 # ft
 MK_83_cg = 19.8 # ft
 AIM_9X_cg = 30.9 # ft
@@ -232,8 +234,10 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + (rear_gear_cg * W_rear_landing_gear)
         + (forward_gear_cg * W_nose_landing_gear)
         + (engine_cg * W_engine)
+        + (engine_cooling_cg * W_engine_cooling)
         + (inlet_cg * W_inlet)
         + (avionics_cg * W_avionics)
+        + (AC_cg * W_air_conditioning)
         + (ordnance_cg * ordnance_w if inc_ordinance else 0)
         + (AIM_9X_cg * AIM_9X_w if inc_AIM_9X else 0)
         + (tank_1_cg * tank_1_w if inc_tank_1 else 0)
@@ -246,7 +250,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
     )
     denominator = (
         W_wing + W_tail + W_fuselage + W_rear_landing_gear + W_nose_landing_gear
-        + W_engine + W_inlet + W_avionics
+        + W_engine + W_engine_cooling + W_inlet + W_avionics + W_air_conditioning
         + (ordnance_w if inc_ordinance else 0)
         + (AIM_9X_w if inc_AIM_9X else 0)
         + (tank_1_w if inc_tank_1 else 0)
