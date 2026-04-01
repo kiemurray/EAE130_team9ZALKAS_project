@@ -472,6 +472,10 @@ T_grid,S_W_S_array_stall=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_w
 
 T_grid, S_W_S_array_landing_arrestor = outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing56lb)
 
+T_grid, S_W_S_array_maxloadfactor = outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_maxloadfactor)
+
+T_grid, S_W_S_array_maxloadfactorideal = outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_ideal_maxloadfactor)
+
 # Arrestor Function (I tried to plot the fully integrated function but it wouldnt converge, if anyone else wants to give it a try i can send you my derivation)
 #A = (cv.s_L_G * cv.g * cv.rho_sl * cv.CD0) / (final_TOGW * cv.wf_landing)
 #B = 0.8 * cv.F_hook
@@ -561,6 +565,8 @@ plt.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeo
 #plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing')
 plt.plot(S_W_S_array_landing_arrestor, T_grid, color='magenta', linewidth=2, label = 'Arrestor Landing')
 plt.plot(S_W_S_array_stall, T_grid, color='purple', linewidth=2, label = 'Stall')
+plt.plot(S_W_S_array_maxloadfactor, T_grid, color='brown', linewidth=2, label = 'Max Load Factor (7.0g)')
+plt.plot(S_W_S_array_maxloadfactorideal, T_grid, color='brown', linewidth=2, linestyle='--', label = 'Ideal Max Load Factor (8.0g)')
 
 S_main = np.array(S_wing_grid)
 T_top = 100000
