@@ -230,4 +230,4 @@ plt.legend(fontsize=14, loc='upper right')
 plt.xlim(0, 200)
 plt.ylim(0, 2.0)  
 
-# plt.show()
+plt.show()
