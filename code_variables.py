@@ -39,15 +39,15 @@ ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7   # lb/(lbf hr) for dash, assumed to be the same as cruise
 v_cruise = 490      # knots
 v_dash = 560        # knots (are we sure these are knots?)
-S_t_plan = 145 # horizontal tail area based on VSP design
-S_ht = S_t_plan*np.cos(np.radians(30.86))
-S_vt = S_t_plan*np.sin(np.radians(30.86))
+S_t_plan = 177 # V-tail area based on Raymer approximation
+S_ht = 109
+S_vt = 66
 S_wet_fuselage = 700
-S_ref = 955
+S_ref = 685
 num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wingtest = 946 #based on vsp design v5
+S_wingtest = 685 #based on vsp design v5
 T_0 = 23930  # Example value for thrust per engine
 
 ##-----weights-------
