@@ -279,7 +279,6 @@ S_csw = 103 # Wing Mounted Control Surface Area ft^2
 K_rht = 1.047 # Rolling Tail (Stabilators)
 H_t = 0 # Horizontal Tail Height Above Fuselage
 H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
-S_vt = 145 # Vertical Tail Area ft^2
 M = 2.0 # Mach Number
 L_t = 10.78 # Tail Length
 S_r = 120 # Rudder Area ft^2
