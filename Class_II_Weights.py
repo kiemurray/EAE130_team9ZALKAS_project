@@ -70,14 +70,9 @@ K_mc = cv.K_mc # Mission Completion Required After Failure
 R_kva = cv.R_kva # System Electrical Rating, kV * A
 L_a = cv.L_a # Electrical Routing Distance, ft
 N_gen = N_en # Number of Generators
-<<<<<<< HEAD
 W_uav = cv.W_uav # Uninstalled Avionics Weight, lbf
+W_urdr = cv.W_urdr # Uninstalled Radar Weight, lbf
 N_c = N_ci # Number of Crew
-=======
-W_urdr = 1221 # Uninstalled Radar Weight, lbf
-W_uav = 2500 - W_urdr # Uninstalled Avionics Weight, lbf
-N_c = 1 # Number of Crew
->>>>>>> 9e463b7c9a144f82eb2cd1acec840b5e613cdb86
 
 # Wing Weight
 W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
