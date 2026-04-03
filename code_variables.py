@@ -33,13 +33,13 @@ F_hook = 120000
 
 # weight estimation fixed parameters
 L_D_max=10 
-R = 950            # nmi
+R = 950             # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
-ct_dash = 0.7   # lb/(lbf hr) for dash, assumed to be the same as cruise
+ct_dash = 0.7       # lb/(lbf hr) for dash, assumed to be the same as cruise
 v_cruise = 490      # knots
 v_dash = 560        # knots (are we sure these are knots?)
-S_t_plan = 177 # V-tail area based on Raymer approximation
+S_t_plan = 177      # V-tail area based on Raymer approximation
 S_ht = 109
 S_vt = 66
 S_wet_fuselage = 700
