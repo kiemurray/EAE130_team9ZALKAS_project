@@ -64,11 +64,11 @@ F_nosewheelsF = W - F_mainwheelsF
 F_mainwheelsA = W*(x_cg_aft-x_nosewheels)/(x_mainwheels-x_nosewheels)
 F_nosewheelsA = W - F_mainwheelsA
 
-print(f"\nPercent weight on main gear: {F_mainwheels/W:.2f} lbs")
-print(f"Percent weight on nose gear: {F_nosewheels/W:.2f} lbs")
+print(f"\nPercent weight on main gear: {(F_mainwheels/W)*100:.2f} %")
+print(f"Percent weight on nose gear: {(F_nosewheels/W)*100:.2f} %")
 
-print(f"\nPercent weight on main gear (fore CG): {F_mainwheelsF/W:.2f} lbs")
-print(f"Percent weight on nose gear (fore CG): {F_nosewheelsF/W:.2f} lbs")
+print(f"\nPercent weight on main gear (fore CG): {(F_mainwheelsF/W)*100:.2f} %")
+print(f"Percent weight on nose gear (fore CG): {(F_nosewheelsF/W)*100:.2f} %")
 
-print(f"\nPercent weight on main gear (aft CG): {F_mainwheelsA/W:.2f} lbs")
-print(f"Percent weight on nose gear (aft CG): {F_nosewheelsA/W:.2f} lbs")
+print(f"\nPercent weight on main gear (aft CG): {(F_mainwheelsA/W)*100:.2f} %")
+print(f"Percent weight on nose gear (aft CG): {(F_nosewheelsA/W)*100:.2f} % ")
