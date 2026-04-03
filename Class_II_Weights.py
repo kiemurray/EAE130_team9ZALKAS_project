@@ -2,6 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import code_variables as cv
 
 # All Equations used are from Raymer's section on Fighter/Attack Weights
 
@@ -14,7 +15,7 @@ N_z = 1.5 * n_z # Ultimate Load Factor
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
 S_w = 685 # Trapezoidal Wing Area ft^2
-AR = 2.46 # Aspect Ratio
+AR = cv.AR_w # Aspect Ratio
 tc_root = 0.06 # t/c ratio at root chord
 taper_ratio = 0.295 # Taper Ratio
 wing_sweep = 45 # Wing Sweep at 25% MAC
@@ -41,8 +42,8 @@ N_l = 1.5 * N_gear # Ultimate Landing Load Factor
 L_m = 48 # Length of Landing Gear, in.
 L_n = 48 # Length of Nose Gear, in.
 N_nw = 2 # Number of Nose Wheels
-N_en = 2 # Number of Engines
-T = 44000 # Total Engine Thrust
+N_en = cv.num_engines # Number of Engines
+T = cv.T_0 * N_en # Total Engine Thrust
 S_fw = 45 # Firewall Surface Area, ft^2 (discuss estimation later)
 W_en = 2445 # Engine Weight, each, lbf
 K_vg = 1.62 # Variable Inlet Geometry
@@ -62,7 +63,7 @@ SFC = 1.85 # SFC at max thrust
 S_cs = 223 # Total Area of Flight Control Surfaces
 N_s = 10 # Number of Flight Control Surfaces
 N_c = 6 # Number of Functions Performed By Controls (4-7)
-N_ci = 1.0 # Single Pilot
+N_ci = cv.num_pilot # Single Pilot
 K_vsh = 1.0 # Non-Variable Sweep Wing
 N_u = 10 # Number of Hydraulic Utility Functions (5-15)
 K_mc = 1.45 # Mission Completion Required After Failure
@@ -70,7 +71,7 @@ R_kva = 160 # System Electrical Rating, kV * A
 L_a = 35 # Electrical Routing Distance, ft
 N_gen = N_en # Number of Generators
 W_uav = 2500 # Uninstalled Avionics Weight, lbf
-N_c = 1 # Number of Crew
+N_c = N_ci # Number of Crew
 
 # Wing Weight
 W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
