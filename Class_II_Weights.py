@@ -69,7 +69,8 @@ K_mc = 1.45 # Mission Completion Required After Failure
 R_kva = 160 # System Electrical Rating, kV * A
 L_a = 35 # Electrical Routing Distance, ft
 N_gen = N_en # Number of Generators
-W_uav = 2500 # Uninstalled Avionics Weight, lbf
+W_urdr = 1221 # Uninstalled Radar Weight, lbf
+W_uav = 2500 - W_urdr # Uninstalled Avionics Weight, lbf
 N_c = 1 # Number of Crew
 
 # Wing Weight
@@ -158,6 +159,10 @@ print(f"Hydraulics Weight: {W_hydraulics} lbf")
 W_electrical = 172.2 * K_mc * R_kva**0.152 * N_c**0.10 * L_a**0.10 * N_gen**0.091
 print(f"Electrical System Weight: {W_electrical} lbf")
 
+# Sensor Weight
+W_radar = 2.117 * W_urdr**0.933
+print(f"Radar Weight: {W_radar} lbf")
+
 # Avionics Weight
 W_avionics = 2.117 * W_uav**0.933
 print(f"Avionics Weight: {W_avionics} lbf")
@@ -179,7 +184,7 @@ W_empty = (W_wing + W_tail + W_fuselage + W_rear_landing_gear + W_nose_landing_g
          W_engine_mounts + W_firewall + W_engine_section + W_inlet +
          W_tailpipe + W_engine_cooling + W_oil_cooling + W_engine_controls + W_starter +
          W_fuel_system + W_flight_controls + W_instruments + W_hydraulics + W_electrical +
-         W_avionics + W_furnishings + W_air_conditioning + W_handling_gear + W_engine)
+         W_avionics + W_radar + W_furnishings + W_air_conditioning + W_handling_gear + W_engine)
 print(f"Empty Weight: {W_empty} lbf")
 
 
@@ -193,7 +198,8 @@ engine_cooling_cg = 40.3 # ft
 inlet_cg = 26.5 # ft
 forward_gear_cg = 10.1 # ft
 rear_gear_cg = 33.8 # ft
-avionics_cg = 6.9 # ft
+radar_cg = 6.9 # ft
+avionics_cg = 16.9 # ft
 AC_cg = 16.1 # ft
 AIM_120_cg = 19.8 # ft
 MK_83_cg = 19.8 # ft
@@ -236,6 +242,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + (engine_cg * W_engine)
         + (engine_cooling_cg * W_engine_cooling)
         + (inlet_cg * W_inlet)
+        + (radar_cg * W_radar)
         + (avionics_cg * W_avionics)
         + (AC_cg * W_air_conditioning)
         + (ordnance_cg * ordnance_w if inc_ordinance else 0)
@@ -250,7 +257,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
     )
     denominator = (
         W_wing + W_tail + W_fuselage + W_rear_landing_gear + W_nose_landing_gear
-        + W_engine + W_engine_cooling + W_inlet + W_avionics + W_air_conditioning
+        + W_engine + W_engine_cooling + W_inlet + W_avionics + W_radar + W_air_conditioning
         + (ordnance_w if inc_ordinance else 0)
         + (AIM_9X_w if inc_AIM_9X else 0)
         + (tank_1_w if inc_tank_1 else 0)
