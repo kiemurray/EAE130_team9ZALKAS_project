@@ -74,40 +74,42 @@ W_uav = cv.W_uav # Uninstalled Avionics Weight, lbf
 W_urdr = cv.W_urdr # Uninstalled Radar Weight, lbf
 N_c = N_ci # Number of Crew
 
-# Wing Weight
+
+
+# Wing Weight (Raymer Eq 15.1)
 W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
 W_Wing = 0.85 * W_wing # Advanced Composites
 print("Wing Weight: ", W_wing, "lbf")
 
-# Vertical Tail Weight
+# Vertical Tail Weight (Raymer Eq 15.3)
 W_tail = (0.452 * K_rht * (1 + H_t/H_v)**0.5 * (W_dg * N_zv)**0.488 * S_vt**0.718 * M**0.341 * L_t**(-1.0) * (1 + S_r/S_vt)**0.348 * AR_vt**0.223 * (1 + taper_ratio_vt)**0.25 * np.cos(np.radians(sweep_vt))**(-0.323))
 W_tail = 0.83 * W_tail # Advanced Composites
 print("Tail Weight:", W_tail, "lbf")
 
-# Fuselage Weight
+# Fuselage Weight (Raymer Eq 15.4)
 W_fuselage = (0.499 * K_dwf * W_dg**0.35 * N_z**0.25 * L_f**0.5 * D_f**0.849 * W_f**0.685)
 W_fuselage = 0.90 * W_fuselage # Advanced Composites
 print("Fuselage Weight:", W_fuselage, "lbf")
 
-# Rear Landing Gear
+# Rear Landing Gear (Raymer Eq 15.5)
 W_rear_landing_gear = K_cb * K_tpg * (W_l * N_l)**0.25 * L_m**0.973
 W_rear_landing_gear = 0.95 * W_rear_landing_gear # Advanced Composites
 print("Rear Landing Gear:", W_rear_landing_gear, "lbf")
 
-# Nose Landing Gear Weight
+# Nose Landing Gear Weight (Raymer Eq 15.6)
 W_nose_landing_gear = (W_l * N_l)**0.290 * L_n**0.5 * N_nw**0.525
 W_nose_landing_gear = 0.95 * W_nose_landing_gear # Advanced Composites
 print("Nose Gear Weight:", W_nose_landing_gear, "lbf")
 
-# Engine Mounts Weight
+# Engine Mounts Weight (Raymer Eq 15.7)
 W_engine_mounts = 0.013 * N_en**0.795 * T**0.579 * N_z
 print(f"Engine Mounts Weight: {W_engine_mounts} lbf")
 
-# Firewall Weight
+# Firewall Weight (Raymer Eq 15.8)
 W_firewall = 1.13 * S_fw
 print(f"Firewall Weight: {W_firewall} lbf")
 
-# Engine Section Weight
+# Engine Section Weight (Raymer Eq 15.9)
 W_engine_section = 0.01 * W_en**0.717 * N_en * N_z
 print(f"Engine Section Weight: {W_engine_section} lbf")
 
@@ -115,24 +117,24 @@ print(f"Engine Section Weight: {W_engine_section} lbf")
 W_engine = N_en * W_en
 print("Total Engine Weight:", W_engine, "lbf")
 
-# Air Induction System Weight
+# Air Induction System Weight (Raymer Eq 15.10)
 W_inlet = 13.29 * K_vg * L_d**0.643 * K_d**0.182 * N_en**1.498 * (L_s/L_d)**(-0.373) * D_e
 W_inlet = 0.85 * W_inlet # Advanced Composites
 print(f"Air Induction System Weight: {W_inlet} lbf")
 
-# Tailpipe Weight
+# Tailpipe Weight (Raymer Eq 15.11)
 W_tailpipe = 3.5 * D_e * L_tp * N_en
 print(f"Tailpipe Weight: {W_tailpipe} lbf")
 
-# Engine Cooling Weight
+# Engine Cooling Weight (Raymer Eq 15.12)
 W_engine_cooling = 4.55 * D_e * L_sh * N_en
 print(f"Engine Cooling Weight: {W_engine_cooling} lbf")
 
-# Oil Cooling Weight
+# Oil Cooling Weight (Raymer Eq 15.13)
 W_oil_cooling = 37.82 * N_en**1.023
 print(f"Oil Cooling Weight: {W_oil_cooling} lbf")
 
-# Engine Controls Weight
+# Engine Controls Weight (Raymer Eq 15.14)
 W_engine_controls = 10.5 * N_en**1.008 * L_ec**0.222
 print(f"Engine Controls Weight: {W_engine_controls} lbf")
 

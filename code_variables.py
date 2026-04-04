@@ -307,3 +307,28 @@ n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
 S_w = 685 # Trapezoidal Wing Area ft^2
 
+
+## -------- Updated Fuel Fractions -------- ##
+
+#Sam is messing with fuel fractions
+#If this works properly I will move to another file :)
+
+#GE F414 Specs
+c_t_military = 0.724 #lb/(lbf hr)
+c_t_AB = 1.85 #lb/(lbf hr)
+T_idle = 0.05*T_0 #idle thrust
+
+
+
+#Updated Fuel Fractions
+def fuelFraction(t,c_t,T_A_initial,W_initial): #time in hours
+    #t is time during a mission segment (assume constant T/W)
+    #Break up segments into small chunks to assume constant T/W
+
+    return 1-t*c_t*(T_A_initial/W_initial)
+
+#wf_warmup = fuelFraction(0.25,c_t_military,T_idle,W_TO)
+#wf_taxi = 0 #warmup includes warmup and taxi
+#wf_takeoff = fuelFraction(1/60,c_t_AB,T_0,W_TO)
+
+## ---------------------------------------- ##
