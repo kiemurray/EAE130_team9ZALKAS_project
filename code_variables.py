@@ -11,6 +11,33 @@ CLmax_TO = 1.7 # maximum lift coefficient for takeoff
 CLmax_L = 2.1 # maximum lift coefficient for landing
 CLmax_climb = CLmax_TO # maximum lift coefficient for climb, assumed to be the same as takeoff
 
+# 2/25 Lab Code Variables
+# geometric variables
+
+# empennage sizing
+# vertical tail
+c_vt = 0.094        # vertical tail volume coefficient
+L_vt = 14.4         # vertical tail moment arm (ft)
+
+# wing
+b_w = 41.026226        # wing span tip-to-tip (ft)
+c_w = 19.918018        # wing chord (ft)
+S_w = 685             # wing area (ft^2)
+
+# horizontal tail
+c_ht = 0.3        # horizontal tail volume coefficient
+L_ht = 15.4       # horizontal tail moment arm (ft)
+
+lambda_w = 40   # Sweep angle of wing (degrees)
+lambda_h = 45   # Sweep angle of horizontal tail (degrees)
+
+eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
+eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
+
+Kf = 0.344      # empirical factor
+Lf = 45         # fuselage length (ft)
+Wid_fuse = 14.6   # maximum width of fuselage (ft)
+
 # weight fractions
 wf_cr = 0.93148704              # weight fraction for cruise
 wf_climb =  0.970299            # weight fraction for climb
@@ -49,6 +76,9 @@ num_engines = 2  # Example number of engines
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
 S_wingtest = 685 #based on vsp design v5
 T_0 = 23930  # Example value for thrust per engine
+T_0_mil = 13000
+c_t_military = 0.724 #lb/(lbf hr)
+c_t_AB = 1.85 #lb/(lbf hr)
 
 ##-----weights-------
 num_pilot = 1
@@ -93,6 +123,9 @@ n_eng = 2
 # oswald efficiency factors for different configurations
 e_to = 0.775                            #takeoff
 e_cr = 0.82                             #cruise
+e_cr_estimate = 4.61*(1-0.045*AR_w**0.68)*(np.cos(lambda_w*np.pi/180)**0.15)-3.1 #Raymer equation 12.49
+
+print("e_cruise guess: ",e_cr,"\ne_cruiseEstimate: ",e_cr_estimate)
 e_land = 0.725                          #landing
 
 # induced drag factors for different configurations
@@ -135,6 +168,7 @@ rho_20, a_20 = atmo_vals(20000)[:2]
 rho_10, a_10 = atmo_vals(10000)[:2]
 rho_sl, a_SL = atmo_vals(0)[:2]
 rho_to = 0.00224392    
+rho_cruise = rho_40
 
 #fuel volume things
 rho_jp5 = 51.1              #lb/ft^3   
@@ -217,32 +251,7 @@ W_S_stall = 0.5 * rho_sl * V_stall**2 * CLmax_L  # wing loading at stall
 W_S_TO = 0.5 * rho_sl * V_TO**2 * CLmax_TO       # wing loading at takeoff
 W_S_landing_56lb= 0.5 * rho_sl * V_landing**2 * CLmax_L/wf_landing   # wing loading at speed where 56 lb of thrust is required for maneuvering constraint
 
-# 2/25 Lab Code Variables
-# geometric variables
 
-# empennage sizing
-# vertical tail
-c_vt = 0.094        # vertical tail volume coefficient
-L_vt = 14.4         # vertical tail moment arm (ft)
-
-# wing
-b_w = 41.026226        # wing span tip-to-tip (ft)
-c_w = 19.918018        # wing chord (ft)
-S_w = 685             # wing area (ft^2)
-
-# horizontal tail
-c_ht = 0.3        # horizontal tail volume coefficient
-L_ht = 15.4       # horizontal tail moment arm (ft)
-
-lambda_w = 40   # Sweep angle of wing (degrees)
-lambda_h = 45   # Sweep angle of horizontal tail (degrees)
-
-eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
-eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
-
-Kf = 0.344      # empirical factor
-Lf = 45         # fuselage length (ft)
-Wid_fuse = 14.6   # maximum width of fuselage (ft)
 
 x_cg =  23.8094      # aircraft center of gravity (ft) assumed
 
@@ -314,13 +323,12 @@ S_w = 685 # Trapezoidal Wing Area ft^2
 #If this works properly I will move to another file :)
 
 #GE F414 Specs
-c_t_military = 0.724 #lb/(lbf hr)
-c_t_AB = 1.85 #lb/(lbf hr)
+
 T_idle = 0.05*T_0 #idle thrust
 
 
 
-#Updated Fuel Fractions
+#Updated Fuel Fractions (From Raymer Ch 19)
 def fuelFraction(t,c_t,T_A_initial,W_initial): #time in hours
     #t is time during a mission segment (assume constant T/W)
     #Break up segments into small chunks to assume constant T/W
@@ -328,7 +336,17 @@ def fuelFraction(t,c_t,T_A_initial,W_initial): #time in hours
     return 1-t*c_t*(T_A_initial/W_initial)
 
 #wf_warmup = fuelFraction(0.25,c_t_military,T_idle,W_TO)
-#wf_taxi = 0 #warmup includes warmup and taxi
-#wf_takeoff = fuelFraction(1/60,c_t_AB,T_0,W_TO)
+#wf_taxi = 1 #warmup includes warmup and taxi
+wf_takeoff = fuelFraction(5/60,c_t_military,2*T_0_mil,W_TO)
+#wf_climb = np.exp()
+W_cruise_i = W_TO*wf_warmup*wf_taxi*wf_climb
+print("W_cruise_initial: ",W_cruise_i,"lbf")
+print("Air density at 40,000 ft: ",rho_cruise,"slugs/ft^3")
+print("Cruise induced drag coefficient: ",k_cr)
+CL_bestRange = np.sqrt(CD0/(3*k_cr))
+print("C_L_bestRange: ",CL_bestRange)
+V_bestRange = np.sqrt((2*W_cruise_i/(rho_cruise*S_w*CL_bestRange))) #ft/s
+print("V_bestRange:",V_bestRange,"ft/s\nV_bestRange: ",V_bestRange/1.688,"kts = Mach",(V_bestRange/968),"Wf_takeoff",wf_takeoff)
+
 
 ## ---------------------------------------- ##
