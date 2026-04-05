@@ -275,8 +275,8 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
     print(f"{label} CG: {cg:.2f} ft  |  Weight: {denominator:.0f} lbf")
     return cg, denominator
 
-MAC_LE = 17.9
-MAC_len = 19.91
+MAC_LE = 18.318175   # MAC x location
+MAC_len = 17.68470 # MAC length
 
 def ft_to_pct_MAC(cg_ft):
     return ((cg_ft - MAC_LE) / MAC_len) * 100
