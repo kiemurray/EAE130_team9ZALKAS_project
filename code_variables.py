@@ -115,6 +115,7 @@ V_engage= 130 * 1.68781                 # ft/s, speed at which arrestor is engag
 # drag coefficients and factors
 CD0=0.01036                             # clean, used for cruise
 
+
 W_TO = 55700
 AR_w = 2.46
 AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
@@ -317,6 +318,41 @@ N_zv = 1.5 * n_zv # Vertical Tail Limit Load
 S_w = 685 # Trapezoidal Wing Area ft^2
 
 
+## -------- Performance and Cruise Metrics -------- ##
+
+
+#Maximize L/D for a given weight
+def get_V_MinThrust(Weight,Altitude,wingArea,K_induced,C_D_0): #also minimum drag
+    rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
+    V_minThrust = np.sqrt((2*Weight/(rho*wingArea))*np.sqrt(K_induced/C_D_0))
+    return V_minThrust
+
+def get_C_L_MinThrust(C_D_0,K_induced):
+    return np.sqrt(C_D_0/K_induced)
+
+def get_C_D_Min(C_D_0):
+    return 2*C_D_0 #It's literally that easy
+
+#Range Optimization (Raymer 17.2.5)
+def get_C_L_bestRange(C_D_0,K_induced):
+    return np.sqrt(C_D_0/(3*K_induced))
+
+def get_V_bestRange(Weight,Altitude,wingArea,K_induced,C_D_0):
+    C_L_bestRange = get_C_L_bestRange(C_D_0,K_induced)
+    rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
+    V_minThrust = np.sqrt((2*Weight/(rho*wingArea))/C_L_bestRange)
+    return V_minThrust
+
+def get_D_bestRange(C_D_0,V_bestRange,wingArea):
+    rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
+    return (((1/2)*rho*V_bestRange**2)*wingArea*(C_D_0*4/3))
+
+#This assumes that (V/C)(L/D) does not vary with weight. This is untrue
+#Use V_minThrust for range
+
+
+
+
 ## -------- Updated Fuel Fractions -------- ##
 
 #Sam is messing with fuel fractions
@@ -340,13 +376,25 @@ def fuelFraction(t,c_t,T_A_initial,W_initial): #time in hours
 wf_takeoff = fuelFraction(5/60,c_t_military,2*T_0_mil,W_TO)
 #wf_climb = np.exp()
 W_cruise_i = W_TO*wf_warmup*wf_taxi*wf_climb
-print("W_cruise_initial: ",W_cruise_i,"lbf")
-print("Air density at 40,000 ft: ",rho_cruise,"slugs/ft^3")
-print("Cruise induced drag coefficient: ",k_cr)
-CL_bestRange = np.sqrt(CD0/(3*k_cr))
-print("C_L_bestRange: ",CL_bestRange)
-V_bestRange = np.sqrt((2*W_cruise_i/(rho_cruise*S_w*CL_bestRange))) #ft/s
-print("V_bestRange:",V_bestRange,"ft/s\nV_bestRange: ",V_bestRange/1.688,"kts = Mach",(V_bestRange/968),"Wf_takeoff",wf_takeoff)
+
+def get_cruisefuelFraction(numSegments,range,W_topOfClimb,altitude,S_w,k_cr,C_D_0,C_cruise):
+    stepDistance=range/numSegments
+    weightArray=np.array([W_topOfClimb])
+    for step in range(numSegments+1):
+        V_cruise_step = get_V_bestRange(weightArray[step],altitude,S_w,k_cr,C_D_0)
+        time = stepDistance * V_cruise_step
+        T_req = get_D_bestRange(C_D_0,V_cruise_step,S_w)
+        W_fuel_burned = T_req*(time/3600)*C_cruise #need to convert to hours since specific fuel consumption in hours
+        weightArray.append(weightArray[step]-W_fuel_burned)
+
+
+
 
 
 ## ---------------------------------------- ##
+
+print("Cruise induced drag coefficient: ",k_cr)
+CL_bestRange = get_C_L_bestRange(CD0,k_cr)
+print("C_L_bestRange: ",CL_bestRange)
+V_bestRange = get_V_bestRange(W_cruise_i,40000,S_w,k_cr,CD0) #ft/s
+print("V_bestRange:",V_bestRange,"ft/s\nV_bestRange: ",V_bestRange/1.688,"kts = Mach",(V_bestRange/968),"Wf_takeoff",wf_takeoff)
