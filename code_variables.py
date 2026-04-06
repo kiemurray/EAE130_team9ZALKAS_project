@@ -77,8 +77,8 @@ num_engines = 2  # Example number of engines
 S_wingtest = 685 #based on vsp design v5
 T_0 = 23930  # Example value for thrust per engine
 T_0_mil = 13000
-c_t_military = 0.724 #lb/(lbf hr)
-c_t_AB = 1.85 #lb/(lbf hr)
+ct_cruise = 0.724 #lb/(lbf hr)
+ct_AB = 1.85 #lb/(lbf hr)
 
 ##-----weights-------
 num_pilot = 1
@@ -343,7 +343,7 @@ def get_V_bestRange(Weight,Altitude,wingArea,K_induced,C_D_0):
     V_minThrust = np.sqrt((2*Weight/(rho*wingArea))/C_L_bestRange)
     return V_minThrust
 
-def get_D_bestRange(C_D_0,V_bestRange,wingArea):
+def get_D_bestRange(C_D_0,V_bestRange,wingArea,Altitude):
     rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
     return (((1/2)*rho*V_bestRange**2)*wingArea*(C_D_0*4/3))
 
@@ -373,19 +373,29 @@ def fuelFraction(t,c_t,T_A_initial,W_initial): #time in hours
 
 #wf_warmup = fuelFraction(0.25,c_t_military,T_idle,W_TO)
 #wf_taxi = 1 #warmup includes warmup and taxi
-wf_takeoff = fuelFraction(5/60,c_t_military,2*T_0_mil,W_TO)
+wf_takeoff = fuelFraction(5/60,ct_cruise,2*T_0_mil,W_TO)
 #wf_climb = np.exp()
 W_cruise_i = W_TO*wf_warmup*wf_taxi*wf_climb
 
-def get_cruisefuelFraction(numSegments,range,W_topOfClimb,altitude,S_w,k_cr,C_D_0,C_cruise):
-    stepDistance=range/numSegments
-    weightArray=np.array([W_topOfClimb])
-    for step in range(numSegments+1):
+def get_cruisefuelFraction(numSegments,range_nm,W_topOfClimb,altitude,S_w,k_cr,C_D_0,C_cruise):
+    #range in nm
+    stepDistance=range_nm/numSegments
+    print("step distance: ",stepDistance,"nm")
+    weightArray=[W_topOfClimb]
+    velocityArray=[]
+    for step in range(numSegments):
         V_cruise_step = get_V_bestRange(weightArray[step],altitude,S_w,k_cr,C_D_0)
-        time = stepDistance * V_cruise_step
-        T_req = get_D_bestRange(C_D_0,V_cruise_step,S_w)
+        time = 6076.12 * stepDistance / V_cruise_step #convert distance in nm to feet
+        print("time for step",step,": ",time,"sec")
+        T_req = get_D_bestRange(C_D_0,V_cruise_step,S_w,altitude)
+        print("Thrust Required",T_req,"lbf")
         W_fuel_burned = T_req*(time/3600)*C_cruise #need to convert to hours since specific fuel consumption in hours
         weightArray.append(weightArray[step]-W_fuel_burned)
+        velocityArray.append(V_cruise_step)
+    print("length of weightarray: ",len(weightArray))
+    print("Weight Array:        Velocity Array")
+    for i in range(len(velocityArray)):
+        print(weightArray[i],"lbf       ",velocityArray[i],"ft/s")
 
 
 
@@ -398,3 +408,4 @@ CL_bestRange = get_C_L_bestRange(CD0,k_cr)
 print("C_L_bestRange: ",CL_bestRange)
 V_bestRange = get_V_bestRange(W_cruise_i,40000,S_w,k_cr,CD0) #ft/s
 print("V_bestRange:",V_bestRange,"ft/s\nV_bestRange: ",V_bestRange/1.688,"kts = Mach",(V_bestRange/968),"Wf_takeoff",wf_takeoff)
+get_cruisefuelFraction(2,1000,W_cruise_i,40000,S_w,k_cr,CD0,ct_cruise)
