@@ -14,13 +14,13 @@ c_vt = cv.c_vt # vertical tail volume coefficient
 L_vt = cv.L_vt # vertical tail moment arm (ft)
 
 # given values for wing
-b_w = m_to_ft(60.9)         # wing span tip-to-tip (m) ---> (ft)
-c_w = m_to_ft(8.75)         # wing chord (ft)
-S_w = sqm_to_sqft(427.8)    # wing area (m^2) -----> (ft^2)
+b_w = m_to_ft(cv.b_w)         # wing span tip-to-tip (m) ---> (ft)
+c_w = m_to_ft(cv.c_w)         # wing chord (ft)
+S_w = sqm_to_sqft(cv.S_w)    # wing area (m^2) -----> (ft^2)
 
 # given values for horizontal tail
-c_ht = 0.891        # horizontal tail volume coefficient
-L_ht = m_to_ft(32.95)   # horizontal tail moment arm (m) ----> (ft)
+c_ht = cv.c_ht        # horizontal tail volume coefficient
+L_ht = m_to_ft(cv.L_ht)   # horizontal tail moment arm (m) ----> (ft)
 
 S_vt = cv.S_vt      # estimated vertical tail area (ft^2)
 S_ht = cv.S_ht       # estimated horizontal tail area (ft^2)

@@ -155,6 +155,18 @@ def tw_maneuverideal(WS):
     return maneuveridealTW      
 T_W_maneuver_ideal = tw_maneuverideal(W_S)
 
+# Max Load Factor
+n_max = 7 #gs
+n_max_ideal = 8
+
+def max_loadfactor_constraint (v, rho, wf, CL, n):
+    q = 0.5 * rho * v**2
+    W_S_maxloadfactor = q * CL / n
+    return  W_S_maxloadfactor / wf
+
+W_S_maxloadfactor = max_loadfactor_constraint(v_maneuver, rho_20 , mid_wf, CLmax_climb, n_max)
+W_S_ideal_maxloadfactor = max_loadfactor_constraint(v_maneuver, rho_20 , mid_wf, CLmax_climb, n_max_ideal)
+
 
 # Traditional Runway Landing
 v_engage56lb = 145                                                          # knots 
@@ -182,8 +194,10 @@ W_S_landing56lb /= wf_landing
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-plt.axvline(W_S_landing56lb, color='magenta', linewidth=2, label='Arrestor Landing')
+plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
+plt.axvline(W_S_maxloadfactor, color='brown', linewidth=2, label='Load Factor (7.0 g)')
+plt.axvline(W_S_ideal_maxloadfactor, color='brown', linestyle='--', linewidth=2, label='Ideal Load Factor (8.0 g)')
 #plt.axvline(W_S_landing_runway, color='magenta', linestyle='--', linewidth=2, label='Landing (3000ft Runway)')
 plt.plot(W_S, T_W_climb, color='orange', linewidth=2, label='Climb (SEROC)')
 plt.plot(W_S, T_W_cruise, color='blue', linewidth=2, label='Cruise (40k ft, M0.85)')
@@ -193,7 +207,8 @@ plt.plot(W_S, T_W_dash30, color='limegreen',  linewidth=2, label='Dash 30k ft (M
 plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8, label='Dash 30k ft Ideal (M2.0)')
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
-diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
+plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
+#diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
 plt.plot( (56411.39/675), (22000*2/56411.39), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')

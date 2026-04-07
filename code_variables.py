@@ -11,6 +11,33 @@ CLmax_TO = 1.7 # maximum lift coefficient for takeoff
 CLmax_L = 2.1 # maximum lift coefficient for landing
 CLmax_climb = CLmax_TO # maximum lift coefficient for climb, assumed to be the same as takeoff
 
+# 2/25 Lab Code Variables
+# geometric variables
+
+# empennage sizing
+# vertical tail
+c_vt = 0.094        # vertical tail volume coefficient
+L_vt = 14.4         # vertical tail moment arm (ft)
+
+# wing
+b_w = 41.026226        # wing span tip-to-tip (ft)
+c_w = 19.918018        # wing chord (ft)
+S_w = 685             # wing area (ft^2)
+
+# horizontal tail
+c_ht = 0.3        # horizontal tail volume coefficient
+L_ht = 15.4       # horizontal tail moment arm (ft)
+
+lambda_w = 40   # Sweep angle of wing (degrees)
+lambda_h = 45   # Sweep angle of horizontal tail (degrees)
+
+eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
+eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
+
+Kf = 0.344      # empirical factor
+Lf = 45         # fuselage length (ft)
+Wid_fuse = 14.6   # maximum width of fuselage (ft)
+
 # weight fractions
 wf_cr = 0.93148704              # weight fraction for cruise
 wf_climb =  0.970299            # weight fraction for climb
@@ -26,28 +53,32 @@ wf_descent= 0.99
 wf_middescent = 0.995
 
 # Landing Parameters
-s_L = 3000 # total landing distance (this is assuming an extremely short landing distance, something like this would be competetive with the Gripen. This value can always be increased later if it becomes a problem)
+s_L = 5000 # total landing distance 
 s_a = 450 # ground clearance distance, taken from STOL requirements
 s_L_G = 349 # carrier ground roll distance for landing, assumed to be 349 ft
 F_hook = 120000
 
 # weight estimation fixed parameters
 L_D_max=10 
-R = 700#950            # nmi
+R = 950             # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
-ct_dash = 0.7   # lb/(lbf hr) for dash, assumed to be the same as cruise
+ct_dash = 0.7       # lb/(lbf hr) for dash, assumed to be the same as cruise
 v_cruise = 490      # knots
 v_dash = 560        # knots (are we sure these are knots?)
-S_ht = 0
-S_vt = 45
+S_t_plan = 177      # V-tail area based on Raymer approximation
+S_ht = 109
+S_vt = 66
 S_wet_fuselage = 700
-S_ref = 955
+S_ref = 685
 num_engines = 2  # Example number of engines
 
 # The value we can adjust by the constraint curve. For example, if we want to be on the takeoff constraint curve, we can find the corresponding W/S and then calculate the TOGW based on that W/S and the wing area.
-S_wingtest = 946 #based on vsp design v5
+S_wingtest = 685 #based on vsp design v5
 T_0 = 23930  # Example value for thrust per engine
+T_0_mil = 13000
+ct_cruise = 0.724 #lb/(lbf hr)
+ct_AB = 1.85 #lb/(lbf hr)
 
 ##-----weights-------
 num_pilot = 1
@@ -82,16 +113,20 @@ V_engage= 130 * 1.68781                 # ft/s, speed at which arrestor is engag
 
 
 # drag coefficients and factors
-CD0=0.01166                             # clean, used for cruise
+CD0=0.01036                             # clean, used for cruise
+
 
 W_TO = 55700
-AR_w = 2.066
+AR_w = 2.46
 AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
 n_eng = 2
 
 # oswald efficiency factors for different configurations
 e_to = 0.775                            #takeoff
 e_cr = 0.82                             #cruise
+e_cr_estimate = 4.61*(1-0.045*AR_w**0.68)*(np.cos(lambda_w*np.pi/180)**0.15)-3.1 #Raymer equation 12.49
+
+print("e_cruise guess: ",e_cr,"\ne_cruiseEstimate: ",e_cr_estimate)
 e_land = 0.725                          #landing
 
 # induced drag factors for different configurations
@@ -107,6 +142,9 @@ ks = 1.2
 #knots to ft/s conversion
 def knots_to_ft_per_s(knots):
     return knots * 1.68781
+
+def ft_s_to_knots(ft_s):
+    return ft_s / 1.68781
 
 # values at atmospheric conditions
 def atmo_vals(height):
@@ -131,6 +169,7 @@ rho_20, a_20 = atmo_vals(20000)[:2]
 rho_10, a_10 = atmo_vals(10000)[:2]
 rho_sl, a_SL = atmo_vals(0)[:2]
 rho_to = 0.00224392    
+rho_cruise = rho_40
 
 #fuel volume things
 rho_jp5 = 51.1              #lb/ft^3   
@@ -213,33 +252,160 @@ W_S_stall = 0.5 * rho_sl * V_stall**2 * CLmax_L  # wing loading at stall
 W_S_TO = 0.5 * rho_sl * V_TO**2 * CLmax_TO       # wing loading at takeoff
 W_S_landing_56lb= 0.5 * rho_sl * V_landing**2 * CLmax_L/wf_landing   # wing loading at speed where 56 lb of thrust is required for maneuvering constraint
 
-# 2/25 Lab Code Variables
-# geometric variables
 
-# empennage sizing
-# vertical tail
-c_vt = 0.094        # vertical tail volume coefficient
-L_vt = 14.4         # vertical tail moment arm (ft)
 
-# wing
-b_w = 39.81724        # wing span tip-to-tip (ft)
-c_w = 19.45522        # wing chord (ft)
-S_w = 685             # wing area (ft^2)
+x_cg =  23.8094      # aircraft center of gravity (ft) assumed
 
-# horizontal tail
-c_ht = 0.3        # horizontal tail volume coefficient
-L_ht = 15.4       # horizontal tail moment arm (ft)
+## variables from Weight Class 2 Estimation
+V_t = 3127 # Total Fuel Volume, gal
+V_i = 0.75 * V_t # Integral Fuel Tank Volume, gal
+V_p = 0.25 * V_t # Self-Sealing Wing Tank Volume, gal
+N_t = 10 # Number of Tanks
+SFC = 1.85 # SFC at max thrust
+S_cs = 223 # Total Area of Flight Control Surfaces
+N_s = 10 # Number of Flight Control Surfaces
+N_c = 6 # Number of Functions Performed By Controls (4-7)
+K_vsh = 1.0 # Non-Variable Sweep Wing
+N_u = 10 # Number of Hydraulic Utility Functions (5-15)
+K_mc = 1.45 # Mission Completion Required After Failure
+R_kva = 160 # System Electrical Rating, kV * A
+L_a = 35 # Electrical Routing Distance, ft
+W_urdr = 1221 # Uninstalled Radar Weight, lbf
+W_uav = 2500 - W_urdr # Uninstalled Avionics Weight, lbf
+S_fw = 45 # Firewall Surface Area, ft^2 (discuss estimation later)
+W_en = 2445 # Engine Weight, each, lbf
+K_vg = 1.62 # Variable Inlet Geometry
+L_d = 11.23 # Duct Length, ft
+K_d = 2.6 # Duct Constant
+L_s = 11.23 # Single Duct Length, ft
+D_e = 6.68 # Engine Diameter, ft
+L_tp = 2.5 # Length of Tailpipe, ft
+L_sh = 12.83 # Length of Engine Shroud, ft
+L_ec = 21.6 # Length From Engine Front to Cockpit, ft
+T_e = 22000 # Thrust per Engine, lbf
+tc_root = 0.06 # t/c ratio at root chord
+taper_ratio = 0.295 # Taper Ratio
+wing_sweep = 45 # Wing Sweep at 25% MAC
+S_csw = 103 # Wing Mounted Control Surface Area ft^2
+K_rht = 1.047 # Rolling Tail (Stabilators)
+H_t = 0 # Horizontal Tail Height Above Fuselage
+H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
+M = 2.0 # Mach Number
+L_t = 10.78 # Tail Length
+S_r = 120 # Rudder Area ft^2
+AR_vt = 1.85 # Vertical Tail Aspect Ratio
+taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
+sweep_vt = 50 # Vertical Tail Sweep
+K_dwf = 1 # For Non-Delta Wing Aircraft
+L_f = 47.5 # Fuselage Length, ft
+D_f = 6.4 # Fuselage Depth, ft
+W_f = 14.6 # Fuselage Width, ft
+K_cb = 1.0 # Non Cross Beam
+K_tpg = 1.0 # Non-Tripod Landing Gear
+W_l = 34000 # Landing Gross Weight, lbf
+N_gear = 3.8 # Landing Limit Load (Raymer Assumption)
+N_l = 1.5 * N_gear # Ultimate Landing Load Factor
+L_m = 48 # Length of Landing Gear, in.
+L_n = 48 # Length of Nose Gear, in.
+N_nw = 2 # Number of Nose Wheels
+K_dw = 1 # Non-Delta Wing
+K_vs = 1.0 # non-variable sweep
+W_dg = 56631 # Design Gross Weight (lbf)
+n_z = 8.0 # limit load, desired by RFP
+N_z = 1.5 * n_z # Ultimate Load Factor
+n_zv = 3.0 # Vertical Tail Limit Load (estimated)
+N_zv = 1.5 * n_zv # Vertical Tail Limit Load
+S_w = 685 # Trapezoidal Wing Area ft^2
 
-lambda_w = 40   # Sweep angle of wing (degrees)
-lambda_h = 45   # Sweep angle of horizontal tail (degrees)
 
-eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
-eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
+## -------- Performance and Cruise Metrics -------- ##
 
-Kf = 0.344      # empirical factor
-Lf = 45         # fuselage length (ft)
-Wid_fuse = 15   # maximum width of fuselage (ft)
 
-x_cg = []       # aircraft center of gravity (ft) assumed
-x_25MAC = []    # distance from nose to 25% MAC (ft) assumed
+#Maximize L/D for a given weight
+def get_V_MinThrust(Weight,Altitude,wingArea,K_induced,C_D_0): #also minimum drag
+    rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
+    V_minThrust = np.sqrt((2*Weight/(rho*wingArea))*np.sqrt(K_induced/C_D_0))
+    return V_minThrust
 
+def get_C_L_MinThrust(C_D_0,K_induced):
+    return np.sqrt(C_D_0/K_induced)
+
+def get_C_D_Min(C_D_0):
+    return 2*C_D_0 #It's literally that easy
+
+#Range Optimization (Raymer 17.2.5)
+def get_C_L_bestRange(C_D_0,K_induced):
+    return np.sqrt(C_D_0/(3*K_induced))
+
+def get_V_bestRange(Weight,Altitude,wingArea,K_induced,C_D_0):
+    C_L_bestRange = get_C_L_bestRange(C_D_0,K_induced)
+    rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
+    V_minThrust = np.sqrt((2*Weight/(rho*wingArea))/C_L_bestRange)
+    return V_minThrust
+
+def get_D_bestRange(C_D_0,V_bestRange,wingArea,Altitude):
+    rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
+    return (((1/2)*rho*V_bestRange**2)*wingArea*(C_D_0*4/3))
+
+#This assumes that (V/C)(L/D) does not vary with weight. This is untrue
+#Use V_minThrust for range
+
+
+
+
+## -------- Updated Fuel Fractions -------- ##
+
+#Sam is messing with fuel fractions
+#If this works properly I will move to another file :)
+
+#GE F414 Specs
+
+T_idle = 0.05*T_0 #idle thrust
+
+
+
+#Updated Fuel Fractions (From Raymer Ch 19)
+def fuelFraction(t,c_t,T_A_initial,W_initial): #time in hours
+    #t is time during a mission segment (assume constant T/W)
+    #Break up segments into small chunks to assume constant T/W
+
+    return 1-t*c_t*(T_A_initial/W_initial)
+
+#wf_warmup = fuelFraction(0.25,c_t_military,T_idle,W_TO)
+#wf_taxi = 1 #warmup includes warmup and taxi
+wf_takeoff = fuelFraction(5/60,ct_cruise,2*T_0_mil,W_TO)
+#wf_climb = np.exp()
+W_cruise_i = W_TO*wf_warmup*wf_taxi*wf_climb
+
+def get_cruisefuelFraction(numSegments,range_nm,W_topOfClimb,altitude,S_w,k_cr,C_D_0,C_cruise):
+    #range in nm
+    stepDistance=range_nm/numSegments
+    print("step distance: ",stepDistance,"nm")
+    weightArray=[W_topOfClimb]
+    velocityArray=[]
+    for step in range(numSegments):
+        V_cruise_step = get_V_bestRange(weightArray[step],altitude,S_w,k_cr,C_D_0)
+        time = 6076.12 * stepDistance / V_cruise_step #convert distance in nm to feet
+        print("time for step",step,": ",time,"sec")
+        T_req = get_D_bestRange(C_D_0,V_cruise_step,S_w,altitude)
+        print("Thrust Required",T_req,"lbf")
+        W_fuel_burned = T_req*(time/3600)*C_cruise #need to convert to hours since specific fuel consumption in hours
+        weightArray.append(weightArray[step]-W_fuel_burned)
+        velocityArray.append(V_cruise_step)
+    print("length of weightarray: ",len(weightArray))
+    print("Weight Array:        Velocity Array")
+    for i in range(len(velocityArray)):
+        print(weightArray[i],"lbf       ",velocityArray[i],"ft/s")
+
+
+
+
+
+## ---------------------------------------- ##
+
+print("Cruise induced drag coefficient: ",k_cr)
+CL_bestRange = get_C_L_bestRange(CD0,k_cr)
+print("C_L_bestRange: ",CL_bestRange)
+V_bestRange = get_V_bestRange(W_cruise_i,40000,S_w,k_cr,CD0) #ft/s
+print("V_bestRange:",V_bestRange,"ft/s\nV_bestRange: ",V_bestRange/1.688,"kts = Mach",(V_bestRange/968),"Wf_takeoff",wf_takeoff)
+get_cruisefuelFraction(2,1000,W_cruise_i,40000,S_w,k_cr,CD0,ct_cruise)

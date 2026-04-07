@@ -55,13 +55,13 @@ print("W_payload: " + str(W_payload) + " lb")
 
 # Fixed parameters for weight estimation
 L_D_max = 10
-R = 950            # nmi
+R = 950             # nmi
 E = 20 / 60         # min --> hr
 ct_cruise = 0.7     # lb/(lbf hr)
 ct_dash = 0.7
 v_cruise = 490      # knots
 v_dash = 560        # knots
-S_ht = 0
+S_ht = 0 
 S_vt = 45
 S_wet_fuselage = 700
 num_engines = 2  # Example number of engines
@@ -472,6 +472,10 @@ T_grid,S_W_S_array_stall=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_w
 
 T_grid, S_W_S_array_landing_arrestor = outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_landing56lb)
 
+T_grid, S_W_S_array_maxloadfactor = outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_maxloadfactor)
+
+T_grid, S_W_S_array_maxloadfactorideal = outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_ideal_maxloadfactor)
+
 # Arrestor Function (I tried to plot the fully integrated function but it wouldnt converge, if anyone else wants to give it a try i can send you my derivation)
 #A = (cv.s_L_G * cv.g * cv.rho_sl * cv.CD0) / (final_TOGW * cv.wf_landing)
 #B = 0.8 * cv.F_hook
@@ -545,22 +549,24 @@ S_F15C = 608 #ft^2
 
 
 plt.figure(figsize=(16,9))
-plt.title('Converged T vs S',fontsize=28)
-plt.xlabel("Wing Area S (ft²)",fontsize=28)
-plt.ylabel("Total Thrust T (lbf)",fontsize=28)
+plt.title('Converged T vs S',fontsize=25)
+plt.xlabel("Wing Area S (ft²)",fontsize=25)
+plt.ylabel("Total Thrust T (lbf)",fontsize=25)
 plt.plot(S_wing_grid, T_cruise, color='blue', linewidth=2, label='Cruise')
-plt.plot(S_wing_grid, T_SLdash, color='cyan', linewidth=2, label='SL Dash')
-plt.plot(S_wing_grid, T_SLdashideal, color='cyan', linewidth=2,linestyle='--', label='Ideal SL Dash')
-plt.plot(S_wing_grid, T_30dash, color='limegreen',  linewidth=2,label='30k ft Dash')
-plt.plot(S_wing_grid, T_30dashideal, color='limegreen',  linewidth=2, linestyle='--', label='Ideal 30k ft Dash')
-plt.plot(S_wing_grid, T_maneuver, color='red', linewidth=2,label='Maneuver')
-plt.plot(S_wing_grid, T_maneuverideal, color='red', linewidth=2, linestyle='--', label='Ideal Maneuver')
+#plt.plot(S_wing_grid, T_SLdash, color='cyan', linewidth=2, label='SL Dash')
+plt.plot(S_wing_grid, T_SLdashideal, color='cyan', linewidth=2,linestyle='--', label='Ideal SL Dash (M0.9)')
+plt.plot(S_wing_grid, T_30dash, color='limegreen',  linewidth=2,label='30k ft Dash (M1.6)')
+plt.plot(S_wing_grid, T_30dashideal, color='limegreen',  linewidth=2, linestyle='--', label='Ideal 30k ft Dash (M2.0)')
+plt.plot(S_wing_grid, T_maneuver, color='red', linewidth=2,label='Sustained Turn (8 deg/s)')
+plt.plot(S_wing_grid, T_maneuverideal, color='red', linewidth=2, linestyle='--', label='Ideal Sustained Turn (10 deg/s)')
 plt.plot(S_wing_grid, T_ceiling, color='darkgreen', linewidth=2, label='Ceiling (50k ft)')
-plt.plot(S_wing_grid, T_climb, color='orange', linewidth=2, label='SEROC Climb')
-plt.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeoff')
-#plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing on 3000ft Runway')
+plt.plot(S_wing_grid, T_climb, color='orange', linewidth=2, label='SEROC Climb (200 ft/min)')
+plt.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeoff (Catapult)')
+#plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing')
 plt.plot(S_W_S_array_landing_arrestor, T_grid, color='magenta', linewidth=2, label = 'Arrestor Landing')
 plt.plot(S_W_S_array_stall, T_grid, color='purple', linewidth=2, label = 'Stall')
+plt.plot(S_W_S_array_maxloadfactor, T_grid, color='brown', linewidth=2, label = 'Max Load Factor (7.0g)')
+plt.plot(S_W_S_array_maxloadfactorideal, T_grid, color='brown', linewidth=2, linestyle='--', label = 'Ideal Max Load Factor (8.0g)')
 
 S_main = np.array(S_wing_grid)
 T_top = 100000
@@ -645,7 +651,7 @@ for S, T, name in aircraft_points:
 plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
 
-plt.legend(loc='upper right',fontsize=16)
+plt.legend(loc='upper right',fontsize=12)
 plt.ylim(0,80000)
 plt.grid()
 plt.show()
@@ -670,7 +676,7 @@ plt.show()
 #calculating fuel volume for A5
 fuel_weight = final_TOGW*calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash)
 fuel_only_volume = fuel_weight / cv.rho_jp5
-fuel_vol_wings = 149.5 * cv.packing_factor_wing #reports fuel vol only
+fuel_vol_wings = 241.2 * cv.packing_factor_wing #reports fuel vol only
 fuel_left_to_pack = fuel_only_volume - fuel_vol_wings 
 fuselage_tank_vol_needed = fuel_left_to_pack / cv.packing_factor_deep_fuselage
 
@@ -679,3 +685,11 @@ print(f"Final Fuel Weight: {fuel_weight} lbs")
 print(f"Unpacked Fuel Volume: {fuel_only_volume} ft^3")
 print(f"Fuel in Wings: {fuel_vol_wings} ft^3")
 print(f"Fuselage tank volume needed: {fuselage_tank_vol_needed} ft^3")
+
+#Stall Speed from Wing Area and Weight (ft/s)
+V_stall_clean_calc = (2*final_TOGW/(cv.rho_sl*S_ZALKAS*cv.CLmax_climb))**(1/2)
+V_stall_landing_calc = (2*final_TOGW/(cv.rho_sl*S_ZALKAS*cv.CLmax_L))**(1/2)
+#Roskam
+v_stall_Roskam=(2*final_TOGW/(cv.rho_sl*S_ZALKAS*1.1*cv.CLmax_L))**(1/2)
+print(f"V_stall (clean) (ft/s)= {V_stall_clean_calc} \nV_stall (landing) (ft/s) = {V_stall_landing_calc}\nV_stall (landing) (Roskam) (ft/s) {v_stall_Roskam}")
+print(f"V_stall (clean) = {cv.ft_s_to_knots(V_stall_clean_calc)} \nV_stall (landing) = {cv.ft_s_to_knots(V_stall_landing_calc)}\nV_stall (landing) (Roskam) (knots) = {cv.ft_s_to_knots(v_stall_Roskam)}")
