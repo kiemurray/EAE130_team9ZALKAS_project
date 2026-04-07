@@ -1,10 +1,10 @@
 import code_variables as cv
 
-x_cg_TO = 25.61
-x_cg_aft = 27.00
-x_cg_for = 24.17
+x_cg_TO = 25.69
+x_cg_aft = 27.44
+x_cg_for = 24.77
 x_nosewheels = 8
-x_mainwheels = 28
+x_mainwheels = 28.5
 
 g = cv.g
 W = 56631
@@ -40,10 +40,8 @@ print(f"\nMax static load per wheel (main gear): {max_static_load_main_perwheel:
 #print(f"Total dynamic load (nose gear): {total_dynamic_load_nose:.2f} lbs")
 print(f"Static value load per wheel (nose gear): {max_static_load_nose_perwheel:.2f} lbs")
 print(f"Braking value load per wheel (nose gear): {breakload_nose:.2f} lbs")
-print(Ma/B)      # should be >0.05
-print(Mf/B)      # should be <0.20 (0.08-0.15 preferred)
-
-
+print(f"Ma/B >0.05: {Ma/B:.4f} ")      # should be >0.05
+print(f"Mf/B <0.20: {Mf/B:.4f} ")      # should be <0.20 (0.08-0.15 preferred)
 
 
 # Sizing tire diameter and width
@@ -64,11 +62,11 @@ F_nosewheelsF = W - F_mainwheelsF
 F_mainwheelsA = W*(x_cg_aft-x_nosewheels)/(x_mainwheels-x_nosewheels)
 F_nosewheelsA = W - F_mainwheelsA
 
-print(f"\nPercent weight on main gear: {(F_mainwheels/W)*100:.2f} %")
-print(f"Percent weight on nose gear: {(F_nosewheels/W)*100:.2f} %")
+print(f"\nPercent weight on main gear: {F_mainwheels/W:.2f} lbs")
+print(f"Percent weight on nose gear: {F_nosewheels/W:.2f} lbs")
 
-print(f"\nPercent weight on main gear (fore CG): {(F_mainwheelsF/W)*100:.2f} %")
-print(f"Percent weight on nose gear (fore CG): {(F_nosewheelsF/W)*100:.2f} %")
+print(f"\nPercent weight on main gear (fore CG): {F_mainwheelsF/W:.2f} lbs")
+print(f"Percent weight on nose gear (fore CG): {F_nosewheelsF/W:.2f} lbs")
 
-print(f"\nPercent weight on main gear (aft CG): {(F_mainwheelsA/W)*100:.2f} %")
-print(f"Percent weight on nose gear (aft CG): {(F_nosewheelsA/W)*100:.2f} % ")
+print(f"\nPercent weight on main gear (aft CG): {F_mainwheelsA/W:.2f} lbs")
+print(f"Percent weight on nose gear (aft CG): {F_nosewheelsA/W:.2f} lbs")
