@@ -26,7 +26,7 @@ W_uav = 2500 - W_urdr # Uninstalled Avionics Weight, lbf
 S_fw = 45 # Firewall Surface Area, ft^2 (discuss estimation later)
 W_en = 2445 # Engine Weight, each, lbf
 M = 2.0 # Mach Number
-
+num_engines = 2
 
 # lift coefficients
 CLmax_TO = 1.7 # maximum lift coefficient for takeoff
@@ -58,6 +58,7 @@ taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
 sweep_vt = 50 # Vertical Tail Sweep
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
+S_vt = 66
 
 # wing
 b_w = 41.026226        # wing span tip-to-tip (ft)
@@ -82,7 +83,7 @@ K_rht = 1.047 # Rolling Tail (Stabilators)
 lambda_h = 45   # Sweep angle of horizontal tail (degrees)
 H_t = 0 # Horizontal Tail Height Above Fuselage
 K_vsh = 1.0 # Non-Variable Sweep Wing
-
+S_ht = 109
 eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
 
 # fuselage
