@@ -166,11 +166,7 @@ print(f"Electrical System Weight: {W_electrical} lbf")
 W_radar = 2.117 * W_urdr**0.933
 print(f"Radar Weight: {W_radar} lbf")
 
-<<<<<<< HEAD
-# Avionics Weight
-=======
 # Avionics Weight (Raymer 15.21)
->>>>>>> 76a21f9 (wrong equation oops)
 W_avionics = 2.117 * W_uav**0.933
 print(f"Avionics Weight: {W_avionics} lbf")
 
