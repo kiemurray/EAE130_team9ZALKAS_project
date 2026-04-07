@@ -8,7 +8,7 @@ x_mainwheels = 28.5
 
 g = cv.g
 W = 56631
-H = 5 #COMEBACK need distance between ground and forwardmost cg point
+H = 6 #COMEBACK need distance between ground and forwardmost cg point
 deceleration = 10 #keeping at 10 for normal landing, arrestor hooks on carrier will make landing easier on nose gear
 
 
