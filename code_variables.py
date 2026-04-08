@@ -58,7 +58,7 @@ taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
 sweep_vt = 50 # Vertical Tail Sweep
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
-S_vt = 145 # Vertical Tail Area [ft]
+S_vt = 177 # Vertical Tail Area [ft]
 
 # wing
 b_w = 41.026226        # wing span tip-to-tip (ft)
