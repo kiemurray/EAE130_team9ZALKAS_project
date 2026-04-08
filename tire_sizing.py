@@ -1,14 +1,14 @@
 import code_variables as cv
 
-x_cg_TO = 25.69
-x_cg_aft = 27.44
-x_cg_for = 24.77
+x_cg_TO = 26.58 #change
+x_cg_aft = 27.15 #change
+x_cg_for = 25.36 #change
 x_nosewheels = 8
-x_mainwheels = 28.5
+x_mainwheels = 29.5
 
 g = cv.g
 W = 56631
-H = 6 #COMEBACK need distance between ground and forwardmost cg point
+H = 7.25 #COMEBACK need distance between ground and forwardmost cg point
 deceleration = 10 #keeping at 10 for normal landing, arrestor hooks on carrier will make landing easier on nose gear
 
 
