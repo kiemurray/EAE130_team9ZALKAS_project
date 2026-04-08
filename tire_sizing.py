@@ -25,6 +25,7 @@ max_static_load_nose = W * Mf/B
 min_static_load_nose = W * Ma/B
 dynamic_braking_load_nose = deceleration/g * W * H/B 
 total_dynamic_load_nose = max_static_load_nose + dynamic_braking_load_nose
+print(f"\nPercent weight on nose gear: {100*min_static_load_nose/W:.2f}% to {100*max_static_load_nose/W:.2f}%")
 
 # Add Safety Margin of 7%, divide by 2 because 2 wheels
 max_static_load_main *= 1.07
