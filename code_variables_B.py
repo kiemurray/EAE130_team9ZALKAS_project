@@ -350,3 +350,57 @@ def get_cruisefuelFraction(numSegments,range_nm,W_topOfClimb,altitude,S_w,k_cr,C
 CL_bestRange = get_C_L_bestRange(CD0,k_cr)
 V_bestRange = get_V_bestRange(W_cruise_i,40000,S_w,k_cr,CD0) #ft/s
 get_cruisefuelFraction(2,1000,W_cruise_i,40000,S_w,k_cr,CD0,ct_cruise)
+
+#Test for F-35
+#AR = 2.66
+#e = 0.75
+#S_w = 460
+#W_cruise_i = 50000
+#CD0 = 0.01
+
+#Test for 737-800
+#AR = 9.45
+#e = 0.80
+#S_w = 1341
+#W_cruise_i = 120000
+#CD0 = 0.025
+
+#k_test = 1/(np.pi*AR*e)
+V_bestRange = get_V_bestRange(W_cruise_i,40000,S_w,k_cr,CD0) #ft/s
+
+get_cruisefuelFraction(2,1000,W_cruise_i,40000,S_w,k_cr,CD0,ct_cruise)
+print("V_best_range (at 40,000 ft):",V_bestRange,"ft/s")
+
+topSpeed = 2000 #ft/s
+velo = np.linspace(0,topSpeed)
+Drag = (1/2)*(rho_cruise)*(velo)**2*(S_w)*(CD0+k_cr*CL_bestRange**2)
+
+
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12, 8))
+plt.plot(velo,Drag, color='darkgreen', linewidth=2, label='Thrust Required')
+plt.axhline(44000*Tratio(40000), color='blue', linewidth=2, label='Thrust Available (Wet)')
+plt.axhline(26000*Tratio(40000), color='red', linewidth=2, label='Thrust Available (Dry)')
+#plt.hlines(velo,44000*Tratio(40000), color='darkgreen', linewidth=2, label='Thrust Available')
+plt.xlabel('Velocity (ft/s)', fontsize=18)
+plt.ylabel('Thrust Required', fontsize=18)
+plt.title('Cruise Thrust Requirement', fontsize=20)
+plt.grid(True, alpha=0.4)
+plt.legend(fontsize=14, loc='upper right')
+plt.xlim(0, topSpeed)
+plt.ylim(0, 44000*Tratio(40000)+1000)  
+plt.show()
+
+plt.figure(figsize=(12, 8))
+plt.plot(ft_s_to_knots(velo)/573,Drag, color='darkgreen', linewidth=2, label='Thrust Required')
+plt.axhline(44000*Tratio(40000), color='blue', linewidth=2, label='Thrust Available (Wet)')
+plt.axhline(26000*Tratio(40000), color='red', linewidth=2, label='Thrust Available (Dry)')
+#plt.hlines(velo,44000*Tratio(40000), color='darkgreen', linewidth=2, label='Thrust Available')
+plt.xlabel('Mach Number', fontsize=18)
+plt.ylabel('Thrust Required', fontsize=18)
+plt.title('Cruise Thrust Requirement', fontsize=20)
+plt.grid(True, alpha=0.4)
+plt.legend(fontsize=14, loc='upper right')
+plt.xlim(0,ft_s_to_knots(topSpeed)/573)
+plt.ylim(0, 44000*Tratio(40000)+1000)  
+plt.show()
