@@ -144,10 +144,12 @@ print(f"Starter (Pneumatic) Weight: {W_starter} lbf")
 W_fuel_system = (7.45 * V_t**0.47 * (1 + V_i/V_t)**(-0.095) * (1 + V_p/V_t) * N_t**0.066 * N_en**0.052 * (T * SFC/1000)**0.249)
 print(f"Fuel System and Tanks Weight: {W_fuel_system} lbf")
 
+# In Overleaf
 # Flight Controls Weight
 W_flight_controls = 36.28 * M**0.003 * S_cs**0.489 * N_s**0.484 * N_c**0.127
 print(f"Flight Controls Weight: {W_flight_controls} lbf")
 
+# In Overleaf
 # Instruments Weight
 W_instruments = 8.0 + 36.37 * N_en**0.676 * N_t**0.237 + 26.4 * (1 + N_ci)**1.356
 print(f"Instruments Weight: {W_instruments} lbf")
