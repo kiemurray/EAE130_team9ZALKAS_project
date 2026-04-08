@@ -347,60 +347,84 @@ def get_cruisefuelFraction(numSegments,range_nm,W_topOfClimb,altitude,S_w,k_cr,C
     for i in range(len(velocityArray)):
         print(weightArray[i],"lbf       ",velocityArray[i],"ft/s")
 
+def getFuelBurn(Altitude,V_cruise,S_wing,CD_0,k_cruise,W_start,c_t_cruise,Range):
+    rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
+
+    W_end = (1/2)*(rho*V_cruise**2)*S_wing*np.sqrt(CD_0/k_cruise)*np.tan(np.arctan((2*W_start/(rho*v_cruise**2*S_wing))*np.sqrt(k_cr/CD_0))-(c_t_cruise*Range*np.sqrt(CD_0*k_cr)))
+    return W_start-W_end
+    
+    
+
+
+h_cruise = 40000 #ft
+
+
+rho_range, a_range = atmo_vals(h_cruise)[:2]
+#Test for Lecture example
+AR_w = 8
+e_cr = 0.885
+S_w = 960
+W_cruise_i = 50000
+CD0 = 0.0165
+L_D_max = 18.35
+Range = 5000 #nm
+
+#L_D_max = 10 #estimate
+
+#L_D = 0.94 * L_D_max
+v_cruise = 0.85 * a_range
+#combat_range = 1000
+#cruise = np.exp((-combat_range*ct_cruise) / (v_cruise*L_D))
+k_cr=1/(np.pi*e_cr*AR_w)
+
 CL_bestRange = get_C_L_bestRange(CD0,k_cr)
-V_bestRange = get_V_bestRange(W_cruise_i,40000,S_w,k_cr,CD0) #ft/s
-get_cruisefuelFraction(2,1000,W_cruise_i,40000,S_w,k_cr,CD0,ct_cruise)
+V_bestRange = get_V_bestRange(W_cruise_i,h_cruise,S_w,k_cr,CD0) #ft/s
+get_cruisefuelFraction(2,1000,W_cruise_i,h_cruise,S_w,k_cr,CD0,ct_cruise)
 
-#Test for F-35
-#AR = 2.66
-#e = 0.75
-#S_w = 460
-#W_cruise_i = 50000
-#CD0 = 0.01
+testFuelBurn = getFuelBurn(40000,v_cruise,S_w,CD0,k_cr,48800,ct_cruise,Range)
+print("Fuel burn: ",testFuelBurn,"lbs")
 
-#Test for 737-800
-#AR = 9.45
-#e = 0.80
-#S_w = 1341
-#W_cruise_i = 120000
-#CD0 = 0.025
 
 #k_test = 1/(np.pi*AR*e)
-V_bestRange = get_V_bestRange(W_cruise_i,40000,S_w,k_cr,CD0) #ft/s
-
-get_cruisefuelFraction(2,1000,W_cruise_i,40000,S_w,k_cr,CD0,ct_cruise)
-print("V_best_range (at 40,000 ft):",V_bestRange,"ft/s")
+print("k_cr = ",k_cr)
+print("C_L_cruise: ",CL_bestRange)
+print("density at",h_cruise,"ft: ",rho_range,"slugs / ft^3")
+print("speed of sound at cruise (40000 ft): ",a_range,"ft/s")
+print("Thrust ratio at",h_cruise,"ft: ",Tratio(h_cruise))
+print("Max dry thrust at",h_cruise,"ft",Tratio(h_cruise)*26000)
+#V_bestRange = get_V_bestRange(W_cruise_i,30000,S_w,k_cr,CD0) #ft/s
+#print("V_best_range (at",h_cruise,"ft):",V_bestRange,"ft/s")
+#print("Ma_cruise (at",h_cruise,"ft):",V_bestRange/a_range)
+#print("cruise weight fraction: ",cruise)
 
 topSpeed = 2000 #ft/s
 velo = np.linspace(0,topSpeed)
 Drag = (1/2)*(rho_cruise)*(velo)**2*(S_w)*(CD0+k_cr*CL_bestRange**2)
 
 
-import matplotlib.pyplot as plt
-plt.figure(figsize=(12, 8))
-plt.plot(velo,Drag, color='darkgreen', linewidth=2, label='Thrust Required')
-plt.axhline(44000*Tratio(40000), color='blue', linewidth=2, label='Thrust Available (Wet)')
-plt.axhline(26000*Tratio(40000), color='red', linewidth=2, label='Thrust Available (Dry)')
-#plt.hlines(velo,44000*Tratio(40000), color='darkgreen', linewidth=2, label='Thrust Available')
-plt.xlabel('Velocity (ft/s)', fontsize=18)
-plt.ylabel('Thrust Required', fontsize=18)
-plt.title('Cruise Thrust Requirement', fontsize=20)
-plt.grid(True, alpha=0.4)
-plt.legend(fontsize=14, loc='upper right')
-plt.xlim(0, topSpeed)
-plt.ylim(0, 44000*Tratio(40000)+1000)  
-plt.show()
+# import matplotlib.pyplot as plt
+# plt.figure(figsize=(12, 8))
+# plt.plot(velo,Drag, color='darkgreen', linewidth=2, label='Thrust Required')
+# plt.axhline(44000*Tratio(40000), color='blue', linewidth=2, label='Thrust Available (Wet)')
+# plt.axhline(26000*Tratio(40000), color='red', linewidth=2, label='Thrust Available (Dry)')
+# plt.xlabel('Velocity (ft/s)', fontsize=18)
+# plt.ylabel('Thrust Required', fontsize=18)
+# plt.title('Cruise Thrust Requirement', fontsize=20)
+# plt.grid(True, alpha=0.4)
+# plt.legend(fontsize=14, loc='upper right')
+# plt.xlim(0, topSpeed)
+# plt.ylim(0, 44000*Tratio(40000)+1000)  
+# plt.show()
 
-plt.figure(figsize=(12, 8))
-plt.plot(ft_s_to_knots(velo)/573,Drag, color='darkgreen', linewidth=2, label='Thrust Required')
-plt.axhline(44000*Tratio(40000), color='blue', linewidth=2, label='Thrust Available (Wet)')
-plt.axhline(26000*Tratio(40000), color='red', linewidth=2, label='Thrust Available (Dry)')
-#plt.hlines(velo,44000*Tratio(40000), color='darkgreen', linewidth=2, label='Thrust Available')
-plt.xlabel('Mach Number', fontsize=18)
-plt.ylabel('Thrust Required', fontsize=18)
-plt.title('Cruise Thrust Requirement', fontsize=20)
-plt.grid(True, alpha=0.4)
-plt.legend(fontsize=14, loc='upper right')
-plt.xlim(0,ft_s_to_knots(topSpeed)/573)
-plt.ylim(0, 44000*Tratio(40000)+1000)  
-plt.show()
+# plt.figure(figsize=(12, 8))
+# plt.plot(ft_s_to_knots(velo)/573,Drag, color='darkgreen', linewidth=2, label='Thrust Required')
+# plt.axhline(44000*Tratio(40000), color='blue', linewidth=2, label='Thrust Available (Wet)')
+# plt.axhline(26000*Tratio(40000), color='red', linewidth=2, label='Thrust Available (Dry)')
+# plt.xlabel('Mach Number', fontsize=18)
+# plt.ylabel('Thrust Required', fontsize=18)
+# plt.title('Cruise Thrust Requirement', fontsize=20)
+# plt.grid(True, alpha=0.4)
+# plt.legend(fontsize=14, loc='upper right')
+# plt.xlim(0,ft_s_to_knots(topSpeed)/573)
+# plt.ylim(0, 44000*Tratio(40000)+1000)  
+# plt.show()
