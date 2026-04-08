@@ -2,12 +2,12 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import code_variables_B as cv
+import code_variables as cv
 
 # All Equations used are from Raymer's section on Fighter/Attack Weights
 
 # Parameters
-K_dw = cv.K_dwf # Non-Delta Wing
+K_dw = cv.K_dw # Non-Delta Wing
 K_vs = cv.K_vs # non-variable sweep
 W_dg = cv.W_dg # Design Gross Weight (lbf)
 n_z = cv.n_z # limit load, desired by RFP
@@ -31,9 +31,9 @@ AR_vt = cv.AR_vt # Vertical Tail Aspect Ratio
 taper_ratio_vt = cv.taper_ratio_vt # Vertical Tail Taper Ratio
 sweep_vt = cv.sweep_vt # Vertical Tail Sweep
 K_dwf = cv.K_dwf # For Non-Delta Wing Aircraft
-L_f = cv.Lf # Fuselage Length, ft
-D_f = cv.Df # Fuselage Depth, ft
-W_f = cv.Wid_fuse # Fuselage Width, ft
+L_f = cv.L_f # Fuselage Length, ft
+D_f = cv.D_f # Fuselage Depth, ft
+W_f = cv.W_f # Fuselage Width, ft
 K_cb = cv.K_cb # Non Cross Beam
 K_tpg = cv.K_tpg # Non-Tripod Landing Gear
 W_l = cv.W_l # Landing Gross Weight, lbf
@@ -73,8 +73,6 @@ N_gen = N_en # Number of Generators
 W_uav = cv.W_uav # Uninstalled Avionics Weight, lbf
 W_urdr = cv.W_urdr # Uninstalled Radar Weight, lbf
 N_c = N_ci # Number of Crew
-
-
 
 # Wing Weight (Raymer Eq 15.1)
 W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
@@ -166,7 +164,7 @@ print(f"Electrical System Weight: {W_electrical} lbf")
 W_radar = 2.117 * W_urdr**0.933
 print(f"Radar Weight: {W_radar} lbf")
 
-# Avionics Weight (Raymer 15.21)
+# Avionics Weight
 W_avionics = 2.117 * W_uav**0.933
 print(f"Avionics Weight: {W_avionics} lbf")
 
@@ -191,7 +189,7 @@ W_empty = (W_wing + W_tail + W_fuselage + W_rear_landing_gear + W_nose_landing_g
 print(f"Empty Weight: {W_empty} lbf")
 
 
-# Center of Gravity
+# X-Axis Center of Gravity
 
 fuselage_cg = 0.26 * L_f # ft
 wing_cg = 29.9 # ft
@@ -206,30 +204,56 @@ avionics_cg = 16.9 # ft
 AC_cg = 16.1 # ft
 AIM_120_cg = 19.8 # ft
 MK_83_cg = 19.8 # ft
-AIM_9X_cg = 30.9 # ft
+AIM_9X_cg = 35.9 # ft
 tank_78_cg = 12.5 # ft
-tank_6_cg = 39.9 # ft
+tank_6_cg = 40.2 # ft
 wing_tank_cg = 29.8 # ft
 tank_34_cg = 20.0 # ft
 tank_1_cg = 22.1 # ft
 tank_2_cg = 27.9 # ft
 tank_5_cg = 33.0 # ft
 
+# Z-Axis Center of Gravity
+
+fuselage_z_cg = 0 # ft
+wing_z_cg = 0 # ft
+empennage_z_cg = 2.3 # ft
+engine_z_cg = 0 # ft
+engine_cooling_z_cg = 0 # ft
+inlet_z_cg = -0.5 # ft
+forward_gear_z_cg = -2.0 # ft
+rear_gear_z_cg = 0.2 # ft
+radar_z_cg = -0.4 # ft
+avionics_z_cg = 2.1 # ft
+AC_z_cg = 2.1 # ft
+AIM_120_z_cg = -1.7 # ft
+MK_83_z_cg = -1.7 # ft
+AIM_9X_z_cg = -2.0 # ft
+tank_78_z_cg = 0.2 # ft
+tank_6_z_cg = 0 # ft
+wing_tank_z_cg = 0 # ft
+tank_34_z_cg = 0 # ft
+tank_1_z_cg = 1.8 # ft
+tank_2_z_cg = 0 # ft
+tank_5_z_cg = 1.6 # ft
+
 # Individual Tank Weights
 
-tank_1_w = 5411 * 0.85 # lbf
-tank_2_w = 3194 * 0.85 # lbf
-tank_34_w = 1114 * 0.85 # lbf
-tank_5_w = 3286 * 0.85 # lbf
-tank_6_w = 4073 * 0.85 # lbf
-tank_78_w = 2310 * 0.85 # lbf
-wing_tank_w = 5580 * 0.85 # lbf
+tank_1_w = (cv.tank_1_v * cv.rho_jp5) * cv.packing_factor_deep_fuselage # lbf
+tank_2_w = (cv.tank_2_v * cv.rho_jp5) * cv.packing_factor_deep_fuselage # lbf
+tank_34_w = (cv.tank_34_v * cv.rho_jp5) * cv.packing_factor_shallow_fuselage # lbf
+tank_5_w = (cv.tank_5_v * cv.rho_jp5) * cv.packing_factor_deep_fuselage # lbf
+tank_6_w = (cv.tank_6_v * cv.rho_jp5) * cv.packing_factor_deep_fuselage # lbf
+tank_78_w = (cv.tank_78_v * cv.rho_jp5) * cv.packing_factor_shallow_fuselage # lbf
+wing_tank_w = (cv.wing_tank_v * cv.rho_jp5) * cv.packing_factor_wing # lbf
 
 # Ordinance Weights
 
 AIM_120_w = 2136 # 6x Aim-120C
 MK_83_w = 4052 # 4x MK-83
 AIM_9X_w = 372 # 2x Aim-9x
+
+# X-Axis Center of Gravity
 
 def calculate_cg(ordnance_cg, ordnance_w, label,
                  inc_AIM_9X=True, inc_tank_1=True, inc_tank_2=True,
@@ -285,33 +309,33 @@ def ft_to_pct_MAC(cg_ft):
 air_points = [
     calculate_cg(AIM_120_cg, AIM_120_w, "Fully Loaded Air-To-Air"),
     calculate_cg(AIM_120_cg, AIM_120_w, "Tank 7-8 Empty", inc_tank_78=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 3-4 Empty", inc_tank_78=False, inc_tank_34=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 1 Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 2 Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "AIM-120C Dropped", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "AIM-9X Dropped", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 5 Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_5=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Wing Tanks Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_5=False, inc_wing_tank=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 6 Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_5=False, inc_wing_tank=False, inc_tank_6=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 6 Empty", inc_tank_78=False, inc_tank_6=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 5 Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 3-4 Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "AIM-120C Dropped", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "AIM-9X Dropped", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False, inc_AIM_9X=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 1 Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_1=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 2 Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_1=False, inc_tank_2=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Wing Tanks Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_1=False, inc_tank_2=False, inc_wing_tank=False),
 ]
-air_labels = ["Fully Loaded", "Tanks 7-8 Empty", "Tanks 3-4 Empty", "Tank 1 Empty", "Tank 2 Empty",
-              "AIM-120 Drop", "AIM-9X Drop", "Tank 5 Empty", "Wing Tanks Empty", "Tank 6 Empty"]
+air_labels = ["Fully Loaded", "Tanks 7-8 Empty", "Tank 6 Empty", "Tank 5 Empty", "Tanks 3-4 Empty",
+              "AIM-120 Drop", "AIM-9X Drop", "Tank 1 Empty", "Tank 2 Empty", "Wing Tanks Empty"]
 
 # Strike
 strike_points = [
     calculate_cg(MK_83_cg, MK_83_w, "Fully Loaded Strike"),
     calculate_cg(MK_83_cg, MK_83_w, "Tank 7-8 Empty", inc_tank_78=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 3-4 Empty", inc_tank_78=False, inc_tank_34=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 1 Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 2 Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False),
-    calculate_cg(MK_83_cg, MK_83_w, "MK-83 Dropped", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False),
-    calculate_cg(MK_83_cg, MK_83_w, "AIM-9X Dropped", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 5 Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_5=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Wing Tanks Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_5=False, inc_wing_tank=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 6 Empty", inc_tank_78=False, inc_tank_34=False, inc_tank_1=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_5=False, inc_wing_tank=False, inc_tank_6=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 6 Empty", inc_tank_78=False, inc_tank_6=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 5 Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 3-4 Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False),
+    calculate_cg(MK_83_cg, MK_83_w, "MK-83 Dropped", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False),
+    calculate_cg(MK_83_cg, MK_83_w, "AIM-9X Dropped", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False, inc_AIM_9X=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 1 Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_1=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 2 Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_1=False, inc_tank_2=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Wing Tanks Empty", inc_tank_78=False, inc_tank_6=False, inc_tank_5=False, inc_tank_34=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_1=False, inc_tank_2=False, inc_wing_tank=False),
 ]
-strike_labels = ["Fully Loaded", "Tanks 7-8 Empty", "Tanks 3-4 Empty", "Tank 1 Empty", "Tank 2 Empty",
-                 "MK-83 Drop", "AIM-9X Drop", "Tank 5 Empty", "Wing Tanks Empty", "Tank 6 Empty"]
+strike_labels = ["Fully Loaded", "Tanks 7-8 Empty", "Tank 6 Empty", "Tank 5 Empty", "Tanks 3-4 Empty",
+                 "MK-83 Drop", "AIM-9X Drop", "Tank 1 Empty", "Tank 2 Empty", "Wing Tanks Empty"]
 
 air_cg   = [p[0] for p in air_points]
 air_wt   = [p[1] for p in air_points]
@@ -365,3 +389,53 @@ ax.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
 plt.show()
+
+# Z-Axis Center of Gravity
+
+def calculate_z_cg(ordnance_z_cg, ordnance_w, label,
+                 inc_AIM_9X=True, inc_tank_1=True, inc_tank_2=True,
+                 inc_tank_34=True, inc_tank_5=True, inc_tank_6=True,
+                 inc_tank_78=True, inc_wing_tank=True, inc_ordinance=True):
+
+    numerator = (
+        (wing_z_cg * W_wing)
+        + (empennage_z_cg * W_tail)
+        + (fuselage_z_cg * W_fuselage)
+        + (rear_gear_z_cg * W_rear_landing_gear)
+        + (forward_gear_z_cg * W_nose_landing_gear)
+        + (engine_z_cg * W_engine)
+        + (engine_cooling_z_cg * W_engine_cooling)
+        + (inlet_z_cg * W_inlet)
+        + (radar_z_cg * W_radar)
+        + (avionics_z_cg * W_avionics)
+        + (AC_z_cg * W_air_conditioning)
+        + (ordnance_z_cg * ordnance_w if inc_ordinance else 0)
+        + (AIM_9X_z_cg * AIM_9X_w if inc_AIM_9X else 0)
+        + (tank_1_z_cg * tank_1_w if inc_tank_1 else 0)
+        + (tank_2_z_cg * tank_2_w if inc_tank_2 else 0)
+        + (tank_34_z_cg * tank_34_w if inc_tank_34 else 0)
+        + (tank_5_z_cg * tank_5_w if inc_tank_5 else 0)
+        + (tank_6_z_cg * tank_6_w if inc_tank_6 else 0)
+        + (tank_78_z_cg * tank_78_w if inc_tank_78 else 0)
+        + (wing_tank_z_cg * wing_tank_w if inc_wing_tank else 0)
+    )
+    denominator = (
+        W_wing + W_tail + W_fuselage + W_rear_landing_gear + W_nose_landing_gear
+        + W_engine + W_engine_cooling + W_inlet + W_avionics + W_radar + W_air_conditioning
+        + (ordnance_w if inc_ordinance else 0)
+        + (AIM_9X_w if inc_AIM_9X else 0)
+        + (tank_1_w if inc_tank_1 else 0)
+        + (tank_2_w if inc_tank_2 else 0)
+        + (tank_34_w if inc_tank_34 else 0)
+        + (tank_5_w if inc_tank_5 else 0)
+        + (tank_6_w if inc_tank_6 else 0)
+        + (tank_78_w if inc_tank_78 else 0)
+        + (wing_tank_w if inc_wing_tank else 0)
+    )
+    z_cg = numerator / denominator
+    print(f"{label} z_CG: {z_cg:.2f} ft  |  Weight: {denominator:.0f} lbf")
+    return z_cg, denominator
+
+
+z_cg_air = calculate_z_cg(AIM_120_z_cg, AIM_120_w, "Air-To-Air Configuration")
+z_cg_strike = calculate_z_cg(MK_83_z_cg, MK_83_w, "Strike Configuration")
