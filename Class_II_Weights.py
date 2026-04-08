@@ -2,12 +2,12 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import code_variables as cv
+import code_variables_B as cv
 
 # All Equations used are from Raymer's section on Fighter/Attack Weights
 
 # Parameters
-K_dw = cv.K_dw # Non-Delta Wing
+K_dw = cv.K_dwf # Non-Delta Wing
 K_vs = cv.K_vs # non-variable sweep
 W_dg = cv.W_dg # Design Gross Weight (lbf)
 n_z = cv.n_z # limit load, desired by RFP
@@ -31,9 +31,9 @@ AR_vt = cv.AR_vt # Vertical Tail Aspect Ratio
 taper_ratio_vt = cv.taper_ratio_vt # Vertical Tail Taper Ratio
 sweep_vt = cv.sweep_vt # Vertical Tail Sweep
 K_dwf = cv.K_dwf # For Non-Delta Wing Aircraft
-L_f = cv.L_f # Fuselage Length, ft
-D_f = cv.D_f # Fuselage Depth, ft
-W_f = cv.W_f # Fuselage Width, ft
+L_f = cv.Lf # Fuselage Length, ft
+D_f = cv.Df # Fuselage Depth, ft
+W_f = cv.Wid_fuse # Fuselage Width, ft
 K_cb = cv.K_cb # Non Cross Beam
 K_tpg = cv.K_tpg # Non-Tripod Landing Gear
 W_l = cv.W_l # Landing Gross Weight, lbf
@@ -166,11 +166,7 @@ print(f"Electrical System Weight: {W_electrical} lbf")
 W_radar = 2.117 * W_urdr**0.933
 print(f"Radar Weight: {W_radar} lbf")
 
-<<<<<<< HEAD
-# Avionics Weight
-=======
 # Avionics Weight (Raymer 15.21)
->>>>>>> 76a21f9 (wrong equation oops)
 W_avionics = 2.117 * W_uav**0.933
 print(f"Avionics Weight: {W_avionics} lbf")
 
