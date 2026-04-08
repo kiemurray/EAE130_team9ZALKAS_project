@@ -2,7 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import code_variables_B as cv
+import code_variables as cv
 
 # All Equations used are from Raymer's section on Fighter/Attack Weights
 
@@ -84,6 +84,7 @@ W_tail = (0.452 * K_rht * (1 + H_t/H_v)**0.5 * (W_dg * N_zv)**0.488 * S_vt**0.71
 W_tail = 0.83 * W_tail # Advanced Composites
 print("Tail Weight:", W_tail, "lbf")
 
+# In Overleaf
 # Fuselage Weight (Raymer Eq 15.4)
 W_fuselage = (0.499 * K_dwf * W_dg**0.35 * N_z**0.25 * L_f**0.5 * D_f**0.849 * W_f**0.685)
 W_fuselage = 0.90 * W_fuselage # Advanced Composites
@@ -160,14 +161,17 @@ print(f"Hydraulics Weight: {W_hydraulics} lbf")
 W_electrical = 172.2 * K_mc * R_kva**0.152 * N_c**0.10 * L_a**0.10 * N_gen**0.091
 print(f"Electrical System Weight: {W_electrical} lbf")
 
+# In Overleaf
 # Sensor Weight
 W_radar = 2.117 * W_urdr**0.933
 print(f"Radar Weight: {W_radar} lbf")
 
-# Avionics Weight
+# In Overleaf
+# Avionics Weight (Raymer 15.21)
 W_avionics = 2.117 * W_uav**0.933
 print(f"Avionics Weight: {W_avionics} lbf")
 
+# In Overleaf
 # Furnishings Weight
 W_furnishings = 217.6 * N_c
 print(f"Furnishings Weight: {W_furnishings} lbf")
