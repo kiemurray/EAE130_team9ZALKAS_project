@@ -251,7 +251,8 @@ tank_5_w = (cv.tank_5_v * cv.rho_jp5) * cv.packing_factor_deep_fuselage # lbf
 tank_6_w = (cv.tank_6_v * cv.rho_jp5) * cv.packing_factor_deep_fuselage # lbf
 tank_78_w = (cv.tank_78_v * cv.rho_jp5) * cv.packing_factor_shallow_fuselage # lbf
 wing_tank_w = (cv.wing_tank_v * cv.rho_jp5) * cv.packing_factor_wing # lbf
-
+tot_fuel_weight = tank_1_w + tank_2_w + tank_34_w + tank_5_w + tank_6_w + tank_78_w + wing_tank_w
+print(f"Total Fuel Weight: {tot_fuel_weight} lbf")
 # Ordinance Weights
 
 AIM_120_w = 2136 # 6x Aim-120C
