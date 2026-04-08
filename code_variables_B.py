@@ -26,7 +26,7 @@ W_uav = 2500 - W_urdr # Uninstalled Avionics Weight, lbf
 S_fw = 45 # Firewall Surface Area, ft^2 (discuss estimation later)
 W_en = 2445 # Engine Weight, each, lbf
 M = 2.0 # Mach Number
-num_engines = 2
+
 
 # lift coefficients
 CLmax_TO = 1.7 # maximum lift coefficient for takeoff
@@ -48,8 +48,8 @@ N_z = 1.5 * n_z # Ultimate Load Factor
 
 
 # vertical tail
-c_vt = 0.094        # vertical tail volume coefficient
-L_vt = 14.4         # vertical tail moment arm (ft)
+c_vt = 0.094 # vertical tail volume coefficient
+L_vt = 14.4 # vertical tail moment arm (ft)
 H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
 L_t = 10.78 # Tail Length
 S_r = 120 # Rudder Area ft^2
@@ -58,7 +58,7 @@ taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
 sweep_vt = 50 # Vertical Tail Sweep
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
-S_vt = 66
+S_vt = 145 # Vertical Tail Area [ft]
 
 # wing
 b_w = 41.026226        # wing span tip-to-tip (ft)
@@ -71,7 +71,7 @@ wing_sweep = 45 # Wing Sweep at 25% MAC
 lambda_w = 40   # Sweep angle of wing (degrees)
 eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
 S_csw = 103 # Wing Mounted Control Surface Area ft^2
-K_dwf = 1 # For Non-Delta Wing Aircraft
+K_dwf = 0.774 # For Non-Delta Wing Aircraft
 K_vs = 1.0 # non-variable sweep
 
 
@@ -83,14 +83,14 @@ K_rht = 1.047 # Rolling Tail (Stabilators)
 lambda_h = 45   # Sweep angle of horizontal tail (degrees)
 H_t = 0 # Horizontal Tail Height Above Fuselage
 K_vsh = 1.0 # Non-Variable Sweep Wing
-S_ht = 109
 eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
 
 # fuselage
-Kf = 0.344      # empirical factor
-Lf = 47.5         # fuselage length (ft)
-Df = 6.4 # Fuselage Depth, ft
-Wid_fuse = 14.6   # maximum width of fuselage (ft)
+K_f = 0.344      # empirical factor
+L_f = 47.5         # fuselage length (ft)
+D_f = 6.4 # Fuselage Depth, ft
+W_f = 14.6   # maximum width of fuselage (ft)
+K_dw = 0.768
 K_vg = 1.62 # Variable Inlet Geometry
 R_kva = 160 # System Electrical Rating, kV * A
 L_a = 35 # Electrical Routing Distance, ft
@@ -115,13 +115,18 @@ N_nw = 2 # Number of Nose Wheels
 rho_jp5 = 51.1              #lb/ft^3   
 packing_factor_shallow_fuselage = 0.8
 packing_factor_deep_fuselage = 0.85
-packing_factor_wing= 0.75
+packing_factor_wing = 0.75
 V_t = 3127 # Total Fuel Volume, gal
 V_i = 0.75 * V_t # Integral Fuel Tank Volume, gal
 V_p = 0.25 * V_t # Self-Sealing Wing Tank Volume, gal
 N_t = 10 # Number of Tanks
-
-
+tank_1_v = 106 # ft^3
+tank_2_v = 99.6 # ft^3
+tank_34_v = 22.0 # ft^3
+tank_5_v = 60.4 # ft^3
+tank_6_v = 79.7 # ft^3
+tank_78_v = 45.3 # ft^3
+wing_tank_v = 71.0 # ft^3
 
 # mission segment variables
 # weight fractions
@@ -182,6 +187,10 @@ V_landing= V_engage_56lb+WOD            # ft/s, landing speed, sum of engage spe
 V_engage= 130 * 1.68781                 # ft/s, speed at which arrestor is engaged, assuming 130 knots
 e_land = 0.725  
 k_land = 1 / (np.pi * AR_w * e_land)      #landing
+
+# Engine Parameters
+num_engines = 2
+
 
 # functions
 def knots_to_ft_per_s(knots):
