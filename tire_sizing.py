@@ -2,7 +2,7 @@ import code_variables as cv
 
 x_cg_TO = 26.58 #change
 x_cg_aft = 27.15 #change
-x_cg_for = 25.36 #change
+x_cg_for = 25.35 #change
 x_nosewheels = 8
 x_mainwheels = 29.0
 
