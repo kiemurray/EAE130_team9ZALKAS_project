@@ -75,7 +75,7 @@ W_urdr = cv.W_urdr # Uninstalled Radar Weight, lbf
 N_c = N_ci # Number of Crew
 
 # Wing Weight (Raymer Eq 15.1)
-W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
+W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
 W_Wing = 0.85 * W_wing # Advanced Composites
 print("Wing Weight: ", W_wing, "lbf")
 
@@ -133,6 +133,7 @@ print(f"Engine Cooling Weight: {W_engine_cooling} lbf")
 W_oil_cooling = 37.82 * N_en**1.023
 print(f"Oil Cooling Weight: {W_oil_cooling} lbf")
 
+# In Overleaf
 # Engine Controls Weight (Raymer Eq 15.14)
 W_engine_controls = 10.5 * N_en**1.008 * L_ec**0.222
 print(f"Engine Controls Weight: {W_engine_controls} lbf")
@@ -155,7 +156,8 @@ print(f"Flight Controls Weight: {W_flight_controls} lbf")
 W_instruments = 8.0 + 36.37 * N_en**0.676 * N_t**0.237 + 26.4 * (1 + N_ci)**1.356
 print(f"Instruments Weight: {W_instruments} lbf")
 
-# Hydraulics Weight
+# In Overleaf
+# Hydraulics Weight (Raymer Eq. 15.19)
 W_hydraulics = 37.23 * K_vsh * N_u**0.664
 print(f"Hydraulics Weight: {W_hydraulics} lbf")
 
@@ -163,6 +165,7 @@ print(f"Hydraulics Weight: {W_hydraulics} lbf")
 W_electrical = 172.2 * K_mc * R_kva**0.152 * N_c**0.10 * L_a**0.10 * N_gen**0.091
 print(f"Electrical System Weight: {W_electrical} lbf")
 
+# In Overleaf
 # Sensor Weight
 W_radar = 2.117 * W_urdr**0.933
 print(f"Radar Weight: {W_radar} lbf")
@@ -251,8 +254,7 @@ tank_5_w = (cv.tank_5_v * cv.rho_jp5) * cv.packing_factor_deep_fuselage # lbf
 tank_6_w = (cv.tank_6_v * cv.rho_jp5) * cv.packing_factor_deep_fuselage # lbf
 tank_78_w = (cv.tank_78_v * cv.rho_jp5) * cv.packing_factor_shallow_fuselage # lbf
 wing_tank_w = (cv.wing_tank_v * cv.rho_jp5) * cv.packing_factor_wing # lbf
-tot_fuel_weight = tank_1_w + tank_2_w + tank_34_w + tank_5_w + tank_6_w + tank_78_w + wing_tank_w
-print(f"Total Fuel Weight: {tot_fuel_weight} lbf")
+
 # Ordinance Weights
 
 AIM_120_w = 2136 # 6x Aim-120C
