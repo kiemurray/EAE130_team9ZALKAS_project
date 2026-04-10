@@ -78,16 +78,6 @@ N_c = N_ci # Number of Crew
 W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
 W_Wing = 0.85 * W_wing # Advanced Composites
 print("Wing Weight: ", W_wing, "lbf")
-print(K_dw)
-print(K_vs)
-print(W_dg)
-print(N_z)
-print(S_w)
-print(AR)
-print(tc_root)
-print(taper_ratio)
-print(wing_sweep)
-print(S_csw)
 
 # Vertical Tail Weight (Raymer Eq 15.3)
 W_tail = (0.452 * K_rht * (1 + H_t/H_v)**0.5 * (W_dg * N_zv)**0.488 * S_vt**0.718 * M**0.341 * L_t**(-1.0) * (1 + S_r/S_vt)**0.348 * AR_vt**0.223 * (1 + taper_ratio_vt)**0.25 * np.cos(np.radians(sweep_vt))**(-0.323))
