@@ -63,7 +63,7 @@ S_vt = 177 # Vertical Tail Area [ft]
 # wing
 b_w = 41.026226        # wing span tip-to-tip (ft)
 c_w = 19.918018        # wing chord (ft)
-S_w = 685             # wing area (ft^2)
+S_w = 540             # wing area (ft^2)
 AR_w = 2.46
 tc_root = 0.06 # t/c ratio at root chord
 taper_ratio = 0.295 # Taper Ratio
