@@ -2,9 +2,9 @@ import code_variables as cv
 
 x_cg_TO = 26.58 #change
 x_cg_aft = 27.15 #change
-x_cg_for = 25.36 #change
+x_cg_for = 25.35 #change
 x_nosewheels = 8
-x_mainwheels = 29.5
+x_mainwheels = 29.0
 
 g = cv.g
 W = 56631
@@ -27,6 +27,10 @@ dynamic_braking_load_nose = deceleration/g * W * H/B
 total_dynamic_load_nose = max_static_load_nose + dynamic_braking_load_nose
 print(f"\nPercent weight on nose gear: {100*min_static_load_nose/W:.2f}% to {100*max_static_load_nose/W:.2f}%")
 
+print(f"\nMax static load per wheel (main gear): {max_static_load_main/2:.2f} lbs")
+print(f"Max static load per wheel (nose gear): {max_static_load_nose/2:.2f} lbs")
+print(f"Braking load per wheel (nose gear): {total_dynamic_load_nose/2:.2f} lbs")
+
 # Add Safety Margin of 7%, divide by 2 because 2 wheels
 max_static_load_main *= 1.07
 max_static_load_main_perwheel = max_static_load_main / 2
@@ -34,14 +38,7 @@ max_static_load_nose_perwheel = max_static_load_nose*1.07/2
 dynamic_braking_load_nose *= (1.07/2)
 breakload_nose = dynamic_braking_load_nose + max_static_load_nose_perwheel
 
-print(f"\nMax static load per wheel (main gear): {max_static_load_main_perwheel:.2f} lbs")
-# print(f"Max static load (nose gear): {max_static_load_nose:.2f} lbs")
-# print(f"Min static load (nose gear): {min_static_load_nose:.2f} lbs")
-# print(f"Dynamic braking load (nose gear): {dynamic_braking_load_nose:.2f} lbs")
-#print(f"Total dynamic load (nose gear): {total_dynamic_load_nose:.2f} lbs")
-print(f"Static value load per wheel (nose gear): {max_static_load_nose_perwheel:.2f} lbs")
-print(f"Braking value load per wheel (nose gear): {breakload_nose:.2f} lbs")
-print(f"Ma/B >0.05: {Ma/B:.4f} ")      # should be >0.05
+print(f"\nMa/B >0.05: {Ma/B:.4f} ")      # should be >0.05
 print(f"Mf/B <0.20: {Mf/B:.4f} ")      # should be <0.20 (0.08-0.15 preferred)
 
 

@@ -78,12 +78,23 @@ N_c = N_ci # Number of Crew
 W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
 W_Wing = 0.85 * W_wing # Advanced Composites
 print("Wing Weight: ", W_wing, "lbf")
+print(K_dw)
+print(K_vs)
+print(W_dg)
+print(N_z)
+print(S_w)
+print(AR)
+print(tc_root)
+print(taper_ratio)
+print(wing_sweep)
+print(S_csw)
 
 # Vertical Tail Weight (Raymer Eq 15.3)
 W_tail = (0.452 * K_rht * (1 + H_t/H_v)**0.5 * (W_dg * N_zv)**0.488 * S_vt**0.718 * M**0.341 * L_t**(-1.0) * (1 + S_r/S_vt)**0.348 * AR_vt**0.223 * (1 + taper_ratio_vt)**0.25 * np.cos(np.radians(sweep_vt))**(-0.323))
 W_tail = 0.85 * W_tail # Advanced Composites
 print("Tail Weight:", W_tail, "lbf")
 
+# In Overleaf
 # Fuselage Weight (Raymer Eq 15.4)
 W_fuselage = (0.499 * K_dwf * W_dg**0.35 * N_z**0.25 * L_f**0.5 * D_f**0.849 * W_f**0.685)
 W_fuselage = 0.90 * W_fuselage # Advanced Composites
@@ -132,6 +143,7 @@ print(f"Engine Cooling Weight: {W_engine_cooling} lbf")
 W_oil_cooling = 37.82 * N_en**1.023
 print(f"Oil Cooling Weight: {W_oil_cooling} lbf")
 
+# In Overleaf
 # Engine Controls Weight (Raymer Eq 15.14)
 W_engine_controls = 10.5 * N_en**1.008 * L_ec**0.222
 print(f"Engine Controls Weight: {W_engine_controls} lbf")
@@ -144,15 +156,18 @@ print(f"Starter (Pneumatic) Weight: {W_starter} lbf")
 W_fuel_system = (7.45 * V_t**0.47 * (1 + V_i/V_t)**(-0.095) * (1 + V_p/V_t) * N_t**0.066 * N_en**0.052 * (T * SFC/1000)**0.249)
 print(f"Fuel System and Tanks Weight: {W_fuel_system} lbf")
 
+# In Overleaf
 # Flight Controls Weight
 W_flight_controls = 36.28 * M**0.003 * S_cs**0.489 * N_s**0.484 * N_c**0.127
 print(f"Flight Controls Weight: {W_flight_controls} lbf")
 
+# In Overleaf
 # Instruments Weight
 W_instruments = 8.0 + 36.37 * N_en**0.676 * N_t**0.237 + 26.4 * (1 + N_ci)**1.356
 print(f"Instruments Weight: {W_instruments} lbf")
 
-# Hydraulics Weight
+# In Overleaf
+# Hydraulics Weight (Raymer Eq. 15.19)
 W_hydraulics = 37.23 * K_vsh * N_u**0.664
 print(f"Hydraulics Weight: {W_hydraulics} lbf")
 
@@ -160,14 +175,17 @@ print(f"Hydraulics Weight: {W_hydraulics} lbf")
 W_electrical = 172.2 * K_mc * R_kva**0.152 * N_c**0.10 * L_a**0.10 * N_gen**0.091
 print(f"Electrical System Weight: {W_electrical} lbf")
 
+# In Overleaf
 # Sensor Weight
 W_radar = 2.117 * W_urdr**0.933
 print(f"Radar Weight: {W_radar} lbf")
 
+# In Overleaf
 # Avionics Weight
 W_avionics = 2.117 * W_uav**0.933
 print(f"Avionics Weight: {W_avionics} lbf")
 
+# In Overleaf
 # Furnishings Weight
 W_furnishings = 217.6 * N_c
 print(f"Furnishings Weight: {W_furnishings} lbf")
