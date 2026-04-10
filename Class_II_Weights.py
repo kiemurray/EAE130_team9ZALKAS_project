@@ -81,7 +81,7 @@ print("Wing Weight: ", W_wing, "lbf")
 
 # Vertical Tail Weight (Raymer Eq 15.3)
 W_tail = (0.452 * K_rht * (1 + H_t/H_v)**0.5 * (W_dg * N_zv)**0.488 * S_vt**0.718 * M**0.341 * L_t**(-1.0) * (1 + S_r/S_vt)**0.348 * AR_vt**0.223 * (1 + taper_ratio_vt)**0.25 * np.cos(np.radians(sweep_vt))**(-0.323))
-W_tail = 0.83 * W_tail # Advanced Composites
+W_tail = 0.85 * W_tail # Advanced Composites
 print("Tail Weight:", W_tail, "lbf")
 
 # Fuselage Weight (Raymer Eq 15.4)
