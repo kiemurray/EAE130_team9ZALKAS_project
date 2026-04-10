@@ -6,6 +6,10 @@ ct_cruise = cv.ct_cruise
 T_0_mil=cv.T_0_mil
 W_TO=cv.W_TO
 Tratio=cv.Tratio
+e_cr=cv.e_cr
+AR_w=cv.AR_w
+CD0=cv.CD0
+S_w=cv.S_w
 
 
 
@@ -49,23 +53,36 @@ T_idle = 0.05*T_0 #idle thrust
 wf_takeoff = fuelFraction(5/60,ct_cruise,2*T_0_mil,W_TO)
 #W_cruise_i = W_TO*wf_warmup*wf_taxi*wf_climb
 
+def getGamma(T_W,L_D):
+    return np.arcsin(T_W - 1/(L_D))
+def getClimbVelocity(rho,W_S,CD_0,k_cr,T_W):
+    return np.sqrt((W_S/(3*rho*CD_0))*(T_W + np.sqrt((T_W)**2)+12*CD_0*k_cr))
+
 def climbFuelFraction(numSegments,h_cruise,TotalThrust,W_takeoff,S_w,k_cr,C_D_0,c_climb):
     weight = np.zeros(numSegments+1)
     weight[0] = W_takeoff
     altitudeArray=np.zeros(numSegments+1)
 
+    #guess L/D
+    L_D_guess = 8
+    gamma = getGamma(TotalThrust/weight,L_D_guess)
+    W_S = weight / S_w
+    T_alt = Tratio(0)*TotalThrust
+    v_climb = getClimbVelocity(rho,W_S,CD0,k_cr,T_alt/weight)
 
-    D= 1
+    
 
 
-    v_climb=np.zeros(numSegments)
-    for step in range(numSegments):
-        rho, a = atmo_vals(altitudeArray[step])[:2]
-        T_W = Tratio(altitudeArray[step])*TotalThrust/weight[step]
-        v_climb[step] = np.sqrt(((weight[step]/S_w)/(3*rho*C_D_0))*(T_W)+np.sqrt((T_W)**2+12*C_D_0*k_cr))
-        delta_He = (h_cruise/numSegments + v_climb[step]**2/(2*32.17))
-        weight[step+1]=weight[step]*np.exp(-c_climb*delta_He/(v_climb[step](1-D/Tratio(altitudeArray[step])*TotalThrust))) #D is drag
-        
+    # v_climb=np.zeros(numSegments)
+    # for step in range(numSegments):
+    #     rho, a = atmo_vals(altitudeArray[step])[:2]
+    #     T_W = Tratio(altitudeArray[step])*TotalThrust/weight[step]
+    #     v_climb[step] = np.sqrt(((weight[step]/S_w)/(3*rho*C_D_0))*(T_W)+np.sqrt((T_W)**2+12*C_D_0*k_cr))
+    #     D=0
+    #     #D= (1/2*rho*v_climb[step]**2)*S_w*(C_D_0+k_cr*)
+    #     delta_He = (h_cruise/numSegments + v_climb[step]**2/(2*32.17))
+    #     weight[step+1]=weight[step]*np.exp(-c_climb*delta_He/(v_climb[step](1-D/Tratio(altitudeArray[step])*TotalThrust))) #D is drag
+
 
 
 def get_cruisefuelFraction(numSegments,range_nm,W_topOfClimb,altitude,S_w,k_cr,C_D_0,C_cruise):
@@ -102,30 +119,30 @@ def getFuelBurn(Altitude,V_cruise,S_wing,CD_0,k_cruise,W_start,c_t_cruise,Range)
     fuelBurned=W_start-W_end    
     print("Fuel Burn: ",fuelBurned,"lbs")
     fuelFraction = (W_start-fuelBurned)/W_start
-    print("Fuel Fraction: ",fuelFraction)
-    return fuelBurned
+    return fuelBurned,fuelFraction
 
-def BreguetExponential(numSegments,Altitude,v_cruise,S_wing,CD_0,k_cruise,W_topOfClimb,C_t_cruise,Range):
+def BreguetExponential(numSegments,Altitude,S_wing,CD_0,k_cruise,W_topOfClimb,C_t_cruise,Range):
     stepDistance=6076.12*Range/numSegments #step distance in feet
     #print("step distance: ",stepDistance,"nm")
     rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
-    
     weightArray=np.zeros(numSegments+1)
     weightArray[0]=W_topOfClimb
     #velocityArray=np.zeros(numSegments)
     C_L_array = np.zeros(numSegments)
     L_D_array = np.zeros(numSegments)
+    velocity_array = []
     fuelBurned=0
     for step in range(numSegments):
-        C_L_array[step] = 2*weightArray[step]/(rho*(v_cruise**2)*S_wing)
+        velocity_array.append(0.85 * a)
+        #velocity_array.append(get_V_bestRange(weightArray[step],Altitude,S_wing,k_cruise,CD_0))
+        C_L_array[step] = 2*weightArray[step]/(rho*(velocity_array[step]**2)*S_wing)
         L_D_array[step] = C_L_array[step]/(CD_0+k_cruise*C_L_array[step]**2)
-        weightArray[step+1] = weightArray[step]*np.exp(-stepDistance*C_t_cruise*(1/3600)/(v_cruise*L_D_array[step]))
+        weightArray[step+1] = weightArray[step]*np.exp(-stepDistance*C_t_cruise*(1/3600)/(velocity_array[step]*L_D_array[step]))
     print("\n\nDiscretized Breguet Equations\nWeight Array:")
     for i in range(numSegments):
         fuelBurned = fuelBurned+(weightArray[i]-weightArray[i+1])
-        print(weightArray[i],"lbf       Fuel burned (segment)",weightArray[i]-weightArray[i+1],"lbs     Fuel burned (total)",fuelBurned,"lbs    C_L",C_L_array[i],"  L_D",L_D_array[i])
-    print("Weight Fraction: ",(W_topOfClimb-fuelBurned)/W_topOfClimb)
-    return ((W_topOfClimb-fuelBurned)/W_topOfClimb)
+        print(round(weightArray[i],2),"lbf       Fuel burned (segment)",round(weightArray[i]-weightArray[i+1],2),"lbs     Fuel burned (total)",round(fuelBurned,2),"lbs    C_L",round(C_L_array[i],2),"  L_D",round(L_D_array[i],2),"    speed: ",round(velocity_array[step],2),"ft/s")
+    return fuelBurned,((W_topOfClimb-fuelBurned)/W_topOfClimb)
     
     
     
@@ -133,21 +150,21 @@ def BreguetExponential(numSegments,Altitude,v_cruise,S_wing,CD_0,k_cruise,W_topO
 def breguetFraction(Range,c_t_cruise,v_cruise,L_D_max):
     return np.exp(-(6076.12*Range*c_t_cruise*(1/3600)/(v_cruise*0.94*L_D_max))) #range to ft, c_t to lb/lbf*sec
 
-h_cruise = 35000 #ft
-Range = 1000 #nm
+h_cruise = 30000 #ft
+Range = 2000 #nm
 L_D_max = 10
 W_cruise_i = 52970
 
 rho_range, a_range = atmo_vals(h_cruise)[:2]
 #Test for Lecture example
-AR_w = 8
-e_cr = 0.885
-S_w = 960
-W_cruise_i = 50000
-CD0 = 0.0165
-L_D_max = 18.35
-Range = 5000 #nm
-W_cruise_i = 48800
+#AR_w = 8
+#e_cr = 0.885
+#S_w = 960
+#W_cruise_i = 50000
+#CD0 = 0.0165
+#L_D_max = 18.35
+#Range = 5000 #nm
+#W_cruise_i = 48800
 
 #L_D = 0.94 * L_D_max
 v_cruise = 0.85 * a_range
@@ -156,16 +173,21 @@ k_cr=1/(np.pi*e_cr*AR_w)
 
 CL_bestRange = get_C_L_bestRange(CD0,k_cr)
 V_bestRange = get_V_bestRange(W_cruise_i,h_cruise,S_w,k_cr,CD0) #ft/s
-get_cruisefuelFraction(20,Range,W_cruise_i,h_cruise,S_w,k_cr,CD0,ct_cruise)
+#get_cruisefuelFraction(20,Range,W_cruise_i,h_cruise,S_w,k_cr,CD0,ct_cruise)
 
 #testFuelBurn = getFuelBurn(h_cruise,v_cruise,S_w,CD0,k_cr,52970,ct_cruise,Range)
-print("Fuel burn for test aircraft")
-testFuelBurn = getFuelBurn(h_cruise,v_cruise,S_w,CD0,k_cr,W_cruise_i,ct_cruise,Range)
-print("Test Fuel Burn: ",testFuelBurn,"lbs")
+print("\n\nFuel burn for test aircraft")
+closedFuelBurn,closedFuelFrac  = getFuelBurn(h_cruise,v_cruise,S_w,CD0,k_cr,W_cruise_i,ct_cruise,Range)
+print("Test Fuel Burn: ",closedFuelBurn,"lbs")
 breguetFuelFrac = breguetFraction(Range,ct_cruise,v_cruise,L_D_max)
+exponentialFuelBurn,exponentialFuelFrac = BreguetExponential(200,h_cruise,S_w,CD0,k_cr,W_cruise_i,ct_cruise,Range)
 print("Fuel fraction (breguet): ",breguetFuelFrac)
-print("Fuel burned (breguet): ",breguetFuelFrac*W_cruise_i)
-BreguetExponential(20,h_cruise,v_cruise,S_w,CD0,k_cr,W_cruise_i,ct_cruise,Range)
+print("Fuel fraction (closed equation): ",closedFuelFrac)
+print("Fuel fraction (exponential): ",exponentialFuelFrac)
+print("Fuel burned (breguet): ",(1-breguetFuelFrac)*W_cruise_i,"lbs")
+print("Fuel burned (closed equation): ",closedFuelBurn,"lbs")
+print("Fuel burned (exponential): ",exponentialFuelBurn,"lbs")
+
 
 # cruise_heights = np.linspace(0,40000)
 # cruiseFuelFractions=np.zeros(len(cruise_heights))
@@ -191,7 +213,7 @@ BreguetExponential(20,h_cruise,v_cruise,S_w,CD0,k_cr,W_cruise_i,ct_cruise,Range)
 #print("Max dry thrust at",h_cruise,"ft",Tratio(h_cruise)*26000)
 #V_bestRange = get_V_bestRange(W_cruise_i,30000,S_w,k_cr,CD0) #ft/s
 #print("V_best_range (at",h_cruise,"ft):",V_bestRange,"ft/s")
-print("Ma_cruise (at",h_cruise,"ft):",V_bestRange/a_range)
+#print("Ma_cruise (at",h_cruise,"ft):",V_bestRange/a_range)
 #print("cruise weight fraction: ",cruise)
 
 topSpeed = 2000 #ft/s
