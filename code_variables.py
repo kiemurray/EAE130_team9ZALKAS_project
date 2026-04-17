@@ -74,6 +74,23 @@ S_csw = 103 # Wing Mounted Control Surface Area ft^2
 K_dwf = 0.774 # For Non-Delta Wing Aircraft
 K_vs = 1.0 # non-variable sweep
 
+#flaps (0.25 * c_wing)
+c_f_inner = 2.27 #feet (inner chord)
+c_f_outer = 5.649 #feet (outer chord)
+b_f = (0.67 - 0.175) * b_w
+
+#inboard slats (0.1 * c_wing)
+c_slat_inboard_i = 2.118 #feet
+c_slat_inboard_o = 0.909 #feet 
+b_slat_inboard = (0.6797 - 0.226) * b_w
+
+#slats (0.1 * c_wing)
+c_slat_outboard_i = 0.909 #feet
+c_slat_outboard_o = 0.449 #feet 
+b_slat_outboard = (1 - 0.670732) * b_w
+
+
+
 
 # horizontal tail
 c_ht = 0.3        # horizontal tail volume coefficient
