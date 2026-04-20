@@ -264,6 +264,7 @@ sweep_vt = 50 # Vertical Tail Sweep
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
 S_vt = 145 # Vertical Tail Area [ft]
+c_t = 8.24676 #stabilator MAC
 
 # wing
 b_w = 41.026226        # wing span tip-to-tip (ft)
@@ -278,7 +279,7 @@ eta_w = 0.97      # difference factor between the theoretical section lift curve
 S_csw = 103 # Wing Mounted Control Surface Area ft^2
 K_dwf = 0.774 # For Non-Delta Wing Aircraft
 K_vs = 1.0 # non-variable sweep
-
+S_wet_wing = 692.402
 
 # horizontal tail
 c_ht = 0.3        # horizontal tail volume coefficient
@@ -289,8 +290,11 @@ lambda_h = 45   # Sweep angle of horizontal tail (degrees)
 H_t = 0 # Horizontal Tail Height Above Fuselage
 K_vsh = 1.0 # Non-Variable Sweep Wing
 eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
+t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
+S_wet_tail = 151.715
 
 # fuselage
+S_wet_fuselage = 528.140 
 K_f = 0.344      # empirical factor
 L_f = 47.5         # fuselage length (ft)
 D_f = 6.4 # Fuselage Depth, ft
@@ -455,8 +459,6 @@ def calculate_weight_fraction(L_D_max, ra, E, ct_cruise, ct_dash, v_cruise, v_da
 
     return Wf_W0
 
-def calculate_zero_lift_drag_coefficient(c_f, S_wet, S_ref):
-    return c_f * (S_wet / S_ref)
 
 def calculate_engine_weight(T_0):
     W_eng_dry = 0.521 * T_0**0.9

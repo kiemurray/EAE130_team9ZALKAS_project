@@ -4,7 +4,7 @@ import code_variables as cv
 CD0 = cv.CD0
 S_w = cv.S_w
 c = cv.c_w
-
+c_f= cv.c_f
 
 #Flap Drag
 delta_CD_flaps = 1.7*(c_f/c)**(1.38)*(S_f/S_w)*(np.sin(delta_flap))**2 #plain and split flap
