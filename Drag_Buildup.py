@@ -15,5 +15,8 @@ C_D_trim = 0 #known trim state
 C_D_wave = 0 #VSP Aero
 C_D_induced = 0 #VSPAero / AVL
 
+C_D_wave_mach2 = 0.0246
+C_D_wave_mach1_6 = 0.0276
+
 
 C_D = CD0 + delta_CD_flaps + C_D_trim + C_D_wave + C_D_induced
