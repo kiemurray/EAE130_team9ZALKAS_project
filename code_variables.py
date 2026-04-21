@@ -162,7 +162,7 @@ wf_middescent = 0.995
 
 # takeoff parameters
 V_TO = 160 * 1.68781                    # takeoff speed in ft/s, assuming 160 knots for takeoff
-W_TO = 55700
+W_TO = 52970
 e_to = 0.775                            #takeoff
 k_to = 1 / (np.pi * AR_w * e_to)          #takeoff
 S_wingtest = 685 #based on vsp design v5
@@ -270,6 +270,10 @@ c_t = 8.24676 #stabilator MAC
 b_w = 41.026226        # wing span tip-to-tip (ft)
 c_w = 19.918018        # wing chord (ft)
 S_w = 685             # wing area (ft^2)
+
+S_w = 540              # wing area (ft^2) (After PDR)
+b_w = 36.42614        # wing span tip-to-tip (ft)
+c_w = 17.68470        # wing chord (ft) --- Mean Aerodynamic Chord ---
 AR_w = 2.46
 tc_root = 0.06 # t/c ratio at root chord
 taper_ratio = 0.295 # Taper Ratio
