@@ -4,7 +4,7 @@ import code_variables as cv
 import design_space as ds
 
 #constants
-e = 0.7    # need to come back
+e = cv.e_cr   # need to come back
 v = cv.v_cruise      # v_cruise?
 rho = cv.rho_cruise
 
