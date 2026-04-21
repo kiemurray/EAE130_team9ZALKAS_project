@@ -9,7 +9,7 @@ def get_dCL_max(dCl_max, S_flapped, lambda_HL_deg):
 
 # FLAPS
 dCl_max_plain_flap = 0.9
-S_flapped_flap = 585
+S_flapped_flap = 465
 lambda_HL_flap = 10
 dCL_max_flap = get_dCL_max(dCl_max_plain_flap, S_flapped_flap, lambda_HL_flap)
 print(dCL_max_flap)
