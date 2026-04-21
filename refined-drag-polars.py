@@ -106,7 +106,7 @@ fit_gear_down = np.poly1d(coeffs_gear_down)
 CD_arr = np.linspace(-0.01, 0.1, 100)
 
 clean = fit_clean(CD_arr) 
-gear_down = fit_gear_down(CD_arr)
+gear_down = fit_gear_down(CD_arr) + delta_CD_elevons + delta_CD_ailerons + delta_CD_slats_inboard + delta_CD_slats_outboard
 
 # plt.plot(CDtot_clean, CLtot_clean)
 plt.plot(CD_arr, clean, label="Clean", color='green')
