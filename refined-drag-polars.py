@@ -82,10 +82,12 @@ CDtot_clean = [
     0.04281, 0.04484, 0.04600, 0.04725, 0.04901, 0.05041, 0.05228
 ]
 CLtot_clean = [
-    0.00879, 0.01770, 0.02659, 0.03525, 0.04411, 0.05338, 0.06253, 0.07167, 0.08105,
+     0.00879, 0.01770, 0.02659, 0.03525, 0.04411, 0.05338, 0.06253, 0.07167, 0.08105,
     0.08919, 0.09800, 0.10718, 0.11752, 0.12581, 0.13410, 0.14229, 0.15025, 0.15867,
     0.16645, 0.17450, 0.18261, 0.19056, 0.19859, 0.20670, 0.21429
 ]
+
+
 CDtot_landing_gear_down = [
     0.02063, 0.02096, 0.02140, 0.02226, 0.02311, 0.02387, 0.02464, 0.02607, 0.02714,
     0.02800, 0.02933, 0.03073, 0.03258, 0.03340, 0.03574, 0.03733, 0.03922, 0.04120,
@@ -109,19 +111,19 @@ fit_gear_up = np.poly1d(coeffs_landing)
 CD_arr = np.linspace(-0.01, 0.1, 100)
 
 clean = fit_clean(CD_arr) 
-gear_up = fit_gear_up(CD_arr)
+gear_up = fit_gear_up(CD_arr) + delta_CD_elevons + delta_CD_ailerons + delta_CD_slats_inboard + delta_CD_slats_outboard
 gear_down = fit_gear_down(CD_arr) + delta_CD_elevons + delta_CD_ailerons + delta_CD_slats_inboard + delta_CD_slats_outboard
 
 # plt.plot(CDtot_clean, CLtot_clean)
-plt.plot(CD_arr, clean, label="Clean", color='green')
+plt.plot(clean,CD_arr, label="Clean", color='green')
 # plt.plot(CDtot_landing_gear_down, CLtot_landing_gear_down, label='Landing Gear Down')
-plt.plot(CD_arr, gear_down, label="Takeoff Gear Down", color='orange')
-plt.plot(CD_arr, gear_up, label="Takeoff Gear Up", color= 'blue')
-plt.ylabel('CL')
-plt.xlabel('CD')
+plt.plot(gear_down,CD_arr, label="Takeoff Gear Down", color='orange')
+plt.plot( gear_up,CD_arr, label="Takeoff Gear Up", color= 'blue')
+plt.ylabel('CD')
+plt.xlabel('CL')
 plt.axhline(0, color='black', linewidth=1)
 plt.axvline(0, color='black', linewidth=1)
-plt.ylim(-0.25,0.25)
+plt.ylim(-0.1,0.1)
 plt.title('CL vs CD with Quadratic Fit')
 plt.legend()
 plt.grid(True)
