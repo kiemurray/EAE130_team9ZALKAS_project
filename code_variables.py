@@ -459,7 +459,7 @@ def calculate_weight_fraction(L_D_max, ra, E, ct_cruise, ct_dash, v_cruise, v_da
     weight_fraction = warmup*taxi*takeoff*climb*cruise*midmission_descent*dash_ingress*dash_egress*midmission_climb*cruise*descent*loiter*landing 
 
     Wf_W0 = (1 - weight_fraction) * 1.06    # compute fuel fraction
-    print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
+    # print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
 
     return Wf_W0
 
@@ -550,7 +550,7 @@ W_cruise_i = W_TO*wf_warmup*wf_taxi*wf_climb
 def get_cruisefuelFraction(numSegments,range_nm,W_topOfClimb,altitude,S_w,k_cr,C_D_0,C_cruise):
     #range in nm
     stepDistance=range_nm/numSegments
-    print("step distance: ",stepDistance,"nm")
+    # print("step distance: ",stepDistance,"nm")
     weightArray=[W_topOfClimb]
     velocityArray=[]
     for step in range(numSegments):
@@ -562,8 +562,8 @@ def get_cruisefuelFraction(numSegments,range_nm,W_topOfClimb,altitude,S_w,k_cr,C
         W_fuel_burned = T_req*(time/3600)*C_cruise #need to convert to hours since specific fuel consumption in hours
         weightArray.append(weightArray[step]-W_fuel_burned)
         velocityArray.append(V_cruise_step)
-    print("length of weightarray: ",len(weightArray))
-    print("Weight Array:        Velocity Array")
+    # print("length of weightarray: ",len(weightArray))
+    # print("Weight Array:        Velocity Array")
     for i in range(len(velocityArray)):
         print(weightArray[i],"lbf       ",velocityArray[i],"ft/s")
 
@@ -625,7 +625,7 @@ def calculate_weight_fraction(L_D_max, ra, E, ct_cruise, ct_dash, v_cruise, v_da
     weight_fraction = warmup*taxi*takeoff*climb*cruise*midmission_descent*dash_ingress*dash_egress*midmission_climb*cruise*descent*loiter*landing 
 
     Wf_W0 = (1 - weight_fraction) * 1.06    # compute fuel fraction
-    print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
+    # print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
 
     return Wf_W0
 
@@ -718,22 +718,23 @@ W_cruise_i = W_TO*wf_warmup*wf_taxi*wf_climb
 def get_cruisefuelFraction(numSegments,range_nm,W_topOfClimb,altitude,S_w,k_cr,C_D_0,C_cruise):
     #range in nm
     stepDistance=range_nm/numSegments
-    print("step distance: ",stepDistance,"nm")
+    # print("step distance: ",stepDistance,"nm")
     weightArray=[W_topOfClimb]
     velocityArray=[]
     for step in range(numSegments):
         V_cruise_step = get_V_bestRange(weightArray[step],altitude,S_w,k_cr,C_D_0)
         time = 6076.12 * stepDistance / V_cruise_step #convert distance in nm to feet
-        print("time for step",step,": ",time,"sec")
+        # print("time for step",step,": ",time,"sec")
         T_req = get_D_bestRange(C_D_0,V_cruise_step,S_w,altitude)
-        print("Thrust Required",T_req,"lbf")
+        # print("Thrust Required",T_req,"lbf")
         W_fuel_burned = T_req*(time/3600)*C_cruise #need to convert to hours since specific fuel consumption in hours
         weightArray.append(weightArray[step]-W_fuel_burned)
         velocityArray.append(V_cruise_step)
-    print("length of weightarray: ",len(weightArray))
-    print("Weight Array:        Velocity Array")
+    # print("length of weightarray: ",len(weightArray))
+    # print("Weight Array:        Velocity Array")
     for i in range(len(velocityArray)):
-        print(weightArray[i],"lbf       ",velocityArray[i],"ft/s")
+        # print(weightArray[i],"lbf       ",velocityArray[i],"ft/s")
+        pass
 
 CL_bestRange = get_C_L_bestRange(CD0,k_cr)
 V_bestRange = get_V_bestRange(W_cruise_i,40000,S_w,k_cr,CD0) #ft/s
