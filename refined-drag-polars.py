@@ -97,21 +97,26 @@ CLtot_landing_gear_down = [
     0.08952, 0.09924, 0.10771, 0.11776, 0.12645, 0.13421, 0.14267, 0.15047, 0.15885,
     0.16702, 0.17451, 0.18251, 0.19092, 0.19876, 0.20702, 0.21480
 ]
-
+CDtot_avg_landing_nogear    = [0.08020773, 0.08544009, 0.09509525, 0.15400723, 0.13648854, 0.11906174, 0.12084928, 0.19870452, 0.13373305, 0.13229621, 0.11678673, -1.26150724, -0.88158880, 0.02666942, 0.10797449]
+CLtot_avg_landing_nogear    = [0.16997004, 0.19070988, 0.17689464, 0.21609493, 0.19947138, 0.27931094, 0.29297851, 0.32184035, 0.32669529, 0.29666088, 0.04678969, -3.45295521, -2.21213341, -0.12624830, 0.07915005]
 coeffs_clean = np.polyfit(CDtot_clean, CLtot_clean, deg=2)
 fit_clean = np.poly1d(coeffs_clean)
 # print(f"Fit: {coeffs_clean[0]:.6f}*CD^2 + {coeffs_clean[1]:.6f}*CD + {coeffs_clean[2]:.6f}")
 coeffs_gear_down = np.polyfit(CDtot_landing_gear_down, CLtot_landing_gear_down, deg=2)
 fit_gear_down = np.poly1d(coeffs_gear_down)
+coeffs_landing = np.polyfit(CDtot_avg_landing_nogear,CLtot_avg_landing_nogear, deg=2)
+fit_gear_up = np.poly1d(coeffs_landing)
 CD_arr = np.linspace(-0.01, 0.1, 100)
 
 clean = fit_clean(CD_arr) 
+gear_up = fit_gear_up(CD_arr)
 gear_down = fit_gear_down(CD_arr) + delta_CD_elevons + delta_CD_ailerons + delta_CD_slats_inboard + delta_CD_slats_outboard
 
 # plt.plot(CDtot_clean, CLtot_clean)
 plt.plot(CD_arr, clean, label="Clean", color='green')
 # plt.plot(CDtot_landing_gear_down, CLtot_landing_gear_down, label='Landing Gear Down')
-plt.plot(CD_arr, gear_down, label="Gear Down", color='orange')
+plt.plot(CD_arr, gear_down, label="Takeoff Gear Down", color='orange')
+plt.plot(CD_arr, gear_up, label="Takeoff Gear Up", color= 'blue')
 plt.ylabel('CL')
 plt.xlabel('CD')
 plt.axhline(0, color='black', linewidth=1)
