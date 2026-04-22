@@ -86,6 +86,9 @@ def cr_dash_constraint(v, rho, wf, T_ratio, WS):
     return T_Wcr * wf / T_ratio
 
 mach_cruise = 0.85
+v_cr = mach_cruise * a_40                                              # ft/s Ma 0.8-0.85 at 40,000ft
+Tcr_Tto = Tratio(40000)                                                   
+T_W_cruise = cr_dash_constraint(v_cr, rho_40, cr_wf, Tcr_Tto)
 v_cr = mach_cruise * a_40     
 Tcr_Tto = Tratio(40000)   
 def tw_cruise (WS):
