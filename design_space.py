@@ -17,8 +17,8 @@ k_land = 1 / (np.pi * AR * e_land)
 ks = 1.2
 R = 53.35                                                              #ft*lbf/lbm-Rankine
 
-CLmax_TO = 1.7
-CLmax_L = 2.1
+CLmax_TO = 1.5# 1.7
+CLmax_L = 1.8 #2.1
 CLmax_climb = CLmax_TO
 
 # Weight Fractions
@@ -88,7 +88,7 @@ def cr_dash_constraint(v, rho, wf, T_ratio, WS):
 mach_cruise = 0.85
 v_cr = mach_cruise * a_40                                              # ft/s Ma 0.8-0.85 at 40,000ft
 Tcr_Tto = Tratio(40000)                                                   
-T_W_cruise = cr_dash_constraint(v_cr, rho_40, cr_wf, Tcr_Tto)
+#T_W_cruise = cr_dash_constraint(v_cr, rho_40, cr_wf, Tcr_Tto)
 v_cr = mach_cruise * a_40     
 Tcr_Tto = Tratio(40000)   
 def tw_cruise (WS):
@@ -233,4 +233,4 @@ plt.legend(fontsize=14, loc='upper right')
 plt.xlim(0, 200)
 plt.ylim(0, 2.0)  
 
-#plt.show()
+plt.show()
