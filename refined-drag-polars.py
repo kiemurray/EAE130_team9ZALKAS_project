@@ -57,13 +57,17 @@ friction_fuselage = Cf_fuse*FF_fuselage*cv.S_wet_fuselage
 CD_friction = (friction_wing + friction_tail + friction_fuselage)/cv.S_wingtest
 print("CD_friction =", CD_friction)
 
-CD_miss = 0.18+0.15
+CD_miss = 0.18 + 0.15
 CD_leak = 0.15
 c = cv.c_w
 
 CD0_land = CD_friction + CD_miss + CD_leak 
 
 # CD = CDmin + K*(CL-CLmin)**2
+
+CD0_takeoff_nogear = [0.00570, 0.00587, 0.00553, 0.00525, 0.00501, 0.00482, 
+    0.00467, 0.00457, 0.00452, 0.00449, 0.00454, 0.00460, 
+    0.00471, 0.00487, 0.00505]
 
 def delta_CD_flaps(delta_flap, c_f, c, S_f, S_wing_wet):
     return 1.7*(c_f/c)**(1.38)*(S_f/S_wing_wet)*(np.sin(delta_flap))**2 #plain and split flap
@@ -89,18 +93,27 @@ CLtot_clean = [
 CLtot_clean_transformed = [-x for x in reversed(CLtot_clean)]
 CDtot_clean_transformed = [x for x in reversed(CDtot_clean)]
 
-CLtot_landing_gear_down = [
-    0.22654, 0.14697, 0.17999, 2.99231, 1.40966
-]
+# CLtot_landing_gear_down = [
+#     0.22654, 0.14697, 0.17999, 2.99231, 1.40966
+# ]
 
-CDtot_landing_gear_down = [
-    1.81604, 1.50197, 1.67972, 6.02132, 9.36590
-]
+# CDtot_landing_gear_down = [
+#     1.81604, 1.50197, 1.67972, 6.02132, 9.36590
+# ]
 # CLtot_landing_gear_down_inv = [-x for x in reversed(CLtot_landing_gear_down)]
 # CDtot_landing_gear_down_inv = [x for x in reversed(CDtot_landing_gear_down)]
 
-CDtot_avg_landing_nogear    = [0.08020773, 0.08544009, 0.09509525, 0.15400723, 0.13648854, 0.11906174, 0.12084928, 0.19870452, 0.13373305, 0.13229621, 0.11678673,  0.02666942, 0.10797449]
-CLtot_avg_landing_nogear    = [0.16997004, 0.19070988, 0.17689464, 0.21609493, 0.19947138, 0.27931094, 0.29297851, 0.32184035, 0.32669529, 0.29666088, 0.04678969,  -0.12624830, 0.07915005]
+CLwtot_takeoff_nogear = [
+    -0.02448, 0.02076, 0.06574, 0.11041, 0.15465, 0.19827, 
+    0.24107, 0.28280, 0.32354, 0.35864, 0.40365, 0.44283, 
+    0.48113, 0.52130, 0.56114
+]
+
+CDwtot_takeoff_nogear = [
+    0.00606, 0.00616, 0.00668, 0.00815, 0.01056, 0.01386, 
+    0.01800, 0.02286, 0.02835, 0.03624, 0.04433, 0.05124, 
+    0.06032, 0.07346, 0.08368
+]
 # coeffs_clean = np.polyfit(CDtot_clean, CLtot_clean, deg=2)
 # coeffs_clean_inv = np.polyfit(CLtot_clean_transformed, CDtot_clean, deg=2)
 # fit_clean = np.poly1d(coeffs_clean)
@@ -123,14 +136,14 @@ CL_clean_inv = np.array(CLtot_clean_transformed)
 CD_clean = np.array(CDtot_clean)
 CD_clean_inv = np.array(CDtot_clean_transformed)
 # CD_clean = np.append(CD_clean_inv, CD_clean)
-CL_gear_down = np.array(CLtot_landing_gear_down)
-# CL_gear_down_inv = np.array(CLtot_landing_gear_down_inv)
-# CL_gear_down = np.append(CL_gear_down_inv, CL_gear_down)
-CD_gear_down = np.array(CDtot_landing_gear_down)
+# CL_gear_down = np.array(CLtot_landing_gear_down)
+# # CL_gear_down_inv = np.array(CLtot_landing_gear_down_inv)
+# # CL_gear_down = np.append(CL_gear_down_inv, CL_gear_down)
+# CD_gear_down = np.array(CDtot_landing_gear_down)
 # CD_gear_down_inv = np.array(CDtot_landing_gear_down_inv)
 # CD_gear_down = np.append(CD_gear_down_inv, CD_gear_down)
-CL_gear_up = np.array(CLtot_avg_landing_nogear)
-CD_gear_up = np.array(CDtot_avg_landing_nogear)
+CL_gear_up = np.array(CLwtot_takeoff_nogear) 
+CD_gear_up = np.array(CDwtot_takeoff_nogear)+ CD0_land
 
 
 coeffs_clean = np.polyfit(CL_clean, CD_clean, deg=2)
@@ -139,22 +152,23 @@ poly_func = np.poly1d(coeffs_clean)
 x_smooth = np.linspace(-1, 2, 100)
 y_smooth = poly_func(x_smooth)
 
-coeffs_gear_down = np.polyfit(CL_gear_down, CD_gear_down, deg=2)
-poly_func_gear_down = np.poly1d(coeffs_gear_down)+ CD0_land
-x_smooth_gear_down = np.linspace(-1, 2, 100)
-y_smooth_gear_down = poly_func_gear_down(x_smooth_gear_down) 
+# coeffs_gear_down = np.polyfit(CL_gear_down, CD_gear_down, deg=2)
+# poly_func_gear_down = np.poly1d(coeffs_gear_down)+ CD0_land
+# x_smooth_gear_down = np.linspace(-1, 2, 100)
+# y_smooth_gear_down = poly_func_gear_down(x_smooth_gear_down) 
 coeffs_gear_up = np.polyfit(CL_gear_up, CD_gear_up, deg=2)
 poly_func_gear_up = np.poly1d(coeffs_gear_up)
 x_smooth_gear_up = np.linspace(-1, 2, 100)
 y_smooth_gear_up = poly_func_gear_up(x_smooth_gear_up)
 
-
 plt.plot(y_smooth, x_smooth, label="Clean Fit", color='blue') 
-plt.plot(y_smooth_gear_down, x_smooth_gear_down, label="Landing Gear Down", color='orange')
+# plt.plot(y_smooth_gear_down, x_smooth_gear_down, label="Landing Gear Down", color='orange')
 plt.plot(y_smooth_gear_up, x_smooth_gear_up, label="Landing Gear Up", color='green')
 plt.ylabel("Lift Coefficient (CL)")
 plt.xlabel("Drag Coefficient (CD)")
 plt.title("Drag Polar Fit")
+plt.axhline(0, color='black', linewidth=1)
+plt.axvline(0, color='black', linewidth=1)
 plt.legend()
 plt.xlim(0, 1)
 # plt.ylim(-1, 1)
@@ -168,8 +182,7 @@ plt.show()
 # plt.plot(CDtot_avg_landing_nogear, CLtot_avg_landing_nogear, label="Takeoff Gear Up", color= 'blue')
 # plt.ylabel('CL')
 # plt.xlabel('CD')
-# plt.axhline(0, color='black', linewidth=1)
-# plt.axvline(0, color='black', linewidth=1)
+
 # plt.ylim(-0.25,0.25)
 
 # plt.title('CL vs CD with Quadratic Fit')
