@@ -189,7 +189,7 @@ poly_func_gear_down_LA = np.poly1d(coeffs_gear_down_LA) + CD_miss
 x_smooth_gear_down_LA = np.linspace(-2, 1.8, 100)
 y_smooth_gear_down_LA = poly_func_gear_down_LA(x_smooth_gear_down_LA)
 
-
+plt.figure(figsize=(10, 8))
 plt.plot(y_smooth, x_smooth, label="Clean", color='blue') 
 plt.plot(y_smooth_gear_down_TO, x_smooth_gear_down_TO, label="Takeoff Gear Down", color='orange')
 plt.plot(y_smooth_gear_up_TO, x_smooth_gear_up_TO, label="Takeoff Gear Up", color='green')
