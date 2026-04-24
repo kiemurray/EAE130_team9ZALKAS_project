@@ -12,8 +12,6 @@ S = cv.S_w
 CL = 
 CD = 
 
-
-
 W_MTOW = 
 W_OEW = 
 
