@@ -1,0 +1,71 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import code_variables as cv
+
+#Need diagram based on minimum and maximum weight
+#you can tweak these values
+W_max = cv.W_TO
+n_design_positive = cv.n_z
+n_design_negative = cv.n_z_negative
+numPoints = 100
+V_max = 700 #KEAS
+V_min = 0 #KEAS
+altitude = 0 #Sea Level
+CL_max = cv.CLmax_climb
+CL_min = -cv.CLmax_climb
+S_ref = cv.S_w
+
+
+
+
+
+#Calculations
+
+#using english units (pounds, feet, seconds)
+KEAS = np.linspace(0,700,numPoints)
+
+def get_Max_Lift_Line(CL_max,Weight,S_ref,altitude,n):
+    rho_lift = cv.atmo_vals(altitude)[0]
+    v_a = cv.ft_s_to_knots(np.sqrt(2*Weight*np.abs(n)/(rho_lift*np.abs(CL_max)*S_ref)))
+    print("v_a:",v_a,"KEAS")
+    v_stall = np.linspace(0,v_a,numPoints)
+    F_stall = (1/2)*rho_lift*(cv.knots_to_ft_per_s(v_stall)**2)*CL_max*S_ref
+    n_stall = F_stall/Weight
+    
+    return n_stall,v_stall
+
+
+n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,W_max,S_ref,altitude,n_design_positive)
+n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,W_max,S_ref,altitude,n_design_negative)
+
+#cut the stall plot off at maneuver speed
+
+
+#Plot based on Equivalent airspeed
+# PLOTS
+plt.figure(figsize=(12, 8))
+#plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
+plt.plot(v_stall_pos,n_stall_pos, color='orange', linewidth=2, label='Max Lift Line')
+plt.plot(v_stall_neg,n_stall_neg, color='blue', linewidth=2, label='Min Lift Line')
+#plt.axvline(v_a, color='red', linewidth=2, label='Maneuvering Speed')
+plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
+plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
+
+#design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
+
+#plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
+                 #where=(W_S <= W_S_stall), 
+                 #color='yellow', 
+                 #alpha=0.3, 
+                 #zorder=1,
+                 #label='Design Window')
+plt.xlabel('V (KEAS)', fontsize=18)
+plt.ylabel('Load Factor, n', fontsize=18)
+plt.title('Flight Envelope', fontsize=20)
+plt.grid(True, alpha=0.4)
+plt.legend(fontsize=14, loc='upper right')
+
+plt.xlim(0, 700)
+plt.ylim(-8, 12)  
+
+plt.show()

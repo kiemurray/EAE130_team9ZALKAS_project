@@ -28,10 +28,10 @@ W_en = 2445 # Engine Weight, each, lbf
 M = 2.0 # Mach Number
 
 
-# lift coefficients
-CLmax_TO = 1.7 # maximum lift coefficient for takeoff
-CLmax_L = 2.1 # maximum lift coefficient for landing
-CLmax_climb = CLmax_TO # maximum lift coefficient for climb, assumed to be the same as takeoff
+# lift coefficients (updated after A2)
+CLmax_TO = 1.5 # maximum lift coefficient for takeoff
+CLmax_L = 1.8 # maximum lift coefficient for landing
+CLmax_climb = 0.9 # maximum lift coefficient for climb, assumed clean
 
 
 # stucture variables
@@ -40,11 +40,12 @@ x_cg =  23.8094      # aircraft center of gravity (ft) assumed
 num_engines = 2 # Number of Engines
 S_cs = 223 # Total Area of Flight Control Surfaces
 N_s = 10 # Number of Flight Control Surfaces
-N_c = 1 # Number of Functions Performed By Controls (4-7)
+N_c = 6 # Number of Functions Performed By Controls (4-7)
 N_u = 10 # Number of Hydraulic Utility Functions (5-15)
 W_dg = 56631 # Design Gross Weight (lbf)
 n_z = 8.0 # limit load, desired by RFP
 N_z = 1.5 * n_z # Ultimate Load Factor
+n_z_negative = -5 #estimate for negative limit load
 
 
 # vertical tail
@@ -239,17 +240,7 @@ CLmax_L = 2.1 # maximum lift coefficient for landing
 CLmax_climb = CLmax_TO # maximum lift coefficient for climb, assumed to be the same as takeoff
 
 
-# stucture variables
 
-x_cg =  23.8094      # aircraft center of gravity (ft) assumed
-n_eng = 2
-S_cs = 223 # Total Area of Flight Control Surfaces
-N_s = 10 # Number of Flight Control Surfaces
-N_c = 6 # Number of Functions Performed By Controls (4-7)
-N_u = 10 # Number of Hydraulic Utility Functions (5-15)
-W_dg = 56631 # Design Gross Weight (lbf)
-n_z = 8.0 # limit load, desired by RFP
-N_z = 1.5 * n_z # Ultimate Load Factor
 
 
 # vertical tail
