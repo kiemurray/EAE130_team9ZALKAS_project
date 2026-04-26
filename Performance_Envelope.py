@@ -4,14 +4,19 @@ import code_variables as cv
 
 #Stall based on GTOW 
 W_TO=cv.W_TO
+W_TO=40000
 CL_max_clean=cv.CLmax_climb
 CL_max_takeoff=cv.CLmax_TO
 CLmax_landing=cv.CLmax_L
 S_ref=cv.S_w
+e_cr=cv.e_cr
+T_0_mil = cv.T_0_mil
+T_0_ab = cv.T_0
+CD0=cv.CD0
 
 h_min = 0 #feet
-h_max = 70000 #feet
-numPoints = 100
+h_max = 100000 #feet
+numPoints = 10
 
 rho_vals=np.zeros(numPoints)
 h_vals = np.linspace(h_min,h_max,numPoints)
@@ -27,16 +32,74 @@ def getStallCurve(Weight,altitude_range,CL_max,S_ref):
     return v_stall
 
 #Specific power calculation
-def getSpecificPower(Velocity,T_W,W_S,altitude,CD0,n,e):
+def getSpecificPower(Velocity,Weight,S_ref,altitude,CD0,n,e,Thrust):
     rho=cv.atmo_vals(altitude)[0]
+    Thrust_Ratio = cv.Tratio(altitude)
+    T_W = Thrust*Thrust_Ratio/Weight
+    W_S = Weight/S_ref
     q=(1/2)*(rho)*(Velocity**2)
     K=1/(np.pi*cv.AR_w*e)
     P_s = Velocity*(T_W-(q*CD0/W_S)-(n**2)*(K/q)*(W_S))
     return P_s
 
-def zeroExcessPowerVelo(T_W,W_S,altitude,CD0,n,e):
-    coefficients = []
 
+def zeroExcessPowerVelo(Weight,S_ref,altitude,CD0,n,e,Thrust): #outputs in knots
+    rho=cv.atmo_vals(altitude)[0]
+    Thrust_Ratio = cv.Tratio(altitude)
+    T_W = Thrust*Thrust_Ratio/Weight
+    W_S = Weight/S_ref
+    K=1/(np.pi*cv.AR_w*e)
+    coefficients = [-0.5*rho*CD0/W_S,0,T_W,0,-(n**2)*(2*K/rho)*(W_S)]
+    roots = np.roots(coefficients)
+    print(roots)
+    velocityBuffer = []
+    velocities = []
+    for i in range(len(roots)):
+        if roots[i] > 0:
+            velocityBuffer.append(cv.ft_s_to_knots(float(roots[i])))
+    if (velocityBuffer[0] == velocityBuffer[1]):
+        return np.zeros(2)
+
+    return velocityBuffer
+
+
+def zeroExcessPowerVeloPlot(Weight,S_ref,h_min,h_max,CD0,n,e,Thrust): #outputs in knots
+    
+    altitudeArray=np.linspace(h_min,h_max)
+    velocityBuffer = []
+    heights = []
+    velocities = []
+    posBuffer = []
+    for altitude in altitudeArray:
+        #print(altitude)
+        rho=cv.atmo_vals(altitude)[0]
+        Thrust_Ratio = cv.Tratio(altitude)
+        T_W = Thrust*Thrust_Ratio/Weight
+        W_S = Weight/S_ref
+        K=1/(np.pi*cv.AR_w*e)
+        coefficients = [-0.5*rho*CD0/W_S,0,T_W,0,-(n**2)*(2*K/rho)*(W_S)]
+        roots = np.roots(coefficients)
+        
+        #sort out all the negative values
+        posBuffer = []
+        for i in range(len(roots)):
+            if roots[i] > 0:
+                posBuffer.append(cv.ft_s_to_knots(float(roots[i])))
+                #print (roots[i],"is real")
+            
+        velocities.append(posBuffer)
+        
+
+
+    print("Printing the positive values")    
+    print(posBuffer)
+    print("Printing the velocities values")    
+    print(velocities)
+    print("Printing heights")  
+    print(heights)
+            
+
+    return posBuffer,heights
 #ceiling curve
 
 
@@ -52,12 +115,13 @@ def zeroExcessPowerVelo(T_W,W_S,altitude,CD0,n,e):
 
 
 stall_vals = cv.ft_s_to_knots(getStallCurve(W_TO,h_vals,CL_max_clean,S_ref))
+zeroExcessPowerVelocity=np.zeros((len(h_vals),2))
+for i in range(len(h_vals)):
+    zeroExcessPowerVelocity[i] = zeroExcessPowerVelo(W_TO,S_ref,h_vals[i],CD0,1,e_cr,2*T_0_mil)
+#print("P_s = 0 at sea level",zeroExcessPowerVelocity)
 
 
-
-
-
-
+P_s_velo,altitudes =zeroExcessPowerVeloPlot(W_TO,S_ref,h_min,h_max,CD0,1,e_cr,2*T_0_mil)
 
 
 
@@ -69,6 +133,8 @@ stall_vals = cv.ft_s_to_knots(getStallCurve(W_TO,h_vals,CL_max_clean,S_ref))
 plt.figure(figsize=(12, 8))
 #plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
 plt.plot(stall_vals,h_vals, color='orange', linewidth=2, label='Stall Line')
+plt.plot(zeroExcessPowerVelocity,h_vals, color='blue', linewidth=2, label='Zero Excess Power')
+plt.plot(P_s_velo,altitudes, color='green', linewidth=2, label='Zero Excess Power')
 #plt.axvline(v_a, color='red', linewidth=2, label='Maneuvering Speed')
 #plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
 #plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
