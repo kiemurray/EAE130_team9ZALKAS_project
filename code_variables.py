@@ -262,9 +262,9 @@ b_w = 41.026226        # wing span tip-to-tip (ft)
 c_w = 19.918018        # wing chord (ft)
 S_w = 685             # wing area (ft^2)
 
-S_w = 540              # wing area (ft^2) (After PDR)
-b_w = 36.42614        # wing span tip-to-tip (ft)
-c_w = 17.68470        # wing chord (ft) --- Mean Aerodynamic Chord ---
+# S_w = 540              # wing area (ft^2) (After PDR)
+# b_w = 36.42614        # wing span tip-to-tip (ft)
+# c_w = 17.68470        # wing chord (ft) --- Mean Aerodynamic Chord ---
 AR_w = 2.46
 tc_root = 0.06 # t/c ratio at root chord
 taper_ratio = 0.295 # Taper Ratio
