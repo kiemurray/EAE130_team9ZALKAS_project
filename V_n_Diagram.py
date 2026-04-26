@@ -15,14 +15,21 @@ CL_max = cv.CLmax_climb
 CL_min = -cv.CLmax_climb
 S_ref = cv.S_w
 k = 0.97 #empirical correction factor that accounts for section lift curve slopes different from 2𝜋
-c = 1 #the mean geometric chord, also known as the standard mean chord, defined as S/b
+c = cv.c_w #the mean geometric chord, also known as the standard mean chord, defined as S/b
+rho = cv.rho_sl
+g = 32.17 # idk, idt the metabook defined this
 
 # V_B = 
 # V_C = 
 
-def get_n_gust(Weight, S_ref, altitude, V, U, C_L_alpha, c, g)
+def get_n_gust(Weight, S_ref, altitude, V_EAS, U_e, C_L_alpha, c, g, rho)
+    
     mu = (2*(Weight/S_ref))/(rho*c*C_L_alpha*g)
-    K_g = 0.88
+    K_g = (0.88*mu)/(5.3+mu)
+    n_pos = 1 + (K_g*C_L_alpha*U_e*V_EAS)/(498*(Weight/S_ref))
+    n_neg = 1 - (K_g*C_L_alpha*U_e*V_EAS)/(498*(Weight/S_ref))
+    
+    return n_pos, n_neg
 
 
 
