@@ -14,8 +14,31 @@ altitude = 0 #Sea Level
 CL_max = cv.CLmax_climb
 CL_min = -cv.CLmax_climb
 S_ref = cv.S_w
+k = 0.97 #empirical correction factor that accounts for section lift curve slopes different from 2𝜋
+c = cv.c_w #the mean geometric chord, also known as the standard mean chord, defined as S/b
+rho = cv.rho_sl
+g = 32.17 # idk, idt the metabook defined this
 
 
+# V_C = 
+def get_V_B(altitude):
+    if altitude <= 20000:
+        V_B = 66
+    elif altitude >= 500000:
+        V_B = 38
+    else:
+        V_B = 66 + (20000 - 50000)/(66 - 38)*(altitude - 20000)
+    return V_B
+        
+
+def get_n_gust(Weight, S_ref, altitude, V_EAS, U_e, C_L_alpha, c, g, rho):
+    
+    mu = (2*(Weight/S_ref))/(rho*c*C_L_alpha*g)
+    K_g = (0.88*mu)/(5.3+mu)
+    n_pos = 1 + (K_g*C_L_alpha*U_e*V_EAS)/(498*(Weight/S_ref))
+    n_neg = 1 - (K_g*C_L_alpha*U_e*V_EAS)/(498*(Weight/S_ref))
+    
+    return n_pos, n_neg
 
 
 
@@ -39,6 +62,9 @@ n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,W_max,S_ref,altitude,n_design
 n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,W_max,S_ref,altitude,n_design_negative)
 
 #cut the stall plot off at maneuver speed
+
+
+# max speed
 
 
 #Plot based on Equivalent airspeed
