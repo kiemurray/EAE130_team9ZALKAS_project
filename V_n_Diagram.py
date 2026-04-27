@@ -16,7 +16,6 @@ CL_min = -cv.CLmax_climb
 S_ref = cv.S_w
 k = 0.97 #empirical correction factor that accounts for section lift curve slopes different from 2𝜋
 c = cv.c_w #the mean geometric chord, also known as the standard mean chord, defined as S/b
-rho = cv.rho_sl
 g = 32.17 # idk, idt the metabook defined this
 
 #Calculations
@@ -94,14 +93,13 @@ def get_n_gust(Weight, S_ref, altitude, V_EAS, U_e, C_L_alpha, c, g):
     return n_pos, n_neg
 
 
-
 n_design_positive = compute_positive_limit_loads(W_max)
 n_design_negative = -1
 
 n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,W_max,S_ref,altitude,n_design_positive)
 n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,W_max,S_ref,altitude,n_design_negative)
 
-#cut the stall plot off at maneuver speed-----------------------------------------------------------------------------------------------
+#cut the stall plot off at maneuver speed----------------------------------------------------------------------
 
 # Adam's code
 def compute_intersection_velocity(stall_coeff, n_limit):
@@ -112,20 +110,34 @@ def compute_intersection_velocity(stall_coeff, n_limit):
 #    print(f"Intersection velocity for n_limit={n_limit:.2f} is {int_V:.2f} m/s")
     return int_V
 
+c_stall = 0.5*cv.atmo_vals(altitude)[0]*CL_max/((W_max/S_ref))
+print(c_stall)
+
 # Compute intersection velocities for positive and negative limit load factors within the stall boundary
-V_stall_pos_end = compute_intersection_velocity(n_stall_pos, n_design_negative)
-V_stall_pos = np.linspace(0, V_stall_pos_end, 100)
+V_stall_pos_end = compute_intersection_velocity(c_stall, n_design_positive)/1.688
+# V_stall_pos = np.linspace(0, V_stall_pos_end, 100)
+print('TEST')
+print(V_stall_pos_end)
 
-
-V_stall_neg_end = compute_intersection_velocity(n_stall_neg, n_design_negative)
-V_stall_neg = np.linspace(0, V_stall_neg_end, 100)
+V_stall_neg_end = compute_intersection_velocity(c_stall, n_design_negative)/1.688
+# V_stall_neg = np.linspace(0, V_stall_neg_end, 100)
 
 
 # Compute the corresponding n values at the intersection points
-n_stall_pos_intersection = n_stall_pos * V_stall_pos**2
-n_stall_neg_intersection = n_stall_neg * V_stall_neg**2
+# n_stall_pos_intersection = n_stall_pos * V_stall_pos**2
+# n_stall_neg_intersection = n_stall_neg * V_stall_neg**2
 
+# V_pos_limit_extended = np.linspace(V_stall_pos_end, V_max, 100)
+# V_neg_limit_extended = np.linspace(V_stall_neg_end, V_max, 100)
 
+# n_pos_extended = n_design_positive * np.ones_like(V_pos_limit_extended)
+# n_neg_extended = n_design_negative * np.ones_like(V_neg_limit_extended)
+V_start_pos = V_stall_pos_end
+V_start_neg = V_stall_neg_end
+
+V_cutoff = V_max
+V_end_pos = V_cutoff
+V_end_neg = V_cutoff
 
 # max speed
 
@@ -139,8 +151,12 @@ plt.ylabel("n (-)")
 plt.plot(v_stall_pos,n_stall_pos, color='orange', linewidth=2, label='Max Lift Line')
 plt.plot(v_stall_neg,n_stall_neg, color='blue', linewidth=2, label='Min Lift Line')
 #plt.axvline(v_a, color='red', linewidth=2, label='Maneuvering Speed')
-plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
-plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
+
+plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='green', linewidth=2, label='Positive Limit Load')
+plt.hlines(n_design_negative, V_start_neg, V_end_neg, colors='red', linewidth=2, label='Negative Limit Load')
+
+# plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
+# plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
 
 #design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
 
