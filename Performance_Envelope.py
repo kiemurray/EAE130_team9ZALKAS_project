@@ -4,7 +4,7 @@ import code_variables as cv
 
 #Stall based on GTOW 
 W_TO=cv.W_TO
-W_TO=40000
+#W_TO=20000
 CL_max_clean=cv.CLmax_climb
 CL_max_takeoff=cv.CLmax_TO
 CLmax_landing=cv.CLmax_L
@@ -15,8 +15,8 @@ T_0_ab = cv.T_0
 CD0=cv.CD0
 
 h_min = 0 #feet
-h_max = 100000 #feet
-numPoints = 10
+h_max = 60000 #feet
+numPoints = 100
 
 rho_vals=np.zeros(numPoints)
 h_vals = np.linspace(h_min,h_max,numPoints)
@@ -65,41 +65,65 @@ def zeroExcessPowerVelo(Weight,S_ref,altitude,CD0,n,e,Thrust): #outputs in knots
 
 def zeroExcessPowerVeloPlot(Weight,S_ref,h_min,h_max,CD0,n,e,Thrust): #outputs in knots
     
-    altitudeArray=np.linspace(h_min,h_max)
+    altitudeArray=np.linspace(h_min,h_max,numPoints)
     velocityBuffer = []
     heights = []
     velocities = []
-    posBuffer = []
-    for altitude in altitudeArray:
+    roots = np.zeros((numPoints,5))
+    velo_roots = np.zeros(4)
+
+
+    #get the array
+    for i in range(len(altitudeArray)):
         #print(altitude)
-        rho=cv.atmo_vals(altitude)[0]
-        Thrust_Ratio = cv.Tratio(altitude)
+        rho=cv.atmo_vals(altitudeArray[i])[0]
+        Thrust_Ratio = cv.Tratio(altitudeArray[i])
         T_W = Thrust*Thrust_Ratio/Weight
         W_S = Weight/S_ref
         K=1/(np.pi*cv.AR_w*e)
         coefficients = [-0.5*rho*CD0/W_S,0,T_W,0,-(n**2)*(2*K/rho)*(W_S)]
-        roots = np.roots(coefficients)
-        
-        #sort out all the negative values
-        posBuffer = []
-        for i in range(len(roots)):
-            if roots[i] > 0:
-                posBuffer.append(cv.ft_s_to_knots(float(roots[i])))
-                #print (roots[i],"is real")
-            
-        velocities.append(posBuffer)
-        
+        # print("AltitudeArray[",i,"]: ",altitudeArray[i])
+        # coefficients.append(altitudeArray[i])
+        # print("Coefficients: ",coefficients)
+        # roots[i] = np.roots(coefficients)
 
 
-    print("Printing the positive values")    
-    print(posBuffer)
-    print("Printing the velocities values")    
-    print(velocities)
-    print("Printing heights")  
-    print(heights)
-            
+        coefficients = [-0.5*rho*CD0/W_S,0,T_W,0,-(n**2)*(2*K/rho)*(W_S)]
+        velo_roots = np.roots(coefficients)
+        velo_roots = np.append(velo_roots,altitudeArray[i])
+        roots[i] = velo_roots
+    
 
-    return posBuffer,heights
+    #take only the positive values
+    doubleUp = 0
+    for i in range(numPoints):
+
+        #isolate the row
+        rootBuffer = []
+        for j in range(len(roots[i])):
+            if roots[i,j] > 0:
+                rootBuffer.append(float(roots[i,j]))
+        #print("Root Buffer: ",rootBuffer)
+        #created row of positive values
+        if abs(rootBuffer[0] - rootBuffer[1]) > 0.001:
+            if i == 0:
+                rootBuffer.append(0)
+                velocityBuffer = rootBuffer
+                #print("velocityBuffer: ",velocityBuffer,"rootBuffer: ",rootBuffer)
+            else:
+                #print("velocityBuffer: ",velocityBuffer,"rootBuffer: ",rootBuffer)
+                velocityBuffer = np.vstack([velocityBuffer,rootBuffer])
+        else:
+            if doubleUp == 0:
+                velocityBuffer = np.vstack([velocityBuffer,rootBuffer])
+                doubleUp = 1
+
+
+    velocities = velocityBuffer[:,[0,1]]
+    heights = velocityBuffer[:,2]
+
+
+    return cv.ft_s_to_knots(velocities),cv.ft_s_to_knots(heights)
 #ceiling curve
 
 
@@ -121,7 +145,11 @@ for i in range(len(h_vals)):
 #print("P_s = 0 at sea level",zeroExcessPowerVelocity)
 
 
-P_s_velo,altitudes =zeroExcessPowerVeloPlot(W_TO,S_ref,h_min,h_max,CD0,1,e_cr,2*T_0_mil)
+print("T_0_mil: ",T_0_mil,"lb")
+print("T_0_ab: ",T_0_ab,"lb")
+
+P_s_velo_mil,altitudes_mil =zeroExcessPowerVeloPlot(W_TO,S_ref,h_min,h_max,CD0,1,e_cr,2*T_0_mil)
+P_s_velo_ab,altitudes_ab =zeroExcessPowerVeloPlot(W_TO,S_ref,h_min,h_max,CD0,1,e_cr,2*T_0_ab)
 
 
 
@@ -132,9 +160,11 @@ P_s_velo,altitudes =zeroExcessPowerVeloPlot(W_TO,S_ref,h_min,h_max,CD0,1,e_cr,2*
 # PLOTS
 plt.figure(figsize=(12, 8))
 #plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
+
 plt.plot(stall_vals,h_vals, color='orange', linewidth=2, label='Stall Line')
-plt.plot(zeroExcessPowerVelocity,h_vals, color='blue', linewidth=2, label='Zero Excess Power')
-plt.plot(P_s_velo,altitudes, color='green', linewidth=2, label='Zero Excess Power')
+plt.plot(P_s_velo_mil,altitudes_mil, color='green', linewidth=2, label='Zero Excess Power (Military Power)')
+plt.plot(P_s_velo_ab,altitudes_ab, color='blue', linewidth=2, label='Zero Excess Power (Afterburner)')
+
 #plt.axvline(v_a, color='red', linewidth=2, label='Maneuvering Speed')
 #plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
 #plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
