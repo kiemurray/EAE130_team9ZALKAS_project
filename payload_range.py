@@ -54,24 +54,20 @@ W_max_fuel -= W_reserve_fuel
 
 W_OEW = 29445                 #from A1 table 3
 
-#functions
-def dCD0_dirty(n_tanks):
-    Doverq = 1.0
-    dCD0 = Doverq / S * n_tanks
-    return dCD0
-
 def get_CL(W0, W1):
     W = (W0 + W1) / 2
     CL = 2 * W / (S * rho * v**2)
     return CL
 
-def get_CD(CL, CD0, n_tanks):
-    CD = CD0 + dCD0_dirty(n_tanks) + CL**2 / (np.pi*AR*e)
+def get_CD(CL, dirty):
+    CD = CD0  + CL**2 / (np.pi*AR*e)
+    CD = CD + CD*0.4
     return CD
 
-def jet_range(W0, W1, CD0, n_tanks):
+def jet_range(W0, W1, dirty):
     CL = get_CL(W0, W1)
-    CD = get_CD(CL, CD0, n_tanks)
+    CD = get_CD(CL, dirty)
+    print(CD)
     return 2*np.sqrt(2/(rho*S)) * 1/ct * np.sqrt(CL)/CD * (np.sqrt(W0) - np.sqrt(W1))
 
 
@@ -83,21 +79,22 @@ W0_B = W_OEW + W_reserve_fuel + W_max_payload + W_fuel_max_payload
 W1_B = W_OEW + W_reserve_fuel + W_max_payload
 vb = get_deadload_endspeed(W0_B)
 print(f"W0_B takeoff speed: {vb:.1f} ft/s")
-R_B = jet_range(W0_B, W1_B, CD0, 4)
+R_B = jet_range(W0_B, W1_B, dirty = True)
+
 
 # Point C
 W0_C = W_OEW + W_reserve_fuel + W_payload_max_fuel + W_max_fuel + 2*W_480gal_tank + 2*W_330gal_tank
 W1_C = W_OEW + W_reserve_fuel + W_payload_max_fuel
 vc = get_deadload_endspeed(W0_C)
 print(f"W0_C takeoff speed: {vc:.1f} ft/s")
-R_C = jet_range(W0_C, W1_C, CD0, 4)
+R_C = jet_range(W0_C, W1_C, dirty = True)
 
 # Point D
 W0_D = W_OEW + W_reserve_fuel + W_max_fuel + 2*W_480gal_tank + 2*W_330gal_tank
 W1_D = W_OEW + W_reserve_fuel
 vd = get_deadload_endspeed(W0_D)
 print(f"W0_D takeoff speed: {vd:.1f} ft/s")
-R_D = jet_range(W0_D, W1_D, CD0, 4)
+R_D = jet_range(W0_D, W1_D, dirty = True)
 
 # # Point S (strike)
 # W0_strike = W_OEW + W_reserve_fuel + cv.strike_payload + W_fuel_max_payload
@@ -110,7 +107,6 @@ R_D = jet_range(W0_D, W1_D, CD0, 4)
 # W1_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload
 # R_a2a = jet_range(W0_a2a, W1_a2a, CD0, 0)
 # W_payload_a2a = cv.a2a_payload
-
 
 
 # data for plotting
