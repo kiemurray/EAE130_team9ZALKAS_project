@@ -19,8 +19,6 @@ c = cv.c_w #the mean geometric chord, also known as the standard mean chord, def
 rho = cv.rho_sl
 g = 32.17 # idk, idt the metabook defined this
 
-
-# V_C = 
 def get_V_B(altitude):
     if altitude <= 20000:
         V_B = 66
@@ -29,7 +27,24 @@ def get_V_B(altitude):
     else:
         V_B = 66 + (20000 - 50000)/(66 - 38)*(altitude - 20000)
     return V_B
-        
+
+def get_V_C(altitude):
+    if altitude <= 20000:
+        V_C = 50
+    elif altitude >= 500000:
+        V_C = 25
+    else:
+        V_C = 50 + (20000 - 50000)/(50 - 25)*(altitude - 20000)
+    return V_C
+
+def get_V_D(altitude):
+    if altitude <= 20000:
+        V_D = 25
+    elif altitude >= 500000:
+        V_D = 12.5
+    else:
+        V_D = 25 + (20000 - 50000)/(25 - 12.5)*(altitude - 20000)
+    return V_D
 
 def get_n_gust(Weight, S_ref, altitude, V_EAS, U_e, C_L_alpha, c, g, rho):
     
