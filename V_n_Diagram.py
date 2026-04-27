@@ -101,27 +101,30 @@ n_design_negative = -1
 n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,W_max,S_ref,altitude,n_design_positive)
 n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,W_max,S_ref,altitude,n_design_negative)
 
-#cut the stall plot off at maneuver speed
+#cut the stall plot off at maneuver speed-----------------------------------------------------------------------------------------------
+
+# Adam's code
 def compute_intersection_velocity(stall_coeff, n_limit):
     """
     Solve stall_coeff * V^2 = |n_limit|
     """
     int_V = np.sqrt(abs(n_limit) / stall_coeff)
-    print(f"Intersection velocity for n_limit={n_limit:.2f} is {int_V:.2f} m/s")
+#    print(f"Intersection velocity for n_limit={n_limit:.2f} is {int_V:.2f} m/s")
     return int_V
 
 # Compute intersection velocities for positive and negative limit load factors within the stall boundary
-V_stall_pos_end = compute_intersection_velocity(n_stall_pos, n_pos_limit[0])
+V_stall_pos_end = compute_intersection_velocity(n_stall_pos, n_design_negative)
 V_stall_pos = np.linspace(0, V_stall_pos_end, 100)
 
 
-V_stall_neg_end = compute_intersection_velocity(stall_coeff, n_neg_limit[0])
+V_stall_neg_end = compute_intersection_velocity(n_stall_neg, n_design_negative)
 V_stall_neg = np.linspace(0, V_stall_neg_end, 100)
 
 
 # Compute the corresponding n values at the intersection points
-n_stall_pos_intersection = stall_coeff * V_stall_pos**2
-n_stall_neg_intersection = -stall_coeff * V_stall_neg**2
+n_stall_pos_intersection = n_stall_pos * V_stall_pos**2
+n_stall_neg_intersection = n_stall_neg * V_stall_neg**2
+
 
 
 # max speed
