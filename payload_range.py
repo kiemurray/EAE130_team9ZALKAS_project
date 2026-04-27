@@ -15,6 +15,16 @@ CD0 = cv.CD0
 
 W_TO = cv.W_TO        # typical TO weight 
 
+
+def get_deadload_endspeed(W_TO):
+    W1 = 72000
+    W2 = 90000
+    v1 = cv.knots_to_ft_per_s(146)
+    v2 = cv.knots_to_ft_per_s(132)
+    m = (v2-v1)/(W2-W1)
+    v_endspeed = m*(W_TO - W1) + v1
+    return v_endspeed
+
 #Payload weights
 W_max_payload = cv.strike_payload + 10000
 W_payload_max_fuel = cv.strike_payload 
@@ -71,54 +81,71 @@ R_A = 0
 # Point B
 W0_B = W_OEW + W_reserve_fuel + W_max_payload + W_fuel_max_payload
 W1_B = W_OEW + W_reserve_fuel + W_max_payload
-
+vb = get_deadload_endspeed(W0_B)
+print(f"W0_B takeoff speed: {vb:.1f} ft/s")
 R_B = jet_range(W0_B, W1_B, CD0, 4)
 
 # Point C
 W0_C = W_OEW + W_reserve_fuel + W_payload_max_fuel + W_max_fuel + 2*W_480gal_tank + 2*W_330gal_tank
 W1_C = W_OEW + W_reserve_fuel + W_payload_max_fuel
+vc = get_deadload_endspeed(W0_C)
+print(f"W0_C takeoff speed: {vc:.1f} ft/s")
 R_C = jet_range(W0_C, W1_C, CD0, 4)
 
 # Point D
 W0_D = W_OEW + W_reserve_fuel + W_max_fuel + 2*W_480gal_tank + 2*W_330gal_tank
 W1_D = W_OEW + W_reserve_fuel
+vd = get_deadload_endspeed(W0_D)
+print(f"W0_D takeoff speed: {vd:.1f} ft/s")
 R_D = jet_range(W0_D, W1_D, CD0, 4)
 
-# Point S (strike)
-W0_strike = W_OEW + W_reserve_fuel + cv.strike_payload + W_fuel_max_payload
-W1_strike = W_OEW + W_reserve_fuel + cv.strike_payload 
-R_strike = jet_range(W0_strike, W1_strike, CD0, 0)
-W_payload_strike = cv.strike_payload
+# # Point S (strike)
+# W0_strike = W_OEW + W_reserve_fuel + cv.strike_payload + W_fuel_max_payload
+# W1_strike = W_OEW + W_reserve_fuel + cv.strike_payload 
+# R_strike = jet_range(W0_strike, W1_strike, CD0, 0)
+# W_payload_strike = cv.strike_payload
 
-# Point A2A (air-to-air)
-W0_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload + W_fuel_max_payload
-W1_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload
-R_a2a = jet_range(W0_a2a, W1_a2a, CD0, 0)
-W_payload_a2a = cv.a2a_payload
+# # Point A2A (air-to-air)
+# W0_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload + W_fuel_max_payload
+# W1_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload
+# R_a2a = jet_range(W0_a2a, W1_a2a, CD0, 0)
+# W_payload_a2a = cv.a2a_payload
 
-# plotting
-ranges = 0.000164579 * np.array([R_A, R_B, R_C, R_D]) #nautical miles
+
+
+# data for plotting
+ranges = 0.000164579 * np.array([R_A, R_B, R_C, R_D])  # nautical miles
 payloads = [W_max_payload, W_max_payload, W_payload_max_fuel, 0]
 
-plt.figure(figsize=(8,6))
-plt.plot(ranges, payloads, 'k-o')
-plt.plot(R_strike*0.000164579, W_payload_strike, 'k-o')
-plt.plot(R_a2a*0.000164579, W_payload_a2a, 'k-o')
 
+plt.figure(figsize=(10, 7))
 
-# Labels
-plt.xlabel('Range (nm)') 
-plt.ylabel('Payload Weight (lbf)')
-plt.title('Payload-Range Diagram')
+plt.plot(ranges, payloads, color='black', marker='o', linewidth=2, markersize=8, clip_on=False)
 
-plt.grid(True)
+# labels
+plt.xlabel('Range (nm)', fontsize=14)
+plt.ylabel('Payload Weight (lbf)', fontsize=14)
+plt.title('Payload-Range Diagram', fontsize=16, fontweight='bold')
 
-# annotate points
-plt.text(ranges[0], payloads[0], ' A')
-plt.text(ranges[1], payloads[1], ' B')
-plt.text(ranges[2], payloads[2], ' C')
-plt.text(ranges[3], payloads[3], ' D')
-plt.text(R_strike*0.000164579, W_payload_strike, ' Strike')
-plt.text(R_a2a*0.000164579, W_payload_a2a, ' Air-to-Air')
+# origin at 0,0
+plt.xlim(left=0)
+plt.ylim(bottom=0)
+
+# Grid styling
+plt.grid(True, linestyle='--', linewidth=0.6, alpha=0.7)
+
+# Tick size
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
+
+# Annotate points with slight offset for readability
+offset_x = max(ranges) * 0.01
+offset_y = max(payloads) * 0.02
+
+#lables w offset so it doesnt get covered up
+plt.text(ranges[0]+10, payloads[0]+200, ' A', fontsize=12, fontweight='bold')
+plt.text(ranges[1]+10, payloads[1]+200, ' B', fontsize=12, fontweight='bold')
+plt.text(ranges[2]+10, payloads[2]+200, ' C', fontsize=12, fontweight='bold')
+plt.text(ranges[3]+10, payloads[3]+200, ' D', fontsize=12, fontweight='bold')
 
 plt.show()
