@@ -8,20 +8,23 @@ W_max = cv.W_TO
 # n_design_positive = cv.n_z
 # n_design_negative = cv.n_z_negative
 numPoints = 100
-V_max = 700 #KEAS
+# V_max = 700 #KEAS
 V_min = 0 #KEAS
-altitude = 0 #Sea Level
+altitude = 30000 # NOT Sea Level
 CL_max = cv.CLmax_climb
 CL_min = -cv.CLmax_climb
 S_ref = cv.S_w
 k = 0.97 #empirical correction factor that accounts for section lift curve slopes different from 2𝜋
 c = cv.c_w #the mean geometric chord, also known as the standard mean chord, defined as S/b
 g = 32.17 # idk, idt the metabook defined this
+V_C = 1179.476 # Mach 2.0 at 30000 ft in knots/s
 
 #Calculations
 
 #using english units (pounds, feet, seconds)
-KEAS = np.linspace(0,700,numPoints)
+V_D = 1.06*1.07*V_C
+V_max = V_D + 100
+KEAS = np.linspace(0,V_max,numPoints)
 
 def get_Max_Lift_Line(CL_max,Weight,S_ref,altitude,n):
     rho_lift = cv.atmo_vals(altitude)[0]
@@ -53,7 +56,7 @@ def compute_positive_limit_loads(weight_lb):
 
     return selected_n_pos_limit
 
-def get_V_B(altitude):
+def get_gustV_B(altitude):
     if altitude <= 20000:
         V_B = 66
     elif altitude >= 500000:
@@ -63,7 +66,7 @@ def get_V_B(altitude):
 
     return V_B
 
-def get_V_C(altitude):
+def get_gustV_C(altitude):
     if altitude <= 20000:
         V_C = 50
     elif altitude >= 500000:
@@ -73,7 +76,7 @@ def get_V_C(altitude):
 
     return V_C
 
-def get_V_D(altitude):
+def get_gustV_D(altitude):
     if altitude <= 20000:
         V_D = 25
     elif altitude >= 500000:
@@ -116,8 +119,6 @@ print(c_stall)
 # Compute intersection velocities for positive and negative limit load factors within the stall boundary
 V_stall_pos_end = compute_intersection_velocity(c_stall, n_design_positive)/1.688
 # V_stall_pos = np.linspace(0, V_stall_pos_end, 100)
-print('TEST')
-print(V_stall_pos_end)
 
 V_stall_neg_end = compute_intersection_velocity(c_stall, n_design_negative)/1.688
 # V_stall_neg = np.linspace(0, V_stall_neg_end, 100)
@@ -135,18 +136,19 @@ V_stall_neg_end = compute_intersection_velocity(c_stall, n_design_negative)/1.68
 V_start_pos = V_stall_pos_end
 V_start_neg = V_stall_neg_end
 
-V_cutoff = V_max
+V_cutoff = V_D
 V_end_pos = V_cutoff
 V_end_neg = V_cutoff
 
 # max speed
-
+n_exceed_line = np.linspace(n_design_negative, n_design_positive, 100)
+V_exceed_line = V_D * np.ones_like(n_exceed_line)
 
 #Plot based on Equivalent airspeed
 # PLOTS
 plt.figure(figsize=(12, 8))
-plt.xlabel("V (m/s)")
-plt.ylabel("n (-)")
+# plt.xlabel("V (m/s)")
+# plt.ylabel("n (-)")
 #plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
 plt.plot(v_stall_pos,n_stall_pos, color='orange', linewidth=2, label='Max Lift Line')
 plt.plot(v_stall_neg,n_stall_neg, color='blue', linewidth=2, label='Min Lift Line')
@@ -154,6 +156,8 @@ plt.plot(v_stall_neg,n_stall_neg, color='blue', linewidth=2, label='Min Lift Lin
 
 plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='green', linewidth=2, label='Positive Limit Load')
 plt.hlines(n_design_negative, V_start_neg, V_end_neg, colors='red', linewidth=2, label='Negative Limit Load')
+
+plt.plot(V_exceed_line, n_exceed_line,label='Never Exceed Speed', linewidth=2, color='purple')
 
 # plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
 # plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
@@ -172,7 +176,7 @@ plt.title('Flight Envelope', fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
 
-plt.xlim(0, 700)
-plt.ylim(-8, 12)  
+plt.xlim(0, V_max)
+plt.ylim(-3, 6)  
 
 plt.show()
