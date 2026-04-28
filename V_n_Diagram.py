@@ -5,8 +5,8 @@ import code_variables as cv
 #Need diagram based on minimum and maximum weight
 #you can tweak these values
 W_max = cv.W_TO
-# n_design_positive = cv.n_z
-# n_design_negative = cv.n_z_negative
+n_design_positive = cv.n_z
+n_design_negative = cv.n_z_negative
 numPoints = 100
 # V_max = 700 #KEAS
 V_min = 0 #KEAS
@@ -96,8 +96,8 @@ def get_n_gust(Weight, S_ref, altitude, V_EAS, U_e, C_L_alpha, c, g):
     return n_pos, n_neg
 
 
-n_design_positive = compute_positive_limit_loads(W_max)
-n_design_negative = -1
+# n_design_positive = compute_positive_limit_loads(W_max)
+# n_design_negative = -1
 
 n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,W_max,S_ref,altitude,n_design_positive)
 n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,W_max,S_ref,altitude,n_design_negative)
@@ -177,6 +177,6 @@ plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
 
 plt.xlim(0, V_max)
-plt.ylim(-3, 6)  
+plt.ylim(n_design_negative - 1, n_design_positive + 4)  
 
 plt.show()
