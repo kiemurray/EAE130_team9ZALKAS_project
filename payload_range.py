@@ -52,6 +52,13 @@ W_max_fuel = W_fuel_internal - W_reserve_fuel + 2*W_480gal_fuel + 2*W_330gal_fue
 W_fuel_max_payload = W_fuel_internal - W_reserve_fuel
 W_max_fuel -= W_reserve_fuel
 
+print(f"usable int fuel: {W_fuel_max_payload} lbs")
+print(f"usable ext fuel: {2*W_480gal_fuel + 2*W_330gal_fuel} lbs")
+print(f"reserve fuel: {W_reserve_fuel} lbs")
+
+print(f"int payload: {W_payload_max_fuel} lbs")
+print(f"a2a payload: {cv.a2a_payload} lbs")
+
 W_OEW = 29445                 #from A1 table 3
 
 def get_CL(W0, W1):
@@ -61,14 +68,15 @@ def get_CL(W0, W1):
 
 def get_CD(CL, dirty):
     CD = CD0  + CL**2 / (np.pi*AR*e)
-    CD = CD + CD*0.4
+    CD = CD + CD*0.5*dirty
     return CD
 
 def jet_range(W0, W1, dirty):
     CL = get_CL(W0, W1)
     CD = get_CD(CL, dirty)
     print(CD)
-    return 2*np.sqrt(2/(rho*S)) * 1/ct * np.sqrt(CL)/CD * (np.sqrt(W0) - np.sqrt(W1))
+    R =2*np.sqrt(2/(rho*S)) * 1/ct * np.sqrt(CL)/CD * (np.sqrt(W0) - np.sqrt(W1))
+    return 0.000164579*R
 
 
 # Point A
@@ -80,6 +88,7 @@ W1_B = W_OEW + W_reserve_fuel + W_max_payload
 vb = get_deadload_endspeed(W0_B)
 print(f"W0_B takeoff speed: {vb:.1f} ft/s")
 R_B = jet_range(W0_B, W1_B, dirty = True)
+print(f"RB = {R_B:.1f} nm")
 
 
 # Point C
@@ -88,6 +97,7 @@ W1_C = W_OEW + W_reserve_fuel + W_payload_max_fuel
 vc = get_deadload_endspeed(W0_C)
 print(f"W0_C takeoff speed: {vc:.1f} ft/s")
 R_C = jet_range(W0_C, W1_C, dirty = True)
+print(f"RC = {R_C:.1f} nm")
 
 # Point D
 W0_D = W_OEW + W_reserve_fuel + W_max_fuel + 2*W_480gal_tank + 2*W_330gal_tank
@@ -95,6 +105,7 @@ W1_D = W_OEW + W_reserve_fuel
 vd = get_deadload_endspeed(W0_D)
 print(f"W0_D takeoff speed: {vd:.1f} ft/s")
 R_D = jet_range(W0_D, W1_D, dirty = True)
+print(f"RD = {R_D:.1f} nm")
 
 # # Point S (strike)
 # W0_strike = W_OEW + W_reserve_fuel + cv.strike_payload + W_fuel_max_payload
@@ -110,7 +121,7 @@ R_D = jet_range(W0_D, W1_D, dirty = True)
 
 
 # data for plotting
-ranges = 0.000164579 * np.array([R_A, R_B, R_C, R_D])  # nautical miles
+ranges =  np.array([R_A, R_B, R_C, R_D])  # nautical miles
 payloads = [W_max_payload, W_max_payload, W_payload_max_fuel, 0]
 
 
