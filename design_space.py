@@ -5,7 +5,7 @@ import code_variables as cv
 #constants 
 g = 32.174                                                            # ft/s^2
 CD0 = 0.01166                                                         # clean, used for cruise, dashes, ceiling, manuever
-W_TO = 55700
+W_TO = cv.W_TO
 AR = 2.066       
 n_eng = 2 
 e_to = 0.775           

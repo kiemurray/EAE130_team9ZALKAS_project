@@ -107,11 +107,12 @@ print(f"W0_D takeoff speed: {vd:.1f} ft/s")
 R_D = jet_range(W0_D, W1_D, dirty = True)
 print(f"RD = {R_D:.1f} nm")
 
-# # Point S (strike)
-# W0_strike = W_OEW + W_reserve_fuel + cv.strike_payload + W_fuel_max_payload
-# W1_strike = W_OEW + W_reserve_fuel + cv.strike_payload 
-# R_strike = jet_range(W0_strike, W1_strike, CD0, 0)
-# W_payload_strike = cv.strike_payload
+# Point S (strike)
+W0_strike = W_OEW + W_reserve_fuel + cv.strike_payload + W_fuel_max_payload
+W1_strike = W_OEW + W_reserve_fuel + cv.strike_payload 
+R_strike = jet_range(W0_strike, W1_strike, dirty = False)
+R_strike = 2000
+W_payload_strike = cv.strike_payload
 
 # # Point A2A (air-to-air)
 # W0_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload + W_fuel_max_payload
@@ -128,6 +129,7 @@ payloads = [W_max_payload, W_max_payload, W_payload_max_fuel, 0]
 plt.figure(figsize=(10, 7))
 
 plt.plot(ranges, payloads, color='black', marker='o', linewidth=2, markersize=8, clip_on=False)
+plt.plot(R_strike, W_payload_strike, color='red', marker='*', linewidth=2, markersize=8)
 
 # labels
 plt.xlabel('Range (nm)', fontsize=14)
@@ -154,5 +156,6 @@ plt.text(ranges[0]+10, payloads[0]+200, ' A', fontsize=12, fontweight='bold')
 plt.text(ranges[1]+10, payloads[1]+200, ' B', fontsize=12, fontweight='bold')
 plt.text(ranges[2]+10, payloads[2]+200, ' C', fontsize=12, fontweight='bold')
 plt.text(ranges[3]+10, payloads[3]+200, ' D', fontsize=12, fontweight='bold')
+plt.text(R_strike+10, W_payload_strike+200, ' Strike', fontsize=12, fontweight='bold')
 
 plt.show()
