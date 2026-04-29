@@ -28,10 +28,10 @@ W_en = 2445 # Engine Weight, each, lbf
 M = 2.0 # Mach Number
 
 
-# lift coefficients
-CLmax_TO = 1.7 # maximum lift coefficient for takeoff
-CLmax_L = 2.1 # maximum lift coefficient for landing
-CLmax_climb = CLmax_TO # maximum lift coefficient for climb, assumed to be the same as takeoff
+# lift coefficients (updated after A2)
+CLmax_TO = 1.5 # maximum lift coefficient for takeoff
+CLmax_L = 1.8 # maximum lift coefficient for landing
+CLmax_climb = 0.9 # maximum lift coefficient for climb, assumed clean
 
 
 # stucture variables
@@ -40,11 +40,12 @@ x_cg =  23.8094      # aircraft center of gravity (ft) assumed
 num_engines = 2 # Number of Engines
 S_cs = 223 # Total Area of Flight Control Surfaces
 N_s = 10 # Number of Flight Control Surfaces
-N_c = 1 # Number of Functions Performed By Controls (4-7)
+N_c = 6 # Number of Functions Performed By Controls (4-7)
 N_u = 10 # Number of Hydraulic Utility Functions (5-15)
 W_dg = 56631 # Design Gross Weight (lbf)
 n_z = 8.0 # limit load, desired by RFP
 N_z = 1.5 * n_z # Ultimate Load Factor
+n_z_negative = -5 #estimate for negative limit load
 
 
 # vertical tail
@@ -220,7 +221,7 @@ aim_120c = 356 #lb
 aim_9x = 188 #lb
 mk_83jdam = 1000 #lb 
 crew = 200 #lb
-#a2a_payload = 6*aim_120c + 2*aim_9x + crew
+a2a_payload = 6*aim_120c + 2*aim_9x + crew
 strike_payload = 2*aim_9x + 4*mk_83jdam + crew
 W_crew = num_pilot*crew
 W_payload = strike_payload
@@ -239,17 +240,7 @@ CLmax_L = 2.1 # maximum lift coefficient for landing
 CLmax_climb = CLmax_TO # maximum lift coefficient for climb, assumed to be the same as takeoff
 
 
-# stucture variables
 
-x_cg =  23.8094      # aircraft center of gravity (ft) assumed
-n_eng = 2
-S_cs = 223 # Total Area of Flight Control Surfaces
-N_s = 10 # Number of Flight Control Surfaces
-N_c = 6 # Number of Functions Performed By Controls (4-7)
-N_u = 10 # Number of Hydraulic Utility Functions (5-15)
-W_dg = 56631 # Design Gross Weight (lbf)
-n_z = 8.0 # limit load, desired by RFP
-N_z = 1.5 * n_z # Ultimate Load Factor
 
 
 # vertical tail
@@ -271,9 +262,9 @@ b_w = 41.026226        # wing span tip-to-tip (ft)
 c_w = 19.918018        # wing chord (ft)
 S_w = 685             # wing area (ft^2)
 
-S_w = 540              # wing area (ft^2) (After PDR)
-b_w = 36.42614        # wing span tip-to-tip (ft)
-c_w = 17.68470        # wing chord (ft) --- Mean Aerodynamic Chord ---
+# S_w = 540              # wing area (ft^2) (After PDR)
+# b_w = 36.42614        # wing span tip-to-tip (ft)
+# c_w = 17.68470        # wing chord (ft) --- Mean Aerodynamic Chord ---
 AR_w = 2.46
 tc_root = 0.06 # t/c ratio at root chord
 taper_ratio = 0.295 # Taper Ratio
