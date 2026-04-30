@@ -1,0 +1,10 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import code_variables as cv
+import design_space as ds
+
+R_max = 1000        # combat radius, nmi
+R_min = 700         # combat radius, nmi
+Maneuver_max = 10   # deg/s
+Maneuver_min = 8    # deg/s
+
