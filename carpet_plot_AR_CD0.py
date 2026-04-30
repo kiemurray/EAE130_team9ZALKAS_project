@@ -10,10 +10,10 @@ rho = cv.rho_cruise
 
 #set ranges
 AR_start = 1
-AR_end = 10
+AR_end = 5
 
-CD0_start = 0.02
-CD0_end = 0.06
+CD0_start = 0.01
+CD0_end = 0.05
 
 #const line values
 AR_list = np.arange(AR_start, AR_end+1, 1)
@@ -51,7 +51,7 @@ for AR in AR_list:
     plt.plot(WS_vals, LD_vals, 'b-')
 
     # label at end of line
-    plt.text(WS_vals[-1], LD_vals[-1], f'AR={AR}', fontsize=9, color='blue')
+    plt.text(WS_vals[-1]+1, LD_vals[-1]-0.4, f'AR={AR}', fontsize=9, color='blue')
 
 
 #const CD0, changing AR
@@ -66,10 +66,10 @@ for CD0 in CD0_list:
         WS_vals.append(WS)
         LD_vals.append(LD_max)
 
-    plt.plot(WS_vals, LD_vals)
+    plt.plot(WS_vals, LD_vals, 'r-')
 
     # label at end of line
-    plt.text(WS_vals[-1], LD_vals[-1], f'CD0={CD0:.3f}', fontsize=9, color='red')
+    plt.text(WS_vals[-1]+1, LD_vals[-1]+0.2, f'CD0={CD0:.3f}', fontsize=9, color='red')
 
 
 #plot labels
