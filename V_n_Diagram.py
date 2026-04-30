@@ -4,9 +4,9 @@ import code_variables as cv
 
 #Need diagram based on minimum and maximum weight
 #you can tweak these values
-W_max = cv.W_TO
-# n_design_positive = cv.n_z
-# n_design_negative = cv.n_z_negative
+W = cv.W_TO
+n_design_positive = cv.n_z
+n_design_negative = cv.n_z_negative
 numPoints = 100
 # V_max = 700 #KEAS
 V_min = 0 #KEAS
@@ -18,7 +18,7 @@ k = 0.97 #empirical correction factor that accounts for section lift curve slope
 c = cv.c_w #the mean geometric chord, also known as the standard mean chord, defined as S/b
 g = 32.17 # idk, idt the metabook defined this
 V_C = 1179.476 # Mach 2.0 at 30000 ft in knots/s
-
+C_L_alpha = 0.033 # from VSPAero, I will put this into code variables after
 #Calculations
 
 #using english units (pounds, feet, seconds)
@@ -59,30 +59,30 @@ def compute_positive_limit_loads(weight_lb):
 def get_gustV_B(altitude):
     if altitude <= 20000:
         V_B = 66
-    elif altitude >= 500000:
+    elif altitude >= 50000:
         V_B = 38
     else:
-        V_B = 66 + (20000 - 50000)/(66 - 38)*(altitude - 20000)
+        V_B = 38 + (66 - 38)/(20000 - 50000)*(altitude - 50000)
 
     return V_B
 
 def get_gustV_C(altitude):
     if altitude <= 20000:
         V_C = 50
-    elif altitude >= 500000:
+    elif altitude >= 50000:
         V_C = 25
     else:
-        V_C = 50 + (20000 - 50000)/(50 - 25)*(altitude - 20000)
+        V_C = 25 + (50 - 25)/(20000 - 50000)*(altitude - 50000)
 
     return V_C
 
 def get_gustV_D(altitude):
     if altitude <= 20000:
         V_D = 25
-    elif altitude >= 500000:
+    elif altitude >= 50000:
         V_D = 12.5
     else:
-        V_D = 25 + (20000 - 50000)/(25 - 12.5)*(altitude - 20000)
+        V_D = 12.5 + (25 - 12.5)/(20000 - 50000)*(altitude - 50000)
 
     return V_D
 
@@ -90,17 +90,30 @@ def get_n_gust(Weight, S_ref, altitude, V_EAS, U_e, C_L_alpha, c, g):
     rho = cv.atmo_vals(altitude)[0]
     mu = (2*(Weight/S_ref))/(rho*c*C_L_alpha*g)
     K_g = (0.88*mu)/(5.3+mu)
+    v = V_EAS
     n_pos = 1 + (K_g*C_L_alpha*U_e*V_EAS)/(498*(Weight/S_ref))
     n_neg = 1 - (K_g*C_L_alpha*U_e*V_EAS)/(498*(Weight/S_ref))
     
-    return n_pos, n_neg
+    return n_pos, n_neg, v
 
 
-n_design_positive = compute_positive_limit_loads(W_max)
-n_design_negative = -1
+# n_design_positive = compute_positive_limit_loads(W_max)
+# n_design_negative = -1
 
-n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,W_max,S_ref,altitude,n_design_positive)
-n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,W_max,S_ref,altitude,n_design_negative)
+n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,W,S_ref,altitude,n_design_positive)
+n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,W,S_ref,altitude,n_design_negative)
+
+# Equivalent Gust Velocities. These are in ft/s
+print('getting gust velocities...')
+gust_V_B = get_gustV_B(altitude)
+print(gust_V_B)
+gust_V_C = get_gustV_C(altitude)
+print(gust_V_C)
+gust_V_D = get_gustV_D(altitude)
+print(gust_V_D)
+
+# U_B = np.linspace(V_min, V_max, numPoints)
+# V_B = get_n_gust(W, S_ref, altitude, U_B, gust_V_B, C_L_alpha, c, g)
 
 #cut the stall plot off at maneuver speed----------------------------------------------------------------------
 
@@ -113,26 +126,13 @@ def compute_intersection_velocity(stall_coeff, n_limit):
 #    print(f"Intersection velocity for n_limit={n_limit:.2f} is {int_V:.2f} m/s")
     return int_V
 
-c_stall = 0.5*cv.atmo_vals(altitude)[0]*CL_max/((W_max/S_ref))
+c_stall = 0.5*cv.atmo_vals(altitude)[0]*CL_max/((W/S_ref))
 print(c_stall)
 
 # Compute intersection velocities for positive and negative limit load factors within the stall boundary
 V_stall_pos_end = compute_intersection_velocity(c_stall, n_design_positive)/1.688
-# V_stall_pos = np.linspace(0, V_stall_pos_end, 100)
-
 V_stall_neg_end = compute_intersection_velocity(c_stall, n_design_negative)/1.688
-# V_stall_neg = np.linspace(0, V_stall_neg_end, 100)
 
-
-# Compute the corresponding n values at the intersection points
-# n_stall_pos_intersection = n_stall_pos * V_stall_pos**2
-# n_stall_neg_intersection = n_stall_neg * V_stall_neg**2
-
-# V_pos_limit_extended = np.linspace(V_stall_pos_end, V_max, 100)
-# V_neg_limit_extended = np.linspace(V_stall_neg_end, V_max, 100)
-
-# n_pos_extended = n_design_positive * np.ones_like(V_pos_limit_extended)
-# n_neg_extended = n_design_negative * np.ones_like(V_neg_limit_extended)
 V_start_pos = V_stall_pos_end
 V_start_neg = V_stall_neg_end
 
@@ -172,11 +172,12 @@ plt.plot(V_exceed_line, n_exceed_line,label='Never Exceed Speed', linewidth=2, c
                  #label='Design Window')
 plt.xlabel('V (KEAS)', fontsize=18)
 plt.ylabel('Load Factor, n', fontsize=18)
-plt.title('Flight Envelope', fontsize=20)
+plt.title('Minimum Weight V-n Diagram', fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
-
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
 plt.xlim(0, V_max)
-plt.ylim(-3, 6)  
+plt.ylim(n_design_negative - 1, n_design_positive + 5)  
 
 plt.show()
