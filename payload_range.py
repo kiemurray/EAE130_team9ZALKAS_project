@@ -56,8 +56,9 @@ print(f"usable int fuel: {W_fuel_max_payload} lbs")
 print(f"usable ext fuel: {2*W_480gal_fuel + 2*W_330gal_fuel} lbs")
 print(f"reserve fuel: {W_reserve_fuel} lbs")
 
-print(f"int payload: {W_payload_max_fuel} lbs")
+print(f"strike payload: {W_payload_max_fuel} lbs")
 print(f"a2a payload: {cv.a2a_payload} lbs")
+print(f"max payload: {W_max_payload} lbs")
 
 W_OEW = 29445                 #from A1 table 3
 
