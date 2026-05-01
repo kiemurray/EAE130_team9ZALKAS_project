@@ -4,7 +4,7 @@ import code_variables as cv
 
 #Need diagram based on minimum and maximum weight
 #you can tweak these values
-W = cv.W_TO
+Weight = cv.W_TO
 n_design_positive = cv.n_z
 n_design_negative = cv.n_z_negative
 numPoints = 100
@@ -102,8 +102,8 @@ def get_n_gust(Weight, S_ref, altitude, V_EAS, U_e, C_L_alpha, c, g):
 # n_design_positive = compute_positive_limit_loads(W_max)
 # n_design_negative = -1
 
-n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,W,S_ref,altitude,n_design_positive)
-n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,W,S_ref,altitude,n_design_negative)
+n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,Weight,S_ref,altitude,n_design_positive)
+n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,Weight,S_ref,altitude,n_design_negative)
 
 # Equivalent Gust Velocities. These are in ft/s
 print('getting gust velocities...')
@@ -128,7 +128,7 @@ def compute_intersection_velocity(stall_coeff, n_limit):
 #    print(f"Intersection velocity for n_limit={n_limit:.2f} is {int_V:.2f} m/s")
     return int_V
 
-c_stall = 0.5*cv.atmo_vals(altitude)[0]*CL_max/((W/S_ref))
+c_stall = 0.5*cv.atmo_vals(altitude)[0]*CL_max/((Weight/S_ref))
 print(c_stall)
 
 # Compute intersection velocities for positive and negative limit load factors within the stall boundary
@@ -178,7 +178,7 @@ plt.plot(V_exceed_line, n_exceed_line,label='Never Exceed Speed', linewidth=2, c
                  #label='Design Window')
 plt.xlabel('V (KEAS)', fontsize=18)
 plt.ylabel('Load Factor, n', fontsize=18)
-plt.title('Minimum Weight V-n Diagram', fontsize=20)
+plt.title('Maximum Weight V-n Diagram', fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
 plt.xticks(fontsize=14)
