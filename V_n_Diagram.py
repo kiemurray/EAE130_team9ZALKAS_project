@@ -5,6 +5,7 @@ import code_variables as cv
 #Need diagram based on minimum and maximum weight
 #you can tweak these values
 Weight = cv.W_TO
+#Weight = cv.W_TO*cv.wf_landing
 n_design_positive = cv.n_z
 n_design_negative = cv.n_z_negative
 numPoints = 100
@@ -149,6 +150,7 @@ V_end_neg = V_cutoff
 # max speed
 n_exceed_line = np.linspace(n_design_negative, n_design_positive, 100)
 V_exceed_line = V_D * np.ones_like(n_exceed_line)
+V_NO_line = V_C* np.ones_like(n_exceed_line)
 
 #Plot based on Equivalent airspeed
 # PLOTS
@@ -160,10 +162,13 @@ plt.plot(v_stall_pos,n_stall_pos, color='orange', linewidth=2, label='Max Lift L
 plt.plot(v_stall_neg,n_stall_neg, color='blue', linewidth=2, label='Min Lift Line')
 #plt.axvline(v_a, color='red', linewidth=2, label='Maneuvering Speed')
 
-plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='green', linewidth=2, label='Positive Limit Load')
-plt.hlines(n_design_negative, V_start_neg, V_end_neg, colors='red', linewidth=2, label='Negative Limit Load')
+plt.plot(V_exceed_line, n_exceed_line,label='Never Exceed Speed', linewidth=2, color='black')
+plt.plot(V_NO_line, n_exceed_line,label='Maximum Structural Cruising Speed', linestyle='--',linewidth=2, color='cyan')
 
-plt.plot(V_exceed_line, n_exceed_line,label='Never Exceed Speed', linewidth=2, color='purple')
+
+plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='green', linewidth=2, label='Positive Limit Load')
+plt.hlines(n_design_negative, V_start_neg, V_end_neg, colors='magenta', linewidth=2, label='Negative Limit Load')
+
 
 # plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
 # plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
@@ -179,11 +184,14 @@ plt.plot(V_exceed_line, n_exceed_line,label='Never Exceed Speed', linewidth=2, c
 plt.xlabel('V (KEAS)', fontsize=18)
 plt.ylabel('Load Factor, n', fontsize=18)
 plt.title('Maximum Weight V-n Diagram', fontsize=20)
+plt.annotate('${V_A}$', (V_stall_pos_end, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
+plt.annotate('${V_C}$', (V_C, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
+plt.annotate('${V_D}$', (V_D, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 plt.xlim(0, V_max)
-plt.ylim(n_design_negative - 1, n_design_positive + 5)  
+plt.ylim(n_design_negative - 1, n_design_positive + 6)  
 
 plt.show()

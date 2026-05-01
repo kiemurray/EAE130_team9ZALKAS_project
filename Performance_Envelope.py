@@ -4,7 +4,8 @@ import code_variables as cv
 
 #Stall based on GTOW 
 W_TO=cv.W_TO
-#W_TO=45000
+#W_TO=cv.W_cruise_i
+#W_TO=W_TO*cv.wf_midcruise
 q_max = 2200 #psf (range 1800 - 2200)
 CL_max_clean=cv.CLmax_climb
 CL_max_takeoff=cv.CLmax_TO
@@ -206,8 +207,8 @@ print("T_0_ab: ",T_0_ab,"lb")
 plt.figure(figsize=(12, 8))
 #plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
 
-plt.plot(v_slow_ps150_mil,awesomeAltitudeArray_mil_excess, color='cyan', linewidth=1, linestyle='--',label='500 ft/min Excess Power (military power)')
-plt.plot(v_fast_ps150_mil,awesomeAltitudeArray_mil_excess, color='cyan', linewidth=1,linestyle='--')
+#plt.plot(v_slow_ps150_mil,awesomeAltitudeArray_mil_excess, color='cyan', linewidth=1, linestyle='--',label='500 ft/min Excess Power (military power)')
+#plt.plot(v_fast_ps150_mil,awesomeAltitudeArray_mil_excess, color='cyan', linewidth=1,linestyle='--')
 plt.plot(stall_vals,h_vals, color='orange', linewidth=2, linestyle='--',label='Stall Line')
 plt.plot(v_slow_ps0_ab,awesomeAltitudeArray_ab, color='blue', linewidth=2, linestyle='--',label='Zero Excess Power (AB)')
 plt.plot(v_fast_ps0_ab,awesomeAltitudeArray_ab, color='blue', linewidth=2,linestyle='--')
@@ -222,11 +223,11 @@ plt.plot(v_from_ceiling,altitudeArray, color='magenta', linewidth=3,)
 
 plt.xlabel('V (KEAS)', fontsize=18)
 plt.ylabel('Altitude (feet)', fontsize=18)
-plt.title('Performance Envelope', fontsize=20)
+plt.title('Performance Envelope (Takeoff Weight)', fontsize=20)
 plt.grid(True, alpha=0.4)
-plt.legend(fontsize=14, loc='upper right')
+plt.legend(fontsize=14, loc='upper left')
 
-plt.xlim(0, 1600)
-plt.ylim(h_min, h_max)  
+plt.xlim(0, 1800)
+plt.ylim(h_min, 80000)  
 
 plt.show()
