@@ -12,9 +12,6 @@ class Engines:
         self.weight = weight
         self.T_W = T_wet/weight
 
-
-
-
 #change to our numbers
 AR = 2.06
 s = 46 
@@ -70,7 +67,7 @@ num_engines = 2  # Example number of engines
 
 
 # Aircraft Design Point
-S_ZALKAS = 675 #ft^2
+S_ZALKAS = 600 #ft^2
 T_ZALKAS = 22000 * num_engines
 EngineChosen = F414
 
@@ -648,7 +645,8 @@ for S, T, name in aircraft_points:
 
 
 
-plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+#plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+plt.plot(600, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
 
 plt.legend(loc='upper right',fontsize=12)
