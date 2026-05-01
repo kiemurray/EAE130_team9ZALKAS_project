@@ -64,6 +64,7 @@ for psi in psi_values:
         TW_vals.append(maneuver_TW(WS, psi))
 
     plt.plot(WS_range, TW_vals, 'r-')
+    
 
 
 # labels

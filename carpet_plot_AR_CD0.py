@@ -69,13 +69,13 @@ for CD0 in CD0_list:
     plt.plot(WS_vals, LD_vals, 'r-')
 
     # label at end of line
-    plt.text(WS_vals[-1]+1, LD_vals[-1]+0.2, f'CD0={CD0:.3f}', fontsize=9, color='red')
+    plt.text(WS_vals[-1]+0.5, LD_vals[-1]+0.2, f'CD0={CD0:.3f}', fontsize=9, color='red')
 
 
 #plot labels
 plt.xlabel('W/S (lbf/ft^2)')
 plt.ylabel('L/D max')
-plt.title('Carpet Plot: W/S vs L/Dmax')
+plt.title('Carpet Plot: AR and CD0')
 
 plt.grid(True)
 plt.show()
