@@ -39,10 +39,10 @@ def maneuver_TW(WS, psi_deg):
     return TW * man_wf / T_ratio
 
 #plot
-WS_range = np.linspace(40, 85, 200)
+WS_range = np.linspace(40, 100, 200)
 
-mach_values = np.arange(1.6, 2.1, 0.1)
-psi_values = np.arange(8, 11, 0.5)
+mach_values = np.arange(1.6, 3.2, 0.1)
+psi_values = np.arange(8, 12.5, 0.5)
 
 plt.figure(figsize=(10,7))
 
@@ -69,26 +69,28 @@ for psi in psi_values:
 # labels
 plt.xlabel('W/S (lbf/ft²)')
 plt.ylabel('T/W')
-plt.title('Carpet Plot: Dash Mach vs Maneuver Rate')
+plt.title('Carpet Plot: Dash Mach and Maneuver Rate')
 
 
-plt.text(58, 0.3734, 'M = 1.6',color='blue',fontsize=9, ha='left',va='center',)
-plt.text(63.5, 0.3855, 'M = 1.7',color='blue',fontsize=9, ha='left',va='center',)
-plt.text(68.3, 0.4019, 'M = 1.8',color='blue',fontsize=9, ha='left',va='center',)
-plt.text(73.4, 0.4156, 'M = 1.9',color='blue',fontsize=9, ha='left',va='center',)
-plt.text(77.8, 0.4335, 'M = 2.0',color='blue',fontsize=9, ha='left',va='center',)
+# plt.text(58, 0.3734, 'M = 1.6',color='blue',fontsize=9, ha='left',va='center',)
+# plt.text(63.5, 0.3855, 'M = 1.7',color='blue',fontsize=9, ha='left',va='center',)
+# plt.text(68.3, 0.4019, 'M = 1.8',color='blue',fontsize=9, ha='left',va='center',)
+# plt.text(73.4, 0.4156, 'M = 1.9',color='blue',fontsize=9, ha='left',va='center',)
+# plt.text(77.8, 0.4335, 'M = 2.0',color='blue',fontsize=9, ha='left',va='center',)
 
 
-plt.text(76.53,0.4525, 'ψ = 8.0°',color='red',fontsize=9,ha='left',va='center')
-plt.text(72.10, 0.4802, 'ψ = 8.5°',color='red',fontsize=9,ha='left',va='center')
-plt.text(68.5, 0.505, 'ψ = 9.0°',color='red',fontsize=9,ha='left',va='center')
-plt.text(64.8, 0.532, 'ψ = 9.5°',color='red',fontsize=9,ha='left',va='center')
-plt.text(61.2, 0.559, 'ψ = 10.0°',color='red',fontsize=9,ha='left',va='center')
-plt.text(58.4, 0.584, 'ψ = 10.5°',color='red',fontsize=9,ha='left',va='center')
+# plt.text(76.53,0.4525, 'ψ = 8.0°/s',color='red',fontsize=9,ha='left',va='center')
+# plt.text(72.10, 0.4802, 'ψ = 8.5°/s',color='red',fontsize=9,ha='left',va='center')
+# plt.text(68.5, 0.505, 'ψ = 9.0°/s',color='red',fontsize=9,ha='left',va='center')
+# plt.text(64.8, 0.532, 'ψ = 9.5°/s',color='red',fontsize=9,ha='left',va='center')
+# plt.text(61.2, 0.559, 'ψ = 10.0°/s',color='red',fontsize=9,ha='left',va='center')
+# plt.text(58.4, 0.584, 'ψ = 10.5°/s',color='red',fontsize=9,ha='left',va='center')
 
+plt.plot( (cv.W_TO/cv.S_w), (22000*2/cv.W_TO), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
+plt.plot( (cv.W_TO/600), (22000*2/cv.W_TO), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
 
 plt.grid(True)
-plt.xlim(40,85)
-plt.ylim(0.35,0.6)
+plt.xlim(40,100)
+plt.ylim(0.35,0.9)
 
 plt.show()

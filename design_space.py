@@ -4,12 +4,12 @@ import code_variables as cv
 
 #constants 
 g = 32.174                                                            # ft/s^2
-CD0 = 0.01166                                                         # clean, used for cruise, dashes, ceiling, manuever
+CD0 = cv.CD0                                                        # clean, used for cruise, dashes, ceiling, manuever
 W_TO = cv.W_TO
-AR = 2.066       
+AR = cv.AR_w      
 n_eng = 2 
 e_to = 0.775           
-e_cr = 0.82
+e_cr = cv.e_cr
 e_land = 0.725
 k_to = 1 / (np.pi * AR * e_to)
 k_cr = 1 / (np.pi * AR * e_cr)
@@ -145,8 +145,9 @@ def manuever_constraint (v, rho, wf, T_ratio, psi, WS):
 
 
 psi = 8 * np.pi/180                                                         # rad/s (8.0-10.0 deg/sec at 20,000 ft mid mission fuel weight)
-v_maneuver = v_cr    #ft/s
+v_maneuver = 0.85 * atmo_vals(20000)[1]    #ft/s
 T20_Tto = Tratio(20000)   
+
 def tw_maneuver(WS):
     maneuverTW = manuever_constraint(v_maneuver, rho_20, man_wf, T20_Tto, psi, WS)
     return maneuverTW                                                 # 20kft thrust / take off thrust
@@ -212,7 +213,7 @@ plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)'
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 #diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-plt.plot( (56411.39/675), (22000*2/56411.39), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
+plt.plot( (cv.W_TO/cv.S_w), (22000*2/cv.W_TO), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
 design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
