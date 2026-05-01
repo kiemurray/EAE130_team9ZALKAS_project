@@ -23,6 +23,8 @@ C_L_alpha = 0.033 # from VSPAero, I will put this into code variables after
 
 #using english units (pounds, feet, seconds)
 V_D = 1.06*1.07*V_C
+print('V_D')
+print(V_D)
 V_max = V_D + 100
 KEAS = np.linspace(0,V_max,numPoints)
 
@@ -135,6 +137,10 @@ V_stall_neg_end = compute_intersection_velocity(c_stall, n_design_negative)/1.68
 
 V_start_pos = V_stall_pos_end
 V_start_neg = V_stall_neg_end
+
+print('V_A')
+print(V_start_pos)
+print(V_start_neg)
 
 V_cutoff = V_D
 V_end_pos = V_cutoff
