@@ -48,41 +48,59 @@ N_z = 1.5 * n_z # Ultimate Load Factor
 n_z_negative = -5 #estimate for negative limit load
 
 
-# vertical tail
-c_vt = 0.094 # vertical tail volume coefficient
-L_vt = 14.4 # vertical tail moment arm (ft)
-H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
-L_t = 10.78 # Tail Length
-S_r = 120 # Rudder Area ft^2
-AR_vt = 1.85 # Vertical Tail Aspect Ratio
-taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
-sweep_vt = 50 # Vertical Tail Sweep
-n_zv = 3.0 # Vertical Tail Limit Load (estimated)
-N_zv = 1.5 * n_zv # Vertical Tail Limit Load
-S_vt = 177 # Vertical Tail Area [ft]
-#S_vt = 145 # Vertical Tail Area [ft]
-S_vt = 66 #Vertical Tail Area (ft^2) from Assignment 5
-c_t = 8.24676 #stabilator MAC
 
-# wing
-b_w = 41.026226        # wing span tip-to-tip (ft)
-c_w = 19.918018        # wing chord (ft)
+
+# wing (600 sq ft)
+y_offset = 3 #ft
+b_w = 38.89        # wing span tip-to-tip (ft)
+b_w_total = b_w + 2*y_offset
+c_w = 13.69       # wing chord (ft)
 S_w = 600             # wing area (ft^2)
-AR_w = 2.46
+AR_w = 2.52
 tc_root = 0.06 # t/c ratio at root chord
-taper_ratio = 0.295 # Taper Ratio
-wing_sweep = 45 # Wing Sweep at 25% MAC
-lambda_w = 40   # Sweep angle of wing (degrees)
+taper_ratio = 0.137 # Taper Ratio
+wing_sweep = 50 # Wing Sweep at 25% MAC
+lambda_w = 50   # Sweep angle of wing (degrees)
+
+#Section 1 (root to change in back sweep)
+c_root_1 = 30.46     #root chord (ft)
+b_section_1 = 12   #section 1 span
+b_section_1_total = (y_offset+b_section_1)*2
+lambda_back_1 = 25      #desired back sweep (degrees)
+c_tip_1 = c_root_1 - b_section_1*(np.tan(np.deg2rad(lambda_w))+np.tan(np.deg2rad(lambda_back_1))) 
+print("For",lambda_back_1,"degree back sweep, section 1 tip chord is:",c_tip_1,"ft")
+print("Total section 1 wingspan:",b_section_1_total,"ft")
+
+
+#Section 2 (change in back sweep to tip)
+c_root_2 = c_tip_1     #root chord (ft)
+b_section_2 = (0.5*b_w) - b_section_1   #section 2 span
+print("Section 2 span:",b_section_2,"ft")
+lambda_back_2 = 20      #desired back sweep (degrees)
+c_tip_2 = c_root_2 - b_section_2*(np.tan(np.deg2rad(lambda_w))-np.tan(np.deg2rad(lambda_back_2))) 
+print("For",lambda_back_2,"degree back sweep, section 2 tip chord is:",c_tip_2,"ft")
+print("Taper ratio becomes:",c_tip_2/c_root_1)
+print("Aspect ratio becomes:",((b_w)**2)/S_w)
+
 eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
 S_csw = 103 # Wing Mounted Control Surface Area ft^2
 K_dwf = 0.774 # For Non-Delta Wing Aircraft
 K_vs = 1.0 # non-variable sweep
 S_wet_wing = 692.402
 
-#flaps (0.25 * c_wing)
-c_f_inner = 2.27 #feet (inner chord)
-c_f_outer = 5.649 #feet (outer chord)
-b_f = (0.67 - 0.175) * b_w
+#flaps info updated May 1st (B3.17)
+#25 percent chord
+#b_range_flaps (0.15 - 0.6315 inboard) (0.632 - 1.0 outboard)
+# print("b_f:",(0.6315 - 0.150) *b_w,"ft")
+# print("c_f_inner:",0.25*c_tip_1,"ft")
+# print("c_f_outer:",0.25*c_root_1,"ft")
+# print("inboard flap area:",(0.25*(c_root_1+c_tip_1))*(b_f),"ft^2")
+b_f = 18.72 #feet (both sides)
+c_f_inner = 2.64 #feet (inner chord)
+c_f_outer = 7.615 #feet (outer chord)
+S_flap = 192 #ft^2
+
+
 
 #inboard slats (0.1 * c_wing)
 c_slat_inboard_i = 2.118 #feet
@@ -94,22 +112,6 @@ c_slat_outboard_i = 0.909 #feet
 c_slat_outboard_o = 0.449 #feet 
 b_slat_outboard = (1 - 0.670732) * b_w
 
-
-
-
-# horizontal tail
-c_ht = 0.3        # horizontal tail volume coefficient
-L_ht = 15.4       # horizontal tail moment arm (ft)
-AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
-K_rht = 1.047 # Rolling Tail (Stabilators)
-lambda_h = 45   # Sweep angle of horizontal tail (degrees)
-H_t = 0 # Horizontal Tail Height Above Fuselage
-K_vsh = 1.0 # Non-Variable Sweep Wing
-eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
-t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
-S_wet_tail = 151.715
-S_ht = 109
-#assignment 5 has horizontal tail area at 197.4 ft^2
 
 # fuselage
 S_wet_fuselage = 528.140 
@@ -137,6 +139,42 @@ N_l = 1.5 * N_gear # Ultimate Landing Load Factor
 L_m = 48 # Length of Landing Gear, in.
 L_n = 48 # Length of Nose Gear, in.
 N_nw = 2 # Number of Nose Wheels
+
+
+# vertical tail
+c_vt = 0.094 # vertical tail volume coefficient (Raymer Section 6.5.3)
+L_vt = 0.40 * L_f
+print("Vertical tail arm:",L_vt,"ft")
+L_vt = 19 # vertical tail moment arm (ft) (Should be 45-50% of the fuselage length according to Raymer 6.5.3) (Updated May 1)
+H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
+AR_vt = 1.85 # Vertical Tail Aspect Ratio
+cr_c = 0.30 #rudder chord fraction (Raymer 6.5.3)
+S_r = 120 # Rudder Area ft^2
+taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
+sweep_vt = 50 # Vertical Tail Sweep
+n_zv = 3.0 # Vertical Tail Limit Load (estimated)
+N_zv = 1.5 * n_zv # Vertical Tail Limit Load
+S_vt = c_vt*b_w*S_w/L_vt #vertical tail area (Eq 6.28 Raymer)
+#S_vt = 161 ft (As of )
+print("Vertical Tail Area:",S_vt,"ft")
+L_t = 10.78 # Tail Length
+#S_vt = 145 # Vertical Tail Area [ft]
+#S_vt = 66 #Vertical Tail Area (ft^2) from Assignment 5
+c_t = 8.24676 #stabilator MAC (not updated)
+
+# horizontal tail
+c_ht = 0.3        # horizontal tail volume coefficient
+L_ht = 15.4       # horizontal tail moment arm (ft)
+AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
+K_rht = 1.047 # Rolling Tail (Stabilators)
+lambda_h = lambda_w +5   # Sweep angle of horizontal tail (degrees) (Raymer 4.5.4 syas add 5 degrees)
+H_t = 0 # Horizontal Tail Height Above Fuselage
+K_vsh = 1.0 # Non-Variable Sweep Wing
+eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
+t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
+S_wet_tail = 151.715
+S_ht = 109
+#assignment 5 has horizontal tail area at 197.4 ft^2
 
 #fuel volume things
 rho_jp5 = 51.1              #lb/ft^3   
