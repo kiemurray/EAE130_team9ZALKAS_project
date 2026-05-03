@@ -52,10 +52,10 @@ n_z_negative = -5 #estimate for negative limit load
 
 # wing (600 sq ft)
 y_offset = 3 #ft
-b_w = 38.89        # wing span tip-to-tip (ft)
+b_w = 37.458        # wing span tip-to-tip (ft)
 b_w_total = b_w + 2*y_offset
-c_w = 13.69       # wing chord (ft)
-S_w = 600             # wing area (ft^2)
+c_w = 13.47       # wing chord (ft)
+S_w = 560             # wing area (ft^2)
 AR_w = 2.52
 tc_root = 0.06 # t/c ratio at root chord
 taper_ratio = 0.137 # Taper Ratio
@@ -63,24 +63,24 @@ wing_sweep = 50 # Wing Sweep at 25% MAC
 lambda_w = 50   # Sweep angle of wing (degrees)
 
 #Section 1 (root to change in back sweep)
-c_root_1 = 30.46     #root chord (ft)
-b_section_1 = 12   #section 1 span
+c_root_1 = 29.34     #root chord (ft)
+b_section_1 = 11.558   #section 1 span
 b_section_1_total = (y_offset+b_section_1)*2
 lambda_back_1 = 25      #desired back sweep (degrees)
 c_tip_1 = c_root_1 - b_section_1*(np.tan(np.deg2rad(lambda_w))+np.tan(np.deg2rad(lambda_back_1))) 
-print("For",lambda_back_1,"degree back sweep, section 1 tip chord is:",c_tip_1,"ft")
-print("Total section 1 wingspan:",b_section_1_total,"ft")
+#print("For",lambda_back_1,"degree back sweep, section 1 tip chord is:",c_tip_1,"ft")
+#print("Total section 1 wingspan:",b_section_1_total,"ft")
 
 
 #Section 2 (change in back sweep to tip)
 c_root_2 = c_tip_1     #root chord (ft)
 b_section_2 = (0.5*b_w) - b_section_1   #section 2 span
-print("Section 2 span:",b_section_2,"ft")
+#print("Section 2 span:",b_section_2,"ft")
 lambda_back_2 = 20      #desired back sweep (degrees)
 c_tip_2 = c_root_2 - b_section_2*(np.tan(np.deg2rad(lambda_w))-np.tan(np.deg2rad(lambda_back_2))) 
-print("For",lambda_back_2,"degree back sweep, section 2 tip chord is:",c_tip_2,"ft")
-print("Taper ratio becomes:",c_tip_2/c_root_1)
-print("Aspect ratio becomes:",((b_w)**2)/S_w)
+#print("For",lambda_back_2,"degree back sweep, section 2 tip chord is:",c_tip_2,"ft")
+#print("Taper ratio becomes:",c_tip_2/c_root_1)
+#print("Aspect ratio becomes:",((b_w)**2)/S_w)
 
 eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
 S_csw = 103 # Wing Mounted Control Surface Area ft^2
@@ -91,14 +91,15 @@ S_wet_wing = 692.402
 #flaps info updated May 1st (B3.17)
 #25 percent chord
 #b_range_flaps (0.15 - 0.6315 inboard) (0.632 - 1.0 outboard)
-# print("b_f:",(0.6315 - 0.150) *b_w,"ft")
-# print("c_f_inner:",0.25*c_tip_1,"ft")
-# print("c_f_outer:",0.25*c_root_1,"ft")
-# print("inboard flap area:",(0.25*(c_root_1+c_tip_1))*(b_f),"ft^2")
-b_f = 18.72 #feet (both sides)
-c_f_inner = 2.64 #feet (inner chord)
-c_f_outer = 7.615 #feet (outer chord)
-S_flap = 192 #ft^2
+#print("b_f:",(0.6315 - 0.150) *b_w,"ft")
+#print("c_f_inner:",0.25*c_tip_1,"ft")
+#print("c_f_outer:",0.25*c_root_1,"ft")
+b_f = 18.03 #feet (both sides)
+c_f_inner = 2.544 #feet (inner chord)
+c_f_outer = 7.335 #feet (outer chord)
+S_flap = 178.11 #ft^2
+#print("inboard flap area:",(0.25*(c_root_1+c_tip_1))*(b_f),"ft^2")
+
 
 
 
@@ -143,8 +144,7 @@ N_nw = 2 # Number of Nose Wheels
 
 # vertical tail
 c_vt = 0.094 # vertical tail volume coefficient (Raymer Section 6.5.3)
-L_vt = 0.40 * L_f
-print("Vertical tail arm:",L_vt,"ft")
+print("Vertical tail arm:",0.40 * L_f,"ft")
 L_vt = 19 # vertical tail moment arm (ft) (Should be 45-50% of the fuselage length according to Raymer 6.5.3) (Updated May 1)
 H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
 AR_vt = 1.85 # Vertical Tail Aspect Ratio
@@ -163,8 +163,8 @@ L_t = 10.78 # Tail Length
 c_t = 8.24676 #stabilator MAC (not updated)
 
 # horizontal tail
-c_ht = 0.3        # horizontal tail volume coefficient
-L_ht = 15.4       # horizontal tail moment arm (ft)
+c_ht = 0.4        # horizontal tail volume coefficient (Raymer Section 6.5.3)
+L_ht = L_vt       # horizontal tail moment arm (ft)
 AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
 K_rht = 1.047 # Rolling Tail (Stabilators)
 lambda_h = lambda_w +5   # Sweep angle of horizontal tail (degrees) (Raymer 4.5.4 syas add 5 degrees)
@@ -172,8 +172,9 @@ H_t = 0 # Horizontal Tail Height Above Fuselage
 K_vsh = 1.0 # Non-Variable Sweep Wing
 eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
 t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
+print("Horizontal Tail Area:",c_ht*c_w*S_w/L_ht,"ft")
 S_wet_tail = 151.715
-S_ht = 109
+S_ht = 173
 #assignment 5 has horizontal tail area at 197.4 ft^2
 
 #fuel volume things

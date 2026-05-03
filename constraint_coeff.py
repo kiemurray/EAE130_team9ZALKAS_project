@@ -13,6 +13,7 @@ AR = cv.AR_w
 
 rho_rho_sl_takeoff = 0.95
 C_L_max_takeoff = cv.CLmax_TO
+C_L_max_landing = cv.CLmax_L
 BFL_takeoff = 10000
 
 def calculate_takeoff_field_length_coefficient(BFL, rho_ratio, C_L_max):

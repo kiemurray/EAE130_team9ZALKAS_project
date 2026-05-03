@@ -60,9 +60,10 @@ def Tratio(height):
 W_S = np.linspace(0, 200, 500)                                          #lbf/ft^2
 
 # Stall
-v_stall = 145/1.1                                                       #knots
-v_stall *= 1.68781                                                      #ft/s
-W_S_stall = 0.5 * rho_sl * v_stall**2 * CLmax_L
+v_stall = cv.knots_to_ft_per_s(145/1.1)                                                       #ft/s
+W_S_stall = 0.5 * cv.rho_sl * v_stall**2 * cv.CLmax_L
+W_S_stall = W_S_stall * (1/cv.wf_landing)
+print("W_S_stall: ",W_S_stall,"lbf/ft^2")
 
 # Takeoff 
 v_to = 160 #knotsF
