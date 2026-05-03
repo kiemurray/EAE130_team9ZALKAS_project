@@ -145,7 +145,7 @@ N_nw = 2 # Number of Nose Wheels
 # vertical tail
 c_vt = 0.094 # vertical tail volume coefficient (Raymer Section 6.5.3)
 print("Vertical tail arm:",0.40 * L_f,"ft")
-L_vt = 19 # vertical tail moment arm (ft) (Should be 45-50% of the fuselage length according to Raymer 6.5.3) (Updated May 1)
+L_vt = 15 # vertical tail moment arm (ft) (Should be 45-50% of the fuselage length according to Raymer 6.5.3) (Updated May 1)
 H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
 AR_vt = 1.85 # Vertical Tail Aspect Ratio
 cr_c = 0.30 #rudder chord fraction (Raymer 6.5.3)
@@ -155,17 +155,15 @@ sweep_vt = 50 # Vertical Tail Sweep
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
 S_vt = c_vt*b_w*S_w/L_vt #vertical tail area (Eq 6.28 Raymer)
-#S_vt = 161 ft (As of )
 print("Vertical Tail Area:",S_vt,"ft")
 L_t = 10.78 # Tail Length
-#S_vt = 145 # Vertical Tail Area [ft]
-#S_vt = 66 #Vertical Tail Area (ft^2) from Assignment 5
+S_vt = 131.45 # Vertical Tail Area [ft^2]
 c_t = 8.24676 #stabilator MAC (not updated)
 
 # horizontal tail
 c_ht = 0.4        # horizontal tail volume coefficient (Raymer Section 6.5.3)
-L_ht = L_vt       # horizontal tail moment arm (ft)
-AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
+L_ht = 17       # horizontal tail moment arm (ft)
+AR_h = 2.37       # aspect ratio of horizontal stabilizer (empenage slide 54)
 K_rht = 1.047 # Rolling Tail (Stabilators)
 lambda_h = lambda_w +5   # Sweep angle of horizontal tail (degrees) (Raymer 4.5.4 syas add 5 degrees)
 H_t = 0 # Horizontal Tail Height Above Fuselage
@@ -174,8 +172,7 @@ eta_h = 0.9      # difference factor between the theoretical section lift curve 
 t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
 print("Horizontal Tail Area:",c_ht*c_w*S_w/L_ht,"ft")
 S_wet_tail = 151.715
-S_ht = 173
-#assignment 5 has horizontal tail area at 197.4 ft^2
+S_ht = 177.5 #ft^2 (B3.18, May 2)
 
 #fuel volume things
 rho_jp5 = 51.1              #lb/ft^3   
