@@ -13,7 +13,7 @@ class Engines:
         self.T_W = T_wet/weight
 
 #change to our numbers
-AR = 2.06
+AR = cv.AR_w
 s = 46 
 #s_ref = 955
 
@@ -24,7 +24,7 @@ def calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref):
     return c_f * (S_wet / s_ref)
 
 #C_D_0 = calculate_zero_lift_drag_coefficient(c_f, S_wet, s_ref)
-C_D_0 = 0.01166
+C_D_0 = cv.CD0
 print("Zero-lift drag coefficient C_D_0:", C_D_0)
 
 
@@ -54,8 +54,8 @@ print("W_payload: " + str(W_payload) + " lb")
 L_D_max = 10
 R = 950             # nmi
 E = 20 / 60         # min --> hr
-ct_cruise = 0.7     # lb/(lbf hr)
-ct_dash = 0.7
+ct_cruise = cv.ct_cruise     # lb/(lbf hr)
+ct_dash = cv.ct_AB
 v_cruise = 490      # knots
 v_dash = 560        # knots
 S_ht = 0 
@@ -67,7 +67,7 @@ num_engines = 2  # Example number of engines
 
 
 # Aircraft Design Point
-S_ZALKAS = 600 #ft^2
+S_ZALKAS = 560 #ft^2
 T_ZALKAS = 22000 * num_engines
 EngineChosen = F414
 
@@ -459,6 +459,8 @@ T_climb, W0_curve, n_iter_T, T_hist_allS, W0_final, wconv_final, it_w_final, W0_
 #     W_payload)
 
 
+
+
 #T_grid,S_W_S_array_takeoff,S_W_S_array_landing=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload)
 
 T_grid,S_W_S_array_takeoff=outer_loop_W_S_curves(T_engine_grid,TOGW_guess_init,S_wing_guess,S_ht,S_vt,S_wet_fuselage,num_engines,W_crew,W_payload,design_space.W_S_takeoff)
@@ -646,8 +648,10 @@ for S, T, name in aircraft_points:
 
 
 #plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
-plt.plot(600, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
+plt.plot(530, F100_229.T_wet, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+plt.annotate('ZALKAS Fighter (F110)', (530, F100_229.T_wet), xytext=(5,5), textcoords='offset points',fontsize=16)
 
 plt.legend(loc='upper right',fontsize=12)
 plt.ylim(0,80000)
@@ -686,8 +690,8 @@ print(f"Fuselage tank volume needed: {fuselage_tank_vol_needed} ft^3")
 
 #Stall Speed from Wing Area and Weight (ft/s)
 V_stall_clean_calc = (2*final_TOGW/(cv.rho_sl*S_ZALKAS*cv.CLmax_climb))**(1/2)
-V_stall_landing_calc = (2*final_TOGW/(cv.rho_sl*S_ZALKAS*cv.CLmax_L))**(1/2)
+V_stall_landing_calc = (2*final_TOGW*cv.wf_landing/(cv.rho_sl*S_ZALKAS*cv.CLmax_L))**(1/2)
 #Roskam
-v_stall_Roskam=(2*final_TOGW/(cv.rho_sl*S_ZALKAS*1.1*cv.CLmax_L))**(1/2)
-print(f"V_stall (clean) (ft/s)= {V_stall_clean_calc} \nV_stall (landing) (ft/s) = {V_stall_landing_calc}\nV_stall (landing) (Roskam) (ft/s) {v_stall_Roskam}")
-print(f"V_stall (clean) = {cv.ft_s_to_knots(V_stall_clean_calc)} \nV_stall (landing) = {cv.ft_s_to_knots(V_stall_landing_calc)}\nV_stall (landing) (Roskam) (knots) = {cv.ft_s_to_knots(v_stall_Roskam)}")
+v_stall_Roskam=(2*cv.wf_landing*final_TOGW/(cv.rho_sl*S_ZALKAS*1.1*cv.CLmax_L))**(1/2)
+print(f"V_stall (clean) (ft/s)= {V_stall_clean_calc} \nV_stall (landing at landing weight) (ft/s) = {V_stall_landing_calc}\nV_stall (landing) (Roskam) (ft/s) {v_stall_Roskam}")
+print(f"V_stall (clean) = {cv.ft_s_to_knots(V_stall_clean_calc)} \nV_stall (landing at landing weight) = {cv.ft_s_to_knots(V_stall_landing_calc)}\nV_stall (landing) (Roskam) (knots) = {cv.ft_s_to_knots(v_stall_Roskam)}")

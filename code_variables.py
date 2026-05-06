@@ -15,7 +15,7 @@ aim_120c = 356 #lb
 aim_9x = 188 #lb
 mk_83jdam = 1000 #lb 
 crew = 200 #lb
-#a2a_payload = 6*aim_120c + 2*aim_9x + crew
+a2a_payload = 6*aim_120c + 2*aim_9x + crew
 strike_payload = 2*aim_9x + 4*mk_83jdam + crew
 W_crew = num_pilot*crew
 W_payload = strike_payload
@@ -48,37 +48,60 @@ N_z = 1.5 * n_z # Ultimate Load Factor
 n_z_negative = -5 #estimate for negative limit load
 
 
-# vertical tail
-c_vt = 0.094 # vertical tail volume coefficient
-L_vt = 14.4 # vertical tail moment arm (ft)
-H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
-L_t = 10.78 # Tail Length
-S_r = 120 # Rudder Area ft^2
-AR_vt = 1.85 # Vertical Tail Aspect Ratio
-taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
-sweep_vt = 50 # Vertical Tail Sweep
-n_zv = 3.0 # Vertical Tail Limit Load (estimated)
-N_zv = 1.5 * n_zv # Vertical Tail Limit Load
-S_vt = 177 # Vertical Tail Area [ft]
 
-# wing
-b_w = 41.026226        # wing span tip-to-tip (ft)
-c_w = 19.918018        # wing chord (ft)
-S_w = 540             # wing area (ft^2)
-AR_w = 2.46
+
+# wing (600 sq ft)
+y_offset = 3 #ft
+b_w = 37.458        # wing span tip-to-tip (ft)
+b_w_total = b_w + 2*y_offset
+c_w = 13.47       # wing chord (ft)
+S_w = 560             # wing area (ft^2)
+AR_w = 2.52
 tc_root = 0.06 # t/c ratio at root chord
-taper_ratio = 0.295 # Taper Ratio
-wing_sweep = 45 # Wing Sweep at 25% MAC
-lambda_w = 40   # Sweep angle of wing (degrees)
+taper_ratio = 0.137 # Taper Ratio
+wing_sweep = 50 # Wing Sweep at 25% MAC
+lambda_w = 50   # Sweep angle of wing (degrees)
+
+#Section 1 (root to change in back sweep)
+c_root_1 = 29.34     #root chord (ft)
+b_section_1 = 11.558   #section 1 span
+b_section_1_total = (y_offset+b_section_1)*2
+lambda_back_1 = 25      #desired back sweep (degrees)
+c_tip_1 = c_root_1 - b_section_1*(np.tan(np.deg2rad(lambda_w))+np.tan(np.deg2rad(lambda_back_1))) 
+#print("For",lambda_back_1,"degree back sweep, section 1 tip chord is:",c_tip_1,"ft")
+#print("Total section 1 wingspan:",b_section_1_total,"ft")
+
+
+#Section 2 (change in back sweep to tip)
+c_root_2 = c_tip_1     #root chord (ft)
+b_section_2 = (0.5*b_w) - b_section_1   #section 2 span
+#print("Section 2 span:",b_section_2,"ft")
+lambda_back_2 = 20      #desired back sweep (degrees)
+c_tip_2 = c_root_2 - b_section_2*(np.tan(np.deg2rad(lambda_w))-np.tan(np.deg2rad(lambda_back_2))) 
+#print("For",lambda_back_2,"degree back sweep, section 2 tip chord is:",c_tip_2,"ft")
+#print("Taper ratio becomes:",c_tip_2/c_root_1)
+#print("Aspect ratio becomes:",((b_w)**2)/S_w)
+
 eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
 S_csw = 103 # Wing Mounted Control Surface Area ft^2
 K_dwf = 0.774 # For Non-Delta Wing Aircraft
 K_vs = 1.0 # non-variable sweep
+S_wet_wing = 692.402
 
-#flaps (0.25 * c_wing)
-c_f_inner = 2.27 #feet (inner chord)
-c_f_outer = 5.649 #feet (outer chord)
-b_f = (0.67 - 0.175) * b_w
+#flaps info updated May 1st (B3.17)
+#25 percent chord
+#b_range_flaps (0.15 - 0.6315 inboard) (0.632 - 1.0 outboard)
+#print("b_f:",(0.6315 - 0.150) *b_w,"ft")
+#print("c_f_inner:",0.25*c_tip_1,"ft")
+#print("c_f_outer:",0.25*c_root_1,"ft")
+b_f = 18.03 #feet (both sides)
+c_f_inner = 2.544 #feet (inner chord)
+c_f_outer = 7.335 #feet (outer chord)
+S_flap = 178.11 #ft^2
+#print("inboard flap area:",(0.25*(c_root_1+c_tip_1))*(b_f),"ft^2")
+
+
+
 
 #inboard slats (0.1 * c_wing)
 c_slat_inboard_i = 2.118 #feet
@@ -91,19 +114,8 @@ c_slat_outboard_o = 0.449 #feet
 b_slat_outboard = (1 - 0.670732) * b_w
 
 
-
-
-# horizontal tail
-c_ht = 0.3        # horizontal tail volume coefficient
-L_ht = 15.4       # horizontal tail moment arm (ft)
-AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
-K_rht = 1.047 # Rolling Tail (Stabilators)
-lambda_h = 45   # Sweep angle of horizontal tail (degrees)
-H_t = 0 # Horizontal Tail Height Above Fuselage
-K_vsh = 1.0 # Non-Variable Sweep Wing
-eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
-
 # fuselage
+S_wet_fuselage = 528.140 
 K_f = 0.344      # empirical factor
 L_f = 47.5         # fuselage length (ft)
 D_f = 6.4 # Fuselage Depth, ft
@@ -128,6 +140,39 @@ N_l = 1.5 * N_gear # Ultimate Landing Load Factor
 L_m = 48 # Length of Landing Gear, in.
 L_n = 48 # Length of Nose Gear, in.
 N_nw = 2 # Number of Nose Wheels
+
+
+# vertical tail
+c_vt = 0.094 # vertical tail volume coefficient (Raymer Section 6.5.3)
+print("Vertical tail arm:",0.40 * L_f,"ft")
+L_vt = 15 # vertical tail moment arm (ft) (Should be 45-50% of the fuselage length according to Raymer 6.5.3) (Updated May 1)
+H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
+AR_vt = 1.85 # Vertical Tail Aspect Ratio
+cr_c = 0.30 #rudder chord fraction (Raymer 6.5.3)
+S_r = 120 # Rudder Area ft^2
+taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
+sweep_vt = 50 # Vertical Tail Sweep
+n_zv = 3.0 # Vertical Tail Limit Load (estimated)
+N_zv = 1.5 * n_zv # Vertical Tail Limit Load
+S_vt = c_vt*b_w*S_w/L_vt #vertical tail area (Eq 6.28 Raymer)
+print("Vertical Tail Area:",S_vt,"ft")
+L_t = 10.78 # Tail Length
+S_vt = 131.45 # Vertical Tail Area [ft^2]
+c_t = 8.24676 #stabilator MAC (not updated)
+
+# horizontal tail
+c_ht = 0.4        # horizontal tail volume coefficient (Raymer Section 6.5.3)
+L_ht = 17       # horizontal tail moment arm (ft)
+AR_h = 2.37       # aspect ratio of horizontal stabilizer (empenage slide 54)
+K_rht = 1.047 # Rolling Tail (Stabilators)
+lambda_h = lambda_w +5   # Sweep angle of horizontal tail (degrees) (Raymer 4.5.4 syas add 5 degrees)
+H_t = 0 # Horizontal Tail Height Above Fuselage
+K_vsh = 1.0 # Non-Variable Sweep Wing
+eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
+t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
+print("Horizontal Tail Area:",c_ht*c_w*S_w/L_ht,"ft")
+S_wet_tail = 151.715
+S_ht = 177.5 #ft^2 (B3.18, May 2)
 
 #fuel volume things
 rho_jp5 = 51.1              #lb/ft^3   
@@ -166,7 +211,7 @@ V_TO = 160 * 1.68781                    # takeoff speed in ft/s, assuming 160 kn
 W_TO = 54747
 e_to = 0.775                            #takeoff
 k_to = 1 / (np.pi * AR_w * e_to)          #takeoff
-S_wingtest = 685 #based on vsp design v5
+S_wingtest = 600 #based on vsp design B3.16
 T_0 = 23930  # Example value for thrust per engine
 T_0_mil = 13000
 
@@ -205,196 +250,6 @@ V_landing= V_engage_56lb+WOD            # ft/s, landing speed, sum of engage spe
 V_engage= 130 * 1.68781                 # ft/s, speed at which arrestor is engaged, assuming 130 knots
 e_land = 0.725  
 k_land = 1 / (np.pi * AR_w * e_land)      #landing# this is for declaring variables that are used across multiple files, such as the T_S_iteration.py and design_space.py files. This way, we can avoid hardcoding values in multiple places and maintain consistency across our codebase.
-import numpy as np
-
-# constants
-R=53.35     # gas constant in (ft*lbf/lbm*R)                                                         #ft*lbf/lbm-Rankine
-g = 32.174  # gravitational constant (slug/lbm)   
-c_f=0.0026
-ra = 950             # nmi
-E = 20 / 60         # min --> hr
-WOD=15*1.68781                          # ft/s, Wind over deck (given in RFP)
-CD0=0.01036                             # clean, used for cruise
-num_pilot = 1
-avg_wt_person = 200  #lb
-aim_120c = 356 #lb
-aim_9x = 188 #lb
-mk_83jdam = 1000 #lb 
-crew = 200 #lb
-a2a_payload = 6*aim_120c + 2*aim_9x + crew
-strike_payload = 2*aim_9x + 4*mk_83jdam + crew
-W_crew = num_pilot*crew
-W_payload = strike_payload
-SFC = 1.85 # SFC at max thrust
-K_mc = 1.45 # Mission Completion Required After Failure
-W_urdr = 1221 # Uninstalled Radar Weight, lbf
-W_uav = 2500 - W_urdr # Uninstalled Avionics Weight, lbf
-S_fw = 45 # Firewall Surface Area, ft^2 (discuss estimation later)
-W_en = 2445 # Engine Weight, each, lbf
-M = 2.0 # Mach Number
-
-
-# lift coefficients
-CLmax_TO = 1.7 # maximum lift coefficient for takeoff
-CLmax_L = 2.1 # maximum lift coefficient for landing
-CLmax_climb = CLmax_TO # maximum lift coefficient for climb, assumed to be the same as takeoff
-
-
-
-
-
-# vertical tail
-c_vt = 0.094 # vertical tail volume coefficient
-L_vt = 14.4 # vertical tail moment arm (ft)
-H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
-L_t = 10.78 # Tail Length
-S_r = 120 # Rudder Area ft^2
-AR_vt = 1.85 # Vertical Tail Aspect Ratio
-taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
-sweep_vt = 50 # Vertical Tail Sweep
-n_zv = 3.0 # Vertical Tail Limit Load (estimated)
-N_zv = 1.5 * n_zv # Vertical Tail Limit Load
-S_vt = 145 # Vertical Tail Area [ft]
-c_t = 8.24676 #stabilator MAC
-
-# wing
-b_w = 41.026226        # wing span tip-to-tip (ft)
-c_w = 19.918018        # wing chord (ft)
-S_w = 600             # wing area (ft^2)
-
-# S_w = 540              # wing area (ft^2) (After PDR)
-# b_w = 36.42614        # wing span tip-to-tip (ft)
-# c_w = 17.68470        # wing chord (ft) --- Mean Aerodynamic Chord ---
-AR_w = 2.46
-tc_root = 0.06 # t/c ratio at root chord
-taper_ratio = 0.295 # Taper Ratio
-wing_sweep = 45 # Wing Sweep at 25% MAC
-lambda_w = 40   # Sweep angle of wing (degrees)
-eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
-S_csw = 103 # Wing Mounted Control Surface Area ft^2
-K_dwf = 0.774 # For Non-Delta Wing Aircraft
-K_vs = 1.0 # non-variable sweep
-S_wet_wing = 692.402
-
-# horizontal tail
-c_ht = 0.3        # horizontal tail volume coefficient
-L_ht = 15.4       # horizontal tail moment arm (ft)
-AR_h = 3.5       # aspect ratio of horizontal stabilizer (empenage slide 54)
-K_rht = 1.047 # Rolling Tail (Stabilators)
-lambda_h = 45   # Sweep angle of horizontal tail (degrees)
-H_t = 0 # Horizontal Tail Height Above Fuselage
-K_vsh = 1.0 # Non-Variable Sweep Wing
-eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
-t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
-S_wet_tail = 151.715
-
-# fuselage
-S_wet_fuselage = 528.140 
-K_f = 0.344      # empirical factor
-L_f = 47.5         # fuselage length (ft)
-D_f = 6.4 # Fuselage Depth, ft
-W_f = 14.6   # maximum width of fuselage (ft)
-K_dw = 0.768 # Delta-Wing Aircraft (lambda-wing more like delta than traditional wing)
-K_vg = 1.62 # Variable Inlet Geometry
-R_kva = 160 # System Electrical Rating, kV * A
-L_a = 35 # Electrical Routing Distance, ft
-L_d = 11.23 # Duct Length, ft
-K_d = 2.6 # Duct Constant
-L_s = 11.23 # Single Duct Length, ft
-D_e = 6.68 # Engine Diameter, ft
-L_tp = 2.5 # Length of Tailpipe, ft
-L_sh = 12.83 # Length of Engine Shroud, ft
-L_ec = 21.6 # Length From Engine Front to Cockpit, ft
-T_e = 22000 # Thrust per Engine, lbf
-K_cb = 1.0 # Non Cross Beam
-K_tpg = 1.0 # Non-Tripod Landing Gear
-W_l = 34000 # Landing Gross Weight, lbf
-N_gear = 3.8 # Landing Limit Load (Raymer Assumption)
-N_l = 1.5 * N_gear # Ultimate Landing Load Factor
-L_m = 48 # Length of Landing Gear, in.
-L_n = 48 # Length of Nose Gear, in.
-N_nw = 2 # Number of Nose Wheels
-
-#fuel volume things
-rho_jp5 = 51.1              #lb/ft^3   
-packing_factor_shallow_fuselage = 0.8
-packing_factor_deep_fuselage = 0.85
-packing_factor_wing = 0.75
-V_t = 3127 # Total Fuel Volume, gal
-V_i = 0.75 * V_t # Integral Fuel Tank Volume, gal
-V_p = 0.25 * V_t # Self-Sealing Wing Tank Volume, gal
-N_t = 10 # Number of Tanks
-tank_1_v = 106 # ft^3
-tank_2_v = 99.6 # ft^3
-tank_34_v = 22.0 # ft^3
-tank_5_v = 60.4 # ft^3
-tank_6_v = 79.7 # ft^3
-tank_78_v = 45.3 # ft^3
-wing_tank_v = 71.0 # ft^3
-
-# mission segment variables
-# weight fractions
-wf_cr = 0.93148704              # weight fraction for cruise
-wf_climb =  0.970299            # weight fraction for climb
-wf_midclimb = 0.98               # weight fraction for mid-climb
-wf_midcruise = 0.7806623694686121     # weight fraction for mid-cruise
-wf_dash30 = wf_midcruise              # weight fraction for 30,000ft dash, assumed to be the same as mid-cruise
-wf_man = 0.7792324662696907     # weight fraction for maneuvering
-wf_landing = 0.6227770873721522 # weight fraction for landing
-wf_warmup= 0.99                 # weight fraction for engine warmup, assumed to be 0.99 (1% fuel burn during warmup)   
-wf_taxi= 0.99
-wf_takeoff= 0.99
-wf_descent= 0.99
-wf_middescent = 0.995
-
-# takeoff parameters
-V_TO = 160 * 1.68781                    # takeoff speed in ft/s, assuming 160 knots for takeoff
-W_TO = 55700
-e_to = 0.775                            #takeoff
-k_to = 1 / (np.pi * AR_w * e_to)          #takeoff
-S_wingtest = 685 #based on vsp design v5
-T_0 = 23930  # Example value for thrust per engine
-T_0_mil = 13000
-
-# climb parameters
-ks = 1.2 # climb ratio (climb speed over stall speed)
-
-# cruise parameters
-ct_cruise = 0.7     # lb/(lbf hr)
-v_cruise = 490      # knots
-ct_cruise = 0.724 #lb/(lbf hr)
-ct_AB = 1.85 #lb/(lbf hr)
-M_cruise = 0.85
-e_cr = 0.82                             #cruise
-e_cr_estimate = 4.61*(1-0.045*AR_w**0.68)*(np.cos(lambda_w*np.pi/180)**0.15)-3.1 #Raymer equation 12.49
-k_cr = 1 / (np.pi * AR_w * e_cr)          #cruise
-
-# dash parameters
-v_dash = 560        # knots 
-ct_dash = 0.7       # lb/(lbf hr) for dash, assumed to be the same as cruise
-M_dashSL = 0.85
-M_dashSLideal= 0.9
-M_dash30= 1.6
-M_dash30ideal = 2.0
-
-# maneuvering parameters
-V_stall=145/1.1                         # stall speed in knots, divided by 1.1 to get a margin for climb speed
-V_stall *= 1.68781                      # convert stall speed to ft/s
-
-# Landing Parameters
-s_L = 5000 # total landing distance 
-s_a = 450 # ground clearance distance, taken from STOL requirements
-s_L_G = 349 # carrier ground roll distance for landing, assumed to be 349 ft
-F_hook = 120000
-V_engage_56lb = 145 * 1.68781           # ft/s, speed at which 56 lb of thrust is required for maneuvering constraint    
-V_landing= V_engage_56lb+WOD            # ft/s, landing speed, sum of engage speed and wind over deck
-V_engage= 130 * 1.68781                 # ft/s, speed at which arrestor is engaged, assuming 130 knots
-e_land = 0.725  
-k_land = 1 / (np.pi * AR_w * e_land)      #landing
-
-# Engine Parameters
-num_engines = 2
-
 
 # functions
 def knots_to_ft_per_s(knots):
