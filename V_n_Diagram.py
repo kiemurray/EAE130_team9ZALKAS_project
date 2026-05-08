@@ -103,8 +103,8 @@ def get_gust_constants(Weight, S_ref, altitude, C_L_alpha, c, g):
     rho = cv.atmo_vals(altitude)[0]
     mu = (2*(Weight/S_ref))/(rho*c*C_L_alpha*g)
     K_g = (0.88*mu)/(5.3+mu)
-    n = (K_g*C_L_alpha)/(2*(Weight/S_ref))      # metabook multiplies denominator by 498, Adam uses 2
-    
+    n = (K_g*C_L_alpha)/(498*(Weight/S_ref))      # metabook multiplies denominator by 498, Adam uses 2
+
     return rho, mu, K_g, n
 
 # Equivalent Gust Velocities. These are in ft/s
@@ -128,6 +128,9 @@ V_range = np.linspace(0,V_D,numPoints)
 gust_B_pos = 1 + constant * gust_V_B * V_range
 gust_C_pos = 1 + constant * gust_V_C * V_range
 gust_D_pos = 1 + constant * gust_V_D * V_range
+gust_B_neg = 1 - constant * gust_V_B * V_range
+gust_C_neg = 1 - constant * gust_V_C * V_range
+gust_D_neg = 1 - constant * gust_V_D * V_range
 
 n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,Weight,S_ref,altitude,n_design_positive)
 n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,Weight,S_ref,altitude,n_design_negative)
@@ -187,6 +190,9 @@ plt.hlines(n_design_negative, V_start_neg, V_end_neg, colors='magenta', linewidt
 plt.plot(V_range, gust_B_pos,label='gustB', linestyle='--',linewidth=2, color='cyan')
 plt.plot(V_range, gust_C_pos,label='gustC', linestyle='--',linewidth=2, color='black')
 plt.plot(V_range, gust_D_pos,label='gustD', linestyle='--',linewidth=2, color='red')
+plt.plot(V_range, gust_B_neg,label='gustB', linestyle='--',linewidth=2, color='cyan')
+plt.plot(V_range, gust_C_neg,label='gustC', linestyle='--',linewidth=2, color='black')
+plt.plot(V_range, gust_D_neg,label='gustD', linestyle='--',linewidth=2, color='red')
 
 # plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
 # plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
