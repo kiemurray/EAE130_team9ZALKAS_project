@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import code_variables as cv
 
 #Inputs
-W0 = 56411.4
+W0 = cv.W_TO
 We = W0*(2.34*W0**-0.13)*1.04 #Empty weight for fighter using Raymer table 3.1
 print(f"Empty Weight: {We} lbs")
 Neng = 2                      #Number of engines per aircraft
