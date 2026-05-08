@@ -445,11 +445,11 @@ def Tratio(height):
     return atmo_vals(height)[2]/atmo_vals(0)[2] * np.sqrt(atmo_vals(0)[3]/atmo_vals(height)[3])
 
 # weight fraction calculation function 
-def calculate_weight_fraction(L_D_max, ra, E, ct_cruise, ct_dash, v_cruise, v_dash):
+def calculate_weight_fraction(L_D_max, R, E, ct_cruise, ct_dash, v_cruise, v_dash):
     """This function calculates the weight fractions for cruise and loiter/descent phases based on the Breguet range and endurance equations, and also other terms.
     Args:
         L_D_max (float): Maximum lift-to-drag ratio of the aircraft.
-        ra (float): Combat range in nautical miles.
+        R (float): Combat range in nautical miles.
         E (float): Endurance in hours.
         ct (float): Specific fuel consumption in lb/(lbf hr).
         V (float): Velocity in knots."""
@@ -474,6 +474,7 @@ def calculate_weight_fraction(L_D_max, ra, E, ct_cruise, ct_dash, v_cruise, v_da
     # print("Total Fuel Fraction Wf/W0: {:.3f}".format(Wf_W0))
 
     return Wf_W0
+
 
 def calculate_zero_lift_drag_coefficient(c_f, S_wet, S_ref):
     return c_f * (S_wet / S_ref)

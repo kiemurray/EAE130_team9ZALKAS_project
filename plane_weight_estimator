@@ -136,6 +136,7 @@ print(f"mid wf: {warmup*taxi*takeoff*climb*cruise*midmission_descent*dash_ingres
 print(f"cruise 1 wf: {warmup*taxi*takeoff*climb}")
 print(f"climb wf: {warmup*taxi*takeoff}")
 print(f"manuever wf: {warmup*taxi*takeoff*climb*cruise*midmission_descent*combat}")
-
 print(f"end wf: {loiter*landing*landing}")
+
+
 
