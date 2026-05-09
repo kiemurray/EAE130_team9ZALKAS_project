@@ -195,7 +195,7 @@ fuselage_cg = 15.26 # 0.26 * L_f # ft
 wing_cg = 27.330 # ft
 empennage_cg = 42.3 # ft
 engine_cg = 40.287 # ft
-engine_cooling_cg = 40.3 # ft
+engine_cooling_cg = 41.393 # ft
 inlet_cg = 38.2315 # 26.5 # ft
 forward_gear_cg = 12.442 # 10.1 ft
 rear_gear_cg = 29.063 # 33.8 # ft
@@ -215,12 +215,12 @@ tank_5_cg = 36.563 # ft
 
 # Z-Axis Center of Gravity
 
-fuselage_z_cg = 0 # ft
-wing_z_cg = 0 # ft
-empennage_z_cg = 2.3 # ft
-engine_z_cg = 0 # ft
+fuselage_z_cg = -0.276 # ft
+wing_z_cg = -0.982 # ft
+empennage_z_cg = 0.893 # ft
+engine_z_cg = -1.1545 # ft
 engine_cooling_z_cg = 0 # ft
-inlet_z_cg = -0.5 # ft
+inlet_z_cg = -1.758 # -0.5 # ft
 forward_gear_z_cg = -2.0 # ft
 rear_gear_z_cg = 0.2 # ft
 radar_z_cg = -0.4 # ft
