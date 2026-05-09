@@ -191,20 +191,20 @@ print(f"Empty Weight: {W_empty} lbf")
 
 # X-Axis Center of Gravity
 
-fuselage_cg = 0.26 * L_f # ft
-wing_cg = 29.9 # ft
+fuselage_cg = 15.26 # 0.26 * L_f # ft
+wing_cg = 27.330 # ft
 empennage_cg = 42.3 # ft
-engine_cg = 40.3 # ft
+engine_cg = 40.287 # ft
 engine_cooling_cg = 40.3 # ft
-inlet_cg = 26.5 # ft
-forward_gear_cg = 10.1 # ft
-rear_gear_cg = 33.8 # ft
-radar_cg = 6.9 # ft
-avionics_cg = 16.9 # ft
+inlet_cg = 38.2315 # 26.5 # ft
+forward_gear_cg = 12.442 # 10.1 ft
+rear_gear_cg = 29.063 # 33.8 # ft
+radar_cg = 5.524 # 6.9 # ft
+avionics_cg = 13.167 # 16.9 # ft (this also got thanos snapped, so i put in the cockpit x_cg)
 AC_cg = 16.1 # ft
 AIM_120_cg = 19.8 # ft
 MK_83_cg = 19.8 # ft
-AIM_9X_cg = 35.9 # ft
+AIM_9X_cg = 36.359 # ft
 tank_78_cg = 13.78 # ft
 tank_6_cg = 40.2 # ft # this got thanos snapped
 wing_tank_cg = 27.064 # ft
