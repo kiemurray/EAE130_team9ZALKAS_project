@@ -19,7 +19,7 @@ k = 0.97 #empirical correction factor that accounts for section lift curve slope
 c = cv.c_w #the mean geometric chord, also known as the standard mean chord, defined as S/b
 g = 32.17 # idk, idt the metabook defined this
 V_C = 1179.476 # Mach 2.0 at 30000 ft in knots/s
-C_L_alpha = 1.891 # 1/rad from VSPAero, I will put this into code variables after
+C_L_alpha = 1.84492410032 # 1/rad from VSPAero, I will put this into code variables after
 #Calculations
 
 #using english units (pounds, feet, seconds)
@@ -132,6 +132,13 @@ gust_B_neg = 1 - constant * gust_V_B * V_range
 gust_C_neg = 1 - constant * gust_V_C * V_range
 gust_D_neg = 1 - constant * gust_V_D * V_range
 
+diveGust = 1 - constant * gust_V_D * V_D
+
+# Create lower limit VC to VD gust line
+VC_VD_range = np.linspace(V_C,V_D,numPoints)
+VC_VD = n_design_negative + (diveGust - n_design_negative)/(V_D - V_C)*(VC_VD_range - V_C)
+
+# Stall lines
 n_stall_pos,v_stall_pos = get_Max_Lift_Line(CL_max,Weight,S_ref,altitude,n_design_positive)
 n_stall_neg,v_stall_neg = get_Max_Lift_Line(CL_min,Weight,S_ref,altitude,n_design_negative)
 
@@ -151,48 +158,48 @@ def compute_intersection_velocity(stall_coeff, n_limit):
 c_stall = 0.5*cv.atmo_vals(altitude)[0]*CL_max/((Weight/S_ref))
 
 # Compute intersection velocities for positive and negative limit load factors within the stall boundary
-V_stall_pos_end = compute_intersection_velocity(c_stall, n_design_positive)/1.688
+V_stall_pos_end = compute_intersection_velocity(c_stall, n_design_positive)/1.688   # /1.688 ft to knot
 V_stall_neg_end = compute_intersection_velocity(c_stall, n_design_negative)/1.688
 
 V_start_pos = V_stall_pos_end
 V_start_neg = V_stall_neg_end
-
-# print('V_A')
-# print(V_start_pos)
-# print(V_start_neg)
 
 V_cutoff = V_D
 V_end_pos = V_cutoff
 V_end_neg = V_cutoff
 
 # max speed
-n_exceed_line = np.linspace(n_design_negative, n_design_positive, 100)
+n_design_line = np.linspace(n_design_negative, n_design_positive, 100)
+n_exceed_line = np.linspace(diveGust, n_design_positive, 100)
 V_exceed_line = V_D * np.ones_like(n_exceed_line)
 V_NO_line = V_C* np.ones_like(n_exceed_line)
+
+# limiting gust load lines
+V_rangeB = np.linspace(0,V_stall_pos_end,numPoints)
+V_rangeC = np.linspace(0,V_C,numPoints)
 
 #Plot based on Equivalent airspeed
 # PLOTS
 plt.figure(figsize=(12, 8))
-# plt.xlabel("V (m/s)")
 # plt.ylabel("n (-)")
-#plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
-plt.plot(v_stall_pos,n_stall_pos, color='orange', linewidth=2, label='Max Lift Line')
-plt.plot(v_stall_neg,n_stall_neg, color='blue', linewidth=2, label='Min Lift Line')
-#plt.axvline(v_a, color='red', linewidth=2, label='Maneuvering Speed')
+plt.plot(v_stall_pos,n_stall_pos, color='#d55e00', linewidth=2, label='Max lift line')
+plt.plot(v_stall_neg,n_stall_neg, color='#0072b2', linewidth=2, label='Min lift line')
 
-plt.plot(V_exceed_line, n_exceed_line,label='Never Exceed Speed', linewidth=2, color='black')
-plt.plot(V_NO_line, n_exceed_line,label='Maximum Structural Cruising Speed', linestyle='--',linewidth=2, color='cyan')
+plt.plot(V_exceed_line, n_exceed_line,label='Never exceed speed', linewidth=2, color='red')
+plt.plot(V_NO_line, n_design_line,label='Design air speed', linestyle='--',linewidth=2, color='#009e73')
 
 
-plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='green', linewidth=2, label='Positive Limit Load')
-plt.hlines(n_design_negative, V_start_neg, V_end_neg, colors='magenta', linewidth=2, label='Negative Limit Load')
+plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='#000000', linewidth=2, label='Positive limit load')
+plt.hlines(n_design_negative, V_start_neg, V_C, colors='#cc79a7', linewidth=2, label='Negative limit load')
 
-plt.plot(V_range, gust_B_pos,label='gustB', linestyle='--',linewidth=2, color='cyan')
-plt.plot(V_range, gust_C_pos,label='gustC', linestyle='--',linewidth=2, color='black')
-plt.plot(V_range, gust_D_pos,label='gustD', linestyle='--',linewidth=2, color='red')
-plt.plot(V_range, gust_B_neg,label='gustB', linestyle='--',linewidth=2, color='cyan')
-plt.plot(V_range, gust_C_neg,label='gustC', linestyle='--',linewidth=2, color='black')
-plt.plot(V_range, gust_D_neg,label='gustD', linestyle='--',linewidth=2, color='red')
+plt.plot(VC_VD_range, VC_VD, color='#cc79a7', linewidth=2, label='Negative limit load')
+
+plt.plot(V_rangeB, gust_B_pos,label='Rough air gust', linestyle='--',linewidth=2, color='#000000')
+plt.plot(V_rangeC, gust_C_pos,label='Gust at max design speed', linestyle='--',linewidth=2, color='#56b4e9')
+plt.plot(V_range, gust_D_pos,label='Gust at max dive speed', linestyle='--',linewidth=2, color='#e69f00')
+plt.plot(V_rangeB, gust_B_neg, linestyle='--',linewidth=2, color='#000000')
+plt.plot(V_rangeC, gust_C_neg, linestyle='--',linewidth=2, color='#56b4e9')
+plt.plot(V_range, gust_D_neg, linestyle='--',linewidth=2, color='#e69f00')
 
 # plt.axhline(n_design_positive, color='green', linewidth=2, label='Positive Limit Load')
 # plt.axhline(n_design_negative, color='red', linewidth=2, label='Negative Limit Load')
@@ -212,7 +219,7 @@ plt.annotate('${V_A}$', (V_stall_pos_end, 8), xytext=(-5,5), textcoords='offset 
 plt.annotate('${V_C}$', (V_C, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
 plt.annotate('${V_D}$', (V_D, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
 plt.grid(True, alpha=0.4)
-plt.legend(fontsize=14, loc='upper right')
+plt.legend(fontsize=14, loc='upper left')
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 plt.xlim(0, V_max)
