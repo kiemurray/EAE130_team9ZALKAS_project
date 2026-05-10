@@ -224,6 +224,8 @@ tank_3_cg = 34.8 # ft
 tank_4_cg = 27.9 # ft
 cockpit_cg = 11.9 # ft
 fuel_tanks_cg = 24.7 # ft
+flight_controls_cg = 33.6 # ft
+tailpipe_cg = 48.6 # ft
 
 # Z-Axis Center of Gravity
 
@@ -252,6 +254,8 @@ tank_3_z_cg = 1.1 # ft
 tank_4_z_cg = -0.7 # ft
 cockpit_z_cg = 2.7 # ft
 fuel_tanks_z_cg = 1.3 # ft
+flight_controls_z_cg = 0.5 # ft
+tailpipe_z_cg = 0 # ft
 
 # Individual Tank Weights
 
@@ -312,12 +316,12 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + (engine_cg * W_engine_mounts)
         + (engine_cg * W_firewall)
         + (engine_cg * W_engine_section)
-        + (engine_cg * W_tailpipe)
+        + (tailpipe_cg * W_tailpipe)
         + (engine_cg * W_oil_cooling)
         + (engine_cg * W_engine_controls)
         + (engine_cg * W_starter)
         + (fuel_tanks_cg * W_fuel_system)
-        + (fuselage_cg * W_flight_controls)
+        + (flight_controls_cg * W_flight_controls)
         + (cockpit_cg * W_instruments)
         + (fuselage_cg * W_hydraulics)
         + (fuselage_cg * W_electrical)
@@ -478,12 +482,12 @@ def calculate_z_cg(ordnance_z_cg, ordnance_w, label,
         + (engine_z_cg * W_engine_mounts)
         + (engine_z_cg * W_firewall)
         + (engine_z_cg * W_engine_section)
-        + (engine_z_cg * W_tailpipe)
+        + (tailpipe_z_cg * W_tailpipe)
         + (engine_z_cg * W_oil_cooling)
         + (engine_z_cg * W_engine_controls)
         + (engine_z_cg * W_starter)
         + (fuel_tanks_z_cg * W_fuel_system)
-        + (fuselage_z_cg * W_flight_controls)
+        + (flight_controls_z_cg * W_flight_controls)
         + (cockpit_z_cg * W_instruments)
         + (fuselage_z_cg * W_hydraulics)
         + (fuselage_z_cg * W_electrical)
