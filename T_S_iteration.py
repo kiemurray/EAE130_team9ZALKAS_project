@@ -590,7 +590,15 @@ idx_stall = np.argsort(T_grid)
 T_stall_sorted = np.array(T_grid)[idx_stall]
 S_stall_sorted = np.array(S_W_S_array_stall)[idx_stall]
 
+# Sort load factor data
+idx_loadfactor = np.argsort(T_grid)
+T_load_sorted = np.array(T_grid)[idx_loadfactor]
+S_load_sorted = np.array(S_W_S_array_maxloadfactor)[idx_stall]
 
+# Sort TO data
+idx_TO = np.argsort(T_grid)
+T_TO_sorted = np.array(T_grid)[idx_TO]
+S_TO_sorted = np.array(S_W_S_array_takeoff)[idx_stall]
 
 # Create mesh
 S_mesh, T_mesh = np.meshgrid(S_main, np.linspace(0, T_top, 400))
@@ -607,10 +615,13 @@ S_stall_required = np.interp(T_mesh, T_stall_sorted, S_stall_sorted)
 # Interpolate 30k dash  S at each T (right boundary)
 S_30_required = np.interp(T_mesh, T_30_sorted, S_30_sorted)
 
+# Interpolate TO  S at each T (right boundary)
+S_TO_required = np.interp(T_mesh, T_TO_sorted, S_TO_sorted)
+
 # Mask: above maneuver, right of landing, left of 30k dash ideal
 mask = (
     (T_mesh >= np.interp(S_mesh, S_main, T_lower_curve)) &  # above maneuver
-    (S_mesh >= (S_stall_required)) &  
+    (S_mesh >= (S_TO_required)) &  
     (S_mesh <= S_30_required)                               # left of 30k dash ideal
 )
 

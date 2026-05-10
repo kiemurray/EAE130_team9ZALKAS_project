@@ -143,3 +143,24 @@ plt.show()
 # DOC/O&M cost
 flight_hours = 400 #FH/YR/AC
 maintainance_hours = 12.5 #MMH/FH
+N_aircraft = 500
+crew_ratio = 1.1
+
+flight_crew_members = N_aircraft * crew_ratio
+C_crew_salary = flight_crew_members*RE*2080
+
+FH_fleet = flight_hours * N_aircraft
+fuel_burn = 3750 / 6.8 #lb/hr to gal/hr
+fuel_gal = FH_fleet * fuel_burn #gallons
+C_fuel = 4.05*fuel_gal
+
+MMH = FH_fleet * maintainance_hours
+C_maintenance_labor = MMH * 100 
+C_maintenance_material = C_maintenance_labor #equals labor (raymer)
+
+OandM = C_crew_salary/0.35
+C_maintenance = OandM*0.5
+
+print(f"\nCrew Cost =        ${C_crew_salary/1e6:.2f} million/yr")
+print(f"Fuel Cost =        ${C_fuel/1e6:.2f} million/yr")
+print(f"Maintenance Cost = ${C_maintenance_labor/1e6:.2f} million/yr")
