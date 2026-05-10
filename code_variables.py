@@ -38,8 +38,8 @@ CLmax_climb = 0.9 # maximum lift coefficient for climb, assumed clean
 
 x_cg =  23.8094      # aircraft center of gravity (ft) assumed
 num_engines = 2 # Number of Engines
-S_cs = 223 # Total Area of Flight Control Surfaces
-N_s = 10 # Number of Flight Control Surfaces
+S_cs = 473 # Total Area of Flight Control Surfaces
+N_s = 12 # Number of Flight Control Surfaces
 N_c = 6 # Number of Functions Performed By Controls (4-7)
 N_u = 10 # Number of Hydraulic Utility Functions (5-15)
 W_dg = 56631 # Design Gross Weight (lbf)
@@ -58,7 +58,7 @@ c_w = 13.47       # wing chord (ft)
 S_w = 560             # wing area (ft^2)
 AR_w = 2.52
 tc_root = 0.06 # t/c ratio at root chord
-taper_ratio = 0.137 # Taper Ratio
+taper_ratio = 0.272 # Taper Ratio
 wing_sweep = 50 # Wing Sweep at 25% MAC
 lambda_w = 50   # Sweep angle of wing (degrees)
 
@@ -83,7 +83,7 @@ c_tip_2 = c_root_2 - b_section_2*(np.tan(np.deg2rad(lambda_w))-np.tan(np.deg2rad
 #print("Aspect ratio becomes:",((b_w)**2)/S_w)
 
 eta_w = 0.97      # difference factor between the theoretical section lift curve slope for the wing
-S_csw = 103 # Wing Mounted Control Surface Area ft^2
+S_csw = 299 # Wing Mounted Control Surface Area ft^2
 K_dwf = 0.774 # For Non-Delta Wing Aircraft
 K_vs = 1.0 # non-variable sweep
 S_wet_wing = 692.402
@@ -118,46 +118,44 @@ b_slat_outboard = (1 - 0.670732) * b_w
 S_wet_fuselage = 528.140 
 K_f = 0.344      # empirical factor
 L_f = 47.5         # fuselage length (ft)
-D_f = 6.4 # Fuselage Depth, ft
-W_f = 14.6   # maximum width of fuselage (ft)
-K_dw = 0.768
+D_f = 4.47 # Average Fuselage Depth, ft
+W_f = 9.83   # Average Width of fuselage (ft)
+K_dw = 0.768 # For Delta Wing Aircraft (ours is "delta-like")
 K_vg = 1.62 # Variable Inlet Geometry
 R_kva = 160 # System Electrical Rating, kV * A
 L_a = 35 # Electrical Routing Distance, ft
-L_d = 11.23 # Duct Length, ft
-K_d = 2.6 # Duct Constant
-L_s = 11.23 # Single Duct Length, ft
+L_d = 8.20 # Duct Length, ft
+K_d = 3.43 # Duct Constant
+L_s = 8.20 # Single Duct Length, ft
 D_e = 6.68 # Engine Diameter, ft
 L_tp = 2.5 # Length of Tailpipe, ft
 L_sh = 12.83 # Length of Engine Shroud, ft
-L_ec = 21.6 # Length From Engine Front to Cockpit, ft
+L_ec = 24 # Length From Engine Front to Cockpit, ft
 T_e = 22000 # Thrust per Engine, lbf
 K_cb = 1.0 # Non Cross Beam
 K_tpg = 1.0 # Non-Tripod Landing Gear
-W_l = 34000 # Landing Gross Weight, lbf
 N_gear = 3.8 # Landing Limit Load (Raymer Assumption)
 N_l = 1.5 * N_gear # Ultimate Landing Load Factor
 L_m = 48 # Length of Landing Gear, in.
 L_n = 48 # Length of Nose Gear, in.
 N_nw = 2 # Number of Nose Wheels
+F_w = 9 # Fuselage Width at Horizontal Tail Intersection
 
 
 # vertical tail
 c_vt = 0.094 # vertical tail volume coefficient (Raymer Section 6.5.3)
 print("Vertical tail arm:",0.40 * L_f,"ft")
 L_vt = 15 # vertical tail moment arm (ft) (Should be 45-50% of the fuselage length according to Raymer 6.5.3) (Updated May 1)
-H_v = 4.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
-AR_vt = 1.85 # Vertical Tail Aspect Ratio
+H_v = 6.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
+AR_vt = 0.24 # Vertical Tail Aspect Ratio
 cr_c = 0.30 #rudder chord fraction (Raymer 6.5.3)
-S_r = 120 # Rudder Area ft^2
-taper_ratio_vt = 0.3 # Vertical Tail Taper Ratio
-sweep_vt = 50 # Vertical Tail Sweep
+S_r = 33.79 # Rudder Area ft^2
+taper_ratio_vt = 0.544 # Vertical Tail Taper Ratio
+sweep_vt = 55 # Vertical Tail Sweep
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
-S_vt = c_vt*b_w*S_w/L_vt #vertical tail area (Eq 6.28 Raymer)
-print("Vertical Tail Area:",S_vt,"ft")
-L_t = 10.78 # Tail Length
-S_vt = 131.45 # Vertical Tail Area [ft^2]
+L_t = 8.95 # Tail Length, ft
+S_vt = 65 # Vertical Tail Area [ft^2]
 c_t = 8.24676 #stabilator MAC (not updated)
 
 # horizontal tail
@@ -166,30 +164,32 @@ L_ht = 17       # horizontal tail moment arm (ft)
 AR_h = 2.37       # aspect ratio of horizontal stabilizer (empenage slide 54)
 K_rht = 1.047 # Rolling Tail (Stabilators)
 lambda_h = lambda_w +5   # Sweep angle of horizontal tail (degrees) (Raymer 4.5.4 syas add 5 degrees)
-H_t = 0 # Horizontal Tail Height Above Fuselage
+H_t = 0.8 # Horizontal Tail Height Above Fuselage
 K_vsh = 1.0 # Non-Variable Sweep Wing
 eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
 t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
 print("Horizontal Tail Area:",c_ht*c_w*S_w/L_ht,"ft")
-S_wet_tail = 151.715
-S_ht = 177.5 #ft^2 (B3.18, May 2)
+S_wet_tail = 99
+S_ht = 99 #ft^2 (B3.24, May 9)
+B_h = 23.35 # Horizontal Tail Span, ft
 
 #fuel volume things
 rho_jp5 = 51.1              #lb/ft^3   
 packing_factor_shallow_fuselage = 0.8
 packing_factor_deep_fuselage = 0.85
 packing_factor_wing = 0.75
-V_t = 3127 # Total Fuel Volume, gal
+V_t = 2450 # Total Fuel Volume, gal
 V_i = 0.75 * V_t # Integral Fuel Tank Volume, gal
 V_p = 0.25 * V_t # Self-Sealing Wing Tank Volume, gal
-N_t = 10 # Number of Tanks
-tank_1_v = 106 # ft^3
-tank_2_v = 99.6 # ft^3
-tank_34_v = 22.0 # ft^3
-tank_5_v = 60.4 # ft^3
-tank_6_v = 79.7 # ft^3
-tank_78_v = 45.3 # ft^3
-wing_tank_v = 71.0 # ft^3
+N_t = 12 # Number of Tanks
+tank_1_v = 59.0 # ft^3
+tank_2_v = 100.0 # ft^3
+tank_3_v = 40.9 # ft^3
+tank_4_v = 26.2 # ft^3
+tank_56_v = 38.2 # ft^3
+tank_78_v = 9.0 # ft^3
+wing_tank_v = 65.1 * 2 # ft^3
+inwing_tank_v = 28.5 * 2 # ft^3
 
 # mission segment variables
 # weight fractions
@@ -241,6 +241,7 @@ V_stall=145/1.1                         # stall speed in knots, divided by 1.1 t
 V_stall *= 1.68781                      # convert stall speed to ft/s
 
 # Landing Parameters
+W_l = wf_landing * W_dg # Landing Gross Weight, lbf
 s_L = 5000 # total landing distance 
 s_a = 450 # ground clearance distance, taken from STOL requirements
 s_L_G = 349 # carrier ground roll distance for landing, assumed to be 349 ft
