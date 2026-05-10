@@ -180,7 +180,6 @@ final_TOGW, converged, iterations, W0_history = inner_loop_weight(
     num_engines, W_crew, W_payload, T_0)
 
 
-
 # plot the convergence history
 plt.figure(figsize=(10,6))
 plt.plot(W0_history, marker='o')
@@ -591,7 +590,15 @@ idx_stall = np.argsort(T_grid)
 T_stall_sorted = np.array(T_grid)[idx_stall]
 S_stall_sorted = np.array(S_W_S_array_stall)[idx_stall]
 
+# Sort load factor data
+idx_loadfactor = np.argsort(T_grid)
+T_load_sorted = np.array(T_grid)[idx_loadfactor]
+S_load_sorted = np.array(S_W_S_array_maxloadfactor)[idx_stall]
 
+# Sort TO data
+idx_TO = np.argsort(T_grid)
+T_TO_sorted = np.array(T_grid)[idx_TO]
+S_TO_sorted = np.array(S_W_S_array_takeoff)[idx_stall]
 
 # Create mesh
 S_mesh, T_mesh = np.meshgrid(S_main, np.linspace(0, T_top, 400))
@@ -608,10 +615,13 @@ S_stall_required = np.interp(T_mesh, T_stall_sorted, S_stall_sorted)
 # Interpolate 30k dash  S at each T (right boundary)
 S_30_required = np.interp(T_mesh, T_30_sorted, S_30_sorted)
 
+# Interpolate TO  S at each T (right boundary)
+S_TO_required = np.interp(T_mesh, T_TO_sorted, S_TO_sorted)
+
 # Mask: above maneuver, right of landing, left of 30k dash ideal
 mask = (
     (T_mesh >= np.interp(S_mesh, S_main, T_lower_curve)) &  # above maneuver
-    (S_mesh >= (S_stall_required)) &  
+    (S_mesh >= (S_TO_required)) &  
     (S_mesh <= S_30_required)                               # left of 30k dash ideal
 )
 
@@ -641,20 +651,26 @@ aircraft_points = [
     (S_Gripen, T_Gripen_wet, "Gripen E"),
     (S_F15C, T_F15C_wet, "F-15C")]
 #plots and labels comparable aircraft
-for S, T, name in aircraft_points:
-    plt.plot(S, T, marker='^', markersize=5, color='black')
-    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
+
+# #COMAPRABLE POINTS
+# for S, T, name in aircraft_points:
+#     plt.plot(S, T, marker='^', markersize=5, color='black')
+#     plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
 
 
 
 #plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
-plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
-plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
-plt.plot(530, F100_229.T_wet, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
-plt.annotate('ZALKAS Fighter (F110)', (530, F100_229.T_wet), xytext=(5,5), textcoords='offset points',fontsize=16)
+# plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+# plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
+# plt.plot(530, F100_229.T_wet, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+# plt.annotate('ZALKAS Fighter (F110)', (530, F100_229.T_wet), xytext=(5,5), textcoords='offset points',fontsize=16)
 
-plt.legend(loc='upper right',fontsize=12)
+plt.legend(loc='upper left',fontsize=12)
 plt.ylim(0,80000)
+
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+
 plt.grid()
 plt.show()
 

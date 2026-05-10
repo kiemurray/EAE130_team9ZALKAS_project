@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import code_variables as cv
 
 #Inputs
-W0 = cv.W_TO
+W0 = 54307#cv.W_TO
 We = W0*(2.34*W0**-0.13)*1.04 #Empty weight for fighter using Raymer table 3.1
 print(f"Empty Weight: {We} lbs")
 Neng = 2                      #Number of engines per aircraft
 
 #F414 info
-Tmax = 22000                  #Engine max thrust lbs F414
+Tmax = 28500/2#22000                  #Engine max thrust lbs F414
 Tturbine_inlet = 3060         #Turbine inlet temperature Rankine 
 Vmax = 1178.6                 #Maximum velocity (knots) Ma 2.0 at 30k ft
 Q = 500                       #Production quantity [RFP]
@@ -136,3 +136,31 @@ plt.title("Unit Procurement Cost Breakdown", fontsize=18, weight='bold')
 plt.axis('equal')
 plt.tight_layout()
 plt.show()
+
+
+
+
+# DOC/O&M cost
+flight_hours = 400 #FH/YR/AC
+maintainance_hours = 12.5 #MMH/FH
+N_aircraft = 500
+crew_ratio = 1.1
+
+flight_crew_members = N_aircraft * crew_ratio
+C_crew_salary = flight_crew_members*RE*2080
+
+FH_fleet = flight_hours * N_aircraft
+fuel_burn = 3750 / 6.8 #lb/hr to gal/hr
+fuel_gal = FH_fleet * fuel_burn #gallons
+C_fuel = 4.05*fuel_gal
+
+MMH = FH_fleet * maintainance_hours
+C_maintenance_labor = MMH * 100 
+C_maintenance_material = C_maintenance_labor #equals labor (raymer)
+
+OandM = C_crew_salary/0.35
+C_maintenance = OandM*0.5
+
+print(f"\nCrew Cost =        ${C_crew_salary/1e6:.2f} million/yr")
+print(f"Fuel Cost =        ${C_fuel/1e6:.2f} million/yr")
+print(f"Maintenance Cost = ${C_maintenance_labor/1e6:.2f} million/yr")
