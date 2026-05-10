@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import code_variables as cv
 
 #Inputs
-W0 = cv.W_TO
+W0 = 54307#cv.W_TO
 We = W0*(2.34*W0**-0.13)*1.04 #Empty weight for fighter using Raymer table 3.1
 print(f"Empty Weight: {We} lbs")
 Neng = 2                      #Number of engines per aircraft
 
 #F414 info
-Tmax = 22000                  #Engine max thrust lbs F414
+Tmax = 28500/2#22000                  #Engine max thrust lbs F414
 Tturbine_inlet = 3060         #Turbine inlet temperature Rankine 
 Vmax = 1178.6                 #Maximum velocity (knots) Ma 2.0 at 30k ft
 Q = 500                       #Production quantity [RFP]
@@ -136,3 +136,10 @@ plt.title("Unit Procurement Cost Breakdown", fontsize=18, weight='bold')
 plt.axis('equal')
 plt.tight_layout()
 plt.show()
+
+
+
+
+# DOC/O&M cost
+flight_hours = 400 #FH/YR/AC
+maintainance_hours = 12.5 #MMH/FH
