@@ -254,7 +254,7 @@ tank_3_z_cg = 1.1 # ft
 tank_4_z_cg = -0.7 # ft
 cockpit_z_cg = 2.7 # ft
 fuel_tanks_z_cg = 1.3 # ft
-flight_controls_z_cg = 0.5 # ft
+flight_controls_z_cg = 0.6 # ft
 tailpipe_z_cg = 0 # ft
 
 # Individual Tank Weights
@@ -324,7 +324,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + (flight_controls_cg * W_flight_controls)
         + (cockpit_cg * W_instruments)
         + (fuselage_cg * W_hydraulics)
-        + (fuselage_cg * W_electrical)
+        + (cockpit_cg * W_electrical)
         + (cockpit_cg * W_furnishings)
         + (forward_gear_cg * W_handling_gear)
         # --- end previously missing ---
@@ -490,7 +490,7 @@ def calculate_z_cg(ordnance_z_cg, ordnance_w, label,
         + (flight_controls_z_cg * W_flight_controls)
         + (cockpit_z_cg * W_instruments)
         + (fuselage_z_cg * W_hydraulics)
-        + (fuselage_z_cg * W_electrical)
+        + (cockpit_z_cg * W_electrical)
         + (cockpit_z_cg * W_furnishings)
         + (forward_gear_z_cg * W_handling_gear)
         # --- end previously missing ---
