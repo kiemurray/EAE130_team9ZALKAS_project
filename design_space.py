@@ -199,7 +199,7 @@ W_S_landing56lb /= wf_landing
 
 # PLOTS
 plt.figure(figsize=(12, 8))
-plt.axvline(W_S_landing_runway, color='magenta', linewidth=2, label='Landing')
+plt.axvline(W_S_landing56lb, color='magenta', linewidth=2, label='Arrestor Landing')
 plt.axvline(W_S_takeoff, color='black', linewidth=2, label='Takeoff (Catapult)')
 plt.axvline(W_S_maxloadfactor, color='brown', linewidth=2, label='Load Factor (7.0 g)')
 plt.axvline(W_S_ideal_maxloadfactor, color='brown', linestyle='--', linewidth=2, label='Ideal Load Factor (8.0 g)')
@@ -212,27 +212,29 @@ plt.plot(W_S, T_W_dash30, color='limegreen',  linewidth=2, label='Dash 30k ft (M
 plt.plot(W_S, T_W_dash30ideal, color='limegreen', linestyle='--', linewidth=1.8, label='Dash 30k ft Ideal (M2.0)')
 plt.plot(W_S, T_W_maneuver, color='red', linewidth=2, label='Maneuver (8 deg/s)')
 plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
-plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
+#plt.plot(W_S, T_W_maneuver_ideal, color='red', linestyle='--', linewidth=2.2, label='Maneuver Ideal (10 deg/s)')
 #diff = np.abs(T_W_dash30ideal - T_W_maneuver_ideal)
-plt.plot( (cv.W_TO/cv.S_w), (22000*2/cv.W_TO), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
+plt.plot( (cv.W_TO/cv.S_w), (22000*2/cv.W_TO), marker='*', color='gold', markersize=20,  markeredgecolor='black', zorder=5, label='Design Point')
 plt.axvline(W_S_stall, color='purple', linewidth=2, label='Stall')
 plt.plot(W_S, T_W_ceiling, color='darkgreen', linewidth=2, label='Service Ceiling (50,000 ft)')
 design_envelope = np.maximum.reduce([T_W_climb * np.ones_like(W_S), T_W_maneuver, T_W_dash30])
 
 plt.fill_between(W_S, design_envelope, 2.0,  # 2.0 is a safe upper Y-limit
-                 where=(W_S <= W_S_stall), 
+                 where=(W_S <= W_S_takeoff), 
                  color='yellow', 
                  alpha=0.3, 
                  zorder=1,
                  label='Design Window')
 plt.xlabel('Wing Loading W/S (lbf/ft²)', fontsize=18)
 plt.ylabel('Thrust-to-Weight Ratio T/W', fontsize=18)
-plt.title('Aircraft Constraint Diagram', fontsize=20)
+#plt.title('Aircraft Constraint Diagram', fontsize=20)
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper right')
 
 
 plt.xlim(0, 200)
 plt.ylim(0, 2.0)  
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
 
 plt.show()

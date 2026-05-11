@@ -41,12 +41,12 @@ for AR in AR_values:
         TW_vals.append(maneuver_TW(WS, AR, psi_deg = 10))
 
     plt.plot(WS_range, TW_vals, 'r-')
-    plt.text(WS+1, TW_vals[-1], f'AR={AR}', fontsize=9, color='blue')
+    plt.text(WS+1, TW_vals[-1], f'AR={AR}', fontsize=12, color='blue')
 
 # labels
-plt.xlabel('W/S (lbf/ft²)')
-plt.ylabel('T/W')
-plt.title('AR Effect on 10.0°/s Maneuver Constraint')
+plt.xlabel('W/S (lbf/ft²)', fontsize=18)
+plt.ylabel('T/W', fontsize=18)
+plt.title('AR Effect on 10.0°/s Maneuver Constraint', fontsize=20)
 
 
 #plt.plot( (cv.W_TO/cv.S_w), (22000*2/cv.W_TO), marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5, label='Design Point')
@@ -55,5 +55,7 @@ plt.title('AR Effect on 10.0°/s Maneuver Constraint')
 plt.grid(True)
 plt.xlim(40,120)
 plt.ylim(0.35,1.1)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
 
 plt.show()

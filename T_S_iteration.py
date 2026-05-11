@@ -547,9 +547,9 @@ S_F15C = 608 #ft^2
 
 
 plt.figure(figsize=(16,9))
-plt.title('Converged T vs S',fontsize=25)
-plt.xlabel("Wing Area S (ft²)",fontsize=25)
-plt.ylabel("Total Thrust T (lbf)",fontsize=25)
+#plt.title('Converged T vs S',fontsize=25)
+plt.xlabel("Wing Area S (ft²)",fontsize=18)
+plt.ylabel("Total Thrust T (lbf)",fontsize=18)
 plt.plot(S_wing_grid, T_cruise, color='blue', linewidth=2, label='Cruise')
 #plt.plot(S_wing_grid, T_SLdash, color='cyan', linewidth=2, label='SL Dash')
 plt.plot(S_wing_grid, T_SLdashideal, color='cyan', linewidth=2,linestyle='--', label='Ideal SL Dash (M0.9)')
@@ -665,7 +665,7 @@ aircraft_points = [
 # plt.plot(530, F100_229.T_wet, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 # plt.annotate('ZALKAS Fighter (F110)', (530, F100_229.T_wet), xytext=(5,5), textcoords='offset points',fontsize=16)
 
-plt.legend(loc='upper left',fontsize=12)
+plt.legend(loc='upper right',fontsize=12)
 plt.ylim(0,80000)
 
 plt.xticks(fontsize=14)
