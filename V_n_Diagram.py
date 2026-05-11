@@ -14,12 +14,14 @@ V_min = 0 #KEAS
 altitude = 30000 # NOT Sea Level
 CL_max = cv.CLmax_climb
 CL_min = -cv.CLmax_climb
+CL_maxL = cv.CLmax_L
 S_ref = cv.S_w
 k = 0.97 #empirical correction factor that accounts for section lift curve slopes different from 2𝜋
 c = cv.c_w #the mean geometric chord, also known as the standard mean chord, defined as S/b
 g = 32.17 # idk, idt the metabook defined this
 V_C = 1179.476 # Mach 2.0 at 30000 ft in knots/s
-C_L_alpha = 1.84492410032 # 1/rad from VSPAero, I will put this into code variables after
+CL_alpha = cv.CL_alpha # 1/rad from VSPAero
+
 #Calculations
 
 #using english units (pounds, feet, seconds)
@@ -99,11 +101,11 @@ def get_gustV_D(altitude):
     
 #     return n_pos, n_neg, v
 
-def get_gust_constants(Weight, S_ref, altitude, C_L_alpha, c, g):
+def get_gust_constants(Weight, S_ref, altitude, CL_alpha, c, g):
     rho = cv.atmo_vals(altitude)[0]
-    mu = (2*(Weight/S_ref))/(rho*c*C_L_alpha*g)
+    mu = (2*(Weight/S_ref))/(rho*c*CL_alpha*g)
     K_g = (0.88*mu)/(5.3+mu)
-    n = (K_g*C_L_alpha)/(498*(Weight/S_ref))      # metabook multiplies denominator by 498, Adam uses 2
+    n = (K_g*CL_alpha)/(498*(Weight/S_ref))      # metabook multiplies denominator by 498, Adam uses 2
 
     return rho, mu, K_g, n
 
@@ -116,7 +118,7 @@ print(gust_V_C)
 gust_V_D = get_gustV_D(altitude)
 print(gust_V_D)
 
-rho, mu, K_g, constant = get_gust_constants(Weight, S_ref, altitude, C_L_alpha, c, g)
+rho, mu, K_g, constant = get_gust_constants(Weight, S_ref, altitude, CL_alpha, c, g)
 print('constants')
 print(rho)
 print(mu)
@@ -174,9 +176,26 @@ n_exceed_line = np.linspace(diveGust, n_design_positive, 100)
 V_exceed_line = V_D * np.ones_like(n_exceed_line)
 V_NO_line = V_C* np.ones_like(n_exceed_line)
 
+# stall speed
+v_stall = (Weight/(0.5*rho*CL_max*S_ref))**0.5/1.688
+v_stall_line = v_stall * np.ones_like(n_exceed_line)
+# Compute intersection velocities for positive and negative limit load factors within the stall boundary
+F_stall = (1/2)*rho*(cv.knots_to_ft_per_s(v_stall)**2)*CL_max*S_ref
+stall_pos = F_stall/Weight
+stall_neg = -F_stall/Weight
+
+n_stall_line = np.linspace(stall_neg, stall_pos, 100)
+
 # limiting gust load lines
 V_rangeB = np.linspace(0,V_stall_pos_end,numPoints)
 V_rangeC = np.linspace(0,V_C,numPoints)
+
+# # side quest to double check stall speed fits RFP (YAY we still got it)
+# rhoSL = cv.atmo_vals(0)[0]
+# v_stallSL = (Weight/(0.5*rhoSL*CL_maxL*S_ref))**0.5/1.688
+# print('SIDE QUEST: RFP stall check')
+# print(v_stallSL)
+
 
 #Plot based on Equivalent airspeed
 # PLOTS
@@ -185,15 +204,19 @@ plt.figure(figsize=(12, 8))
 plt.plot(v_stall_pos,n_stall_pos, color='#d55e00', linewidth=2, label='Max lift line')
 plt.plot(v_stall_neg,n_stall_neg, color='#0072b2', linewidth=2, label='Min lift line')
 
+# plot those vertical lines
 plt.plot(V_exceed_line, n_exceed_line,label='Never exceed speed', linewidth=2, color='red')
 plt.plot(V_NO_line, n_design_line,label='Design air speed', linestyle='--',linewidth=2, color='#009e73')
+plt.plot(v_stall_line, n_stall_line, label='Stall speed',linewidth=2, color='#e69f00')
 
-
+# plot pos and neg loads
 plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='#000000', linewidth=2, label='Positive limit load')
 plt.hlines(n_design_negative, V_start_neg, V_C, colors='#cc79a7', linewidth=2, label='Negative limit load')
 
+# plot that awkward negative load line between VC and VD
 plt.plot(VC_VD_range, VC_VD, color='#cc79a7', linewidth=2, label='Negative limit load')
 
+# plot gust load lines
 plt.plot(V_rangeB, gust_B_pos,label='Rough air gust', linestyle='--',linewidth=2, color='#000000')
 plt.plot(V_rangeC, gust_C_pos,label='Gust at max design speed', linestyle='--',linewidth=2, color='#56b4e9')
 plt.plot(V_range, gust_D_pos,label='Gust at max dive speed', linestyle='--',linewidth=2, color='#e69f00')
@@ -214,7 +237,7 @@ plt.plot(V_range, gust_D_neg, linestyle='--',linewidth=2, color='#e69f00')
                  #label='Design Window')
 plt.xlabel('V (KEAS)', fontsize=18)
 plt.ylabel('Load Factor, n', fontsize=18)
-plt.title('Maximum Weight V-n Diagram', fontsize=20)
+plt.title('Maximum Weight V-n Diagram at 30,000 ft', fontsize=20)
 plt.annotate('${V_A}$', (V_stall_pos_end, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
 plt.annotate('${V_C}$', (V_C, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
 plt.annotate('${V_D}$', (V_D, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
