@@ -205,7 +205,7 @@ horizontal_tail_cg = 46.0 # ft
 vertical_tail_cg = 45.2 # ft
 engine_cg = 42.4 # ft
 engine_cooling_cg = 42.4 # ft
-inlet_cg = 31.1 # ft
+inlet_cg = 30.1 # ft
 forward_gear_cg = 7.2 # ft
 rear_gear_cg = 29.0 # ft
 radar_cg = 5.3 # ft
@@ -360,7 +360,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
     return cg, denominator
 
 MAC_LE = 14.9   # MAC x location
-MAC_len = 15.0 # MAC length
+MAC_len = 17.94 # MAC length
 
 def ft_to_pct_MAC(cg_ft):
     return ((cg_ft - MAC_LE) / MAC_len) * 100
@@ -368,36 +368,34 @@ def ft_to_pct_MAC(cg_ft):
 # Air to Air
 air_points = [
     calculate_cg(AIM_120_cg, AIM_120_w, "Fully Loaded Air-To-Air"),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 3 Empty",       inc_tank_3=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tanks 5/6 Empty",    inc_tank_3=False, inc_tank_56=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 4 Empty",       inc_tank_3=False, inc_tank_56=False, inc_tank_4=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Wing Tanks Empty",   inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False),
-    # ~half fuel burned, drop ordnance
-    calculate_cg(AIM_120_cg, AIM_120_w, "AIM-120 Dropped",    inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "AIM-9X Dropped",     inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False, inc_AIM_9X=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Inwing Tanks Empty", inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False, inc_AIM_9X=False, inc_inwing_tank=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 2 Empty",       inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False, inc_AIM_9X=False, inc_inwing_tank=False, inc_tank_2=False),
-    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 1 Empty",       inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False, inc_AIM_9X=False, inc_inwing_tank=False, inc_tank_2=False, inc_tank_1=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tanks 5/6 Empty",    inc_tank_56=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 3 Empty",       inc_tank_56=False, inc_tank_3=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Wing Tanks Empty",   inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 2 Empty",       inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "AIM-120 Dropped",    inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "AIM-9X Dropped",     inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 4 Empty",       inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_4=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Tank 1 Empty",       inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_4=False, inc_tank_1=False),
+    calculate_cg(AIM_120_cg, AIM_120_w, "Inwing Tanks Empty", inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_4=False, inc_tank_1=False, inc_inwing_tank=False),
 ]
-air_labels = ["Fully Loaded", "Tank 3 Empty", "Tanks 5/6 Empty", "Tank 4 Empty", "Wing Tanks Empty",
-              "AIM-120 Drop", "AIM-9X Drop", "Inwing Tanks Empty", "Tank 2 Empty", "Tank 1 Empty"]
+air_labels = ["Fully Loaded", "Tanks 5/6 Empty", "Tank 3 Empty", "Wing Tanks Empty", "Tank 2 Empty",
+              "AIM-120 Drop", "AIM-9X Drop", "Tank 4 Empty", "Tank 1 Empty", "Inwing Tanks Empty"]
 
 # Strike
 strike_points = [
     calculate_cg(MK_83_cg, MK_83_w, "Fully Loaded Strike"),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 3 Empty",       inc_tank_3=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tanks 5/6 Empty",    inc_tank_3=False, inc_tank_56=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 4 Empty",       inc_tank_3=False, inc_tank_56=False, inc_tank_4=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Wing Tanks Empty",   inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False),
-    # ~half fuel burned, drop ordnance
-    calculate_cg(MK_83_cg, MK_83_w, "MK-83 Dropped",      inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False),
-    calculate_cg(MK_83_cg, MK_83_w, "AIM-9X Dropped",     inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False, inc_AIM_9X=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Inwing Tanks Empty", inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False, inc_AIM_9X=False, inc_inwing_tank=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 2 Empty",       inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False, inc_AIM_9X=False, inc_inwing_tank=False, inc_tank_2=False),
-    calculate_cg(MK_83_cg, MK_83_w, "Tank 1 Empty",       inc_tank_3=False, inc_tank_56=False, inc_tank_4=False, inc_wing_tank=False, inc_ordinance=False, inc_AIM_9X=False, inc_inwing_tank=False, inc_tank_2=False, inc_tank_1=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tanks 5/6 Empty",    inc_tank_56=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 3 Empty",       inc_tank_56=False, inc_tank_3=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Wing Tanks Empty",   inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 2 Empty",       inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False),
+    calculate_cg(MK_83_cg, MK_83_w, "MK-83 Dropped",      inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False),
+    calculate_cg(MK_83_cg, MK_83_w, "AIM-9X Dropped",     inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 4 Empty",       inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_4=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Tank 1 Empty",       inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_4=False, inc_tank_1=False),
+    calculate_cg(MK_83_cg, MK_83_w, "Inwing Tanks Empty", inc_tank_56=False, inc_tank_3=False, inc_wing_tank=False, inc_tank_2=False, inc_ordinance=False, inc_AIM_9X=False, inc_tank_4=False, inc_tank_1=False, inc_inwing_tank=False),
 ]
-strike_labels = ["Fully Loaded", "Tank 3 Empty", "Tanks 5/6 Empty", "Tank 4 Empty", "Wing Tanks Empty",
-                 "MK-83 Drop", "AIM-9X Drop", "Inwing Tanks Empty", "Tank 2 Empty", "Tank 1 Empty"]
+strike_labels = ["Fully Loaded", "Tanks 5/6 Empty", "Tank 3 Empty", "Wing Tanks Empty", "Tank 2 Empty",
+                 "MK-83 Drop", "AIM-9X Drop", "Tank 4 Empty", "Tank 1 Empty", "Inwing Tanks Empty"]
 
 air_cg   = [p[0] for p in air_points]
 air_wt   = [p[1] for p in air_points]
@@ -430,8 +428,8 @@ all_labels  = [l for _, l in air_handles] + [l for _, l in str_handles]
 ax.legend(all_handles, all_labels, loc='upper right', fontsize=9, ncol=2)
 
 takeoff_cg_mac = air_cg_mac[0]
-fwd_limit_mac = takeoff_cg_mac - (0.1 * 100)
-aft_limit_mac = takeoff_cg_mac + (0.1 * 100)
+fwd_limit_mac = takeoff_cg_mac - (0.04 * 100)
+aft_limit_mac = takeoff_cg_mac + (0.04 * 100)
 
 ax.axvline(x=fwd_limit_mac, color='black', linewidth=2, linestyle='-')
 ax.axvline(x=aft_limit_mac, color='black', linewidth=2, linestyle='-')
