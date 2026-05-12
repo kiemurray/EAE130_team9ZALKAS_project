@@ -67,7 +67,8 @@ c_root_1 = 29.34     #root chord (ft)
 b_section_1 = 11.558   #section 1 span
 b_section_1_total = (y_offset+b_section_1)*2
 lambda_back_1 = 25      #desired back sweep (degrees)
-c_tip_1 = c_root_1 - b_section_1*(np.tan(np.deg2rad(lambda_w))+np.tan(np.deg2rad(lambda_back_1))) 
+c_tip_1 = c_root_1 - b_section_1*(np.tan(np.deg2rad(lambda_w))+np.tan(np.deg2rad(lambda_back_1)))
+A_inboard_flapped = 0.528       #S_flapped / S_ref for section 1
 #print("For",lambda_back_1,"degree back sweep, section 1 tip chord is:",c_tip_1,"ft")
 #print("Total section 1 wingspan:",b_section_1_total,"ft")
 
@@ -78,6 +79,7 @@ b_section_2 = (0.5*b_w) - b_section_1   #section 2 span
 #print("Section 2 span:",b_section_2,"ft")
 lambda_back_2 = 20      #desired back sweep (degrees)
 c_tip_2 = c_root_2 - b_section_2*(np.tan(np.deg2rad(lambda_w))-np.tan(np.deg2rad(lambda_back_2))) 
+A_outboard_flapped = 0.257       #S_flapped / S_ref for section 2
 #print("For",lambda_back_2,"degree back sweep, section 2 tip chord is:",c_tip_2,"ft")
 #print("Taper ratio becomes:",c_tip_2/c_root_1)
 #print("Aspect ratio becomes:",((b_w)**2)/S_w)
