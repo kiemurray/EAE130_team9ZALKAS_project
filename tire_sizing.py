@@ -1,8 +1,8 @@
 import code_variables as cv
 
-x_cg_TO = 25.36 #change
-x_cg_aft = 25.86 #change
-x_cg_for = 24.95 #change
+x_cg_TO = 25.30 #change
+x_cg_aft = 25.56 #change
+x_cg_for = 24.65  #change
 x_nosewheels = 7.2
 x_mainwheels = 29.0
 

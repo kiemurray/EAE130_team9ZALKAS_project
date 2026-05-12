@@ -162,7 +162,10 @@ C_maintenance_material = C_maintenance_labor #equals labor (raymer)
 
 DOC_total = C_crew_salary + C_fuel + 2* C_maintenance_labor
 
+DOC_per_hour = DOC_total / FH_fleet
+
 print(f"\nCrew Cost =        ${C_crew_salary/1e6:.2f} million/yr")
 print(f"Fuel Cost =        ${C_fuel/1e6:.2f} million/yr")
 print(f"Maintenance Cost = ${C_maintenance_labor/1e6:.2f} million/yr")
 print(f"Total DOC Cost = ${DOC_total/1e6:.2f} million/yr")
+print(f"O&M/FH = ${DOC_per_hour/1e3:.2f} thousand/FH")
