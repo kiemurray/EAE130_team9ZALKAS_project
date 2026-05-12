@@ -645,7 +645,7 @@ aircraft_points = [
     #(S_Typhoon, T_Typhoon_wet, "Typhoon"),
     (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
     (S_F18_E_M, T_F18_E_wet, "F/A-18E"),
-    #(S_F35C, T_F35C_wet, "F35-C"),
+    (S_F35C, T_F35C_wet, "F35-C"),
     (S_F16C, T_F16C_wet, "F-16C"),
     (S_F22A, T_F22A_wet, "F-22A"),
     (S_Gripen, T_Gripen_wet, "Gripen E"),
