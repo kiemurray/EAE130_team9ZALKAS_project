@@ -666,7 +666,7 @@ plt.plot(cv.S_w, 44000, label='ZALKAS Fighter', marker='*', color='gold', marker
 # plt.plot(530, F100_229.T_wet, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 # plt.annotate('ZALKAS Fighter (F110)', (530, F100_229.T_wet), xytext=(5,5), textcoords='offset points',fontsize=16)
 
-plt.legend(loc='upper right',fontsize=11)
+plt.legend(loc='upper right', fontsize=16, prop={'size': 18}, handlelength=2, handleheight=1.25)
 plt.ylim(0,80000)
 
 plt.xticks(fontsize=14)

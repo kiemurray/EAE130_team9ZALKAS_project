@@ -58,30 +58,6 @@ def getGamma(T_W,L_D):
 def getClimbVelocity(rho,W_S,CD_0,k_cr,T_W):
     return np.sqrt((W_S/(3*rho*CD_0))*(T_W + np.sqrt((T_W)**2)+12*CD_0*k_cr))
 
-def climbFuelFraction(numSegments,h_cruise,TotalThrust,W_takeoff,S_w,k_cr,C_D_0,c_climb):
-    weight = np.zeros(numSegments+1)
-    weight[0] = W_takeoff
-    altitudeArray=np.zeros(numSegments+1)
-
-    #guess L/D
-    L_D_guess = 8
-    gamma = getGamma(TotalThrust/weight,L_D_guess)
-    W_S = weight / S_w
-    T_alt = Tratio(0)*TotalThrust
-    v_climb = getClimbVelocity(rho,W_S,CD0,k_cr,T_alt/weight)
-
-    
-
-
-    # v_climb=np.zeros(numSegments)
-    # for step in range(numSegments):
-    #     rho, a = atmo_vals(altitudeArray[step])[:2]
-    #     T_W = Tratio(altitudeArray[step])*TotalThrust/weight[step]
-    #     v_climb[step] = np.sqrt(((weight[step]/S_w)/(3*rho*C_D_0))*(T_W)+np.sqrt((T_W)**2+12*C_D_0*k_cr))
-    #     D=0
-    #     #D= (1/2*rho*v_climb[step]**2)*S_w*(C_D_0+k_cr*)
-    #     delta_He = (h_cruise/numSegments + v_climb[step]**2/(2*32.17))
-    #     weight[step+1]=weight[step]*np.exp(-c_climb*delta_He/(v_climb[step](1-D/Tratio(altitudeArray[step])*TotalThrust))) #D is drag
 
 
 
@@ -141,7 +117,7 @@ def BreguetExponential(numSegments,Altitude,S_wing,CD_0,k_cruise,W_topOfClimb,C_
     print("\n\nDiscretized Breguet Equations\nWeight Array:")
     for i in range(numSegments):
         fuelBurned = fuelBurned+(weightArray[i]-weightArray[i+1])
-        print(round(weightArray[i],2),"lbf       Fuel burned (segment)",round(weightArray[i]-weightArray[i+1],2),"lbs     Fuel burned (total)",round(fuelBurned,2),"lbs    C_L",round(C_L_array[i],2),"  L_D",round(L_D_array[i],2),"    speed: ",round(velocity_array[step],2),"ft/s")
+        #print(round(weightArray[i],2),"lbf       Fuel burned (segment)",round(weightArray[i]-weightArray[i+1],2),"lbs     Fuel burned (total)",round(fuelBurned,2),"lbs    C_L",round(C_L_array[i],2),"  L_D",round(L_D_array[i],2),"    speed: ",round(velocity_array[step],2),"ft/s")
     return fuelBurned,((W_topOfClimb-fuelBurned)/W_topOfClimb)
     
     
@@ -153,7 +129,7 @@ def breguetFraction(Range,c_t_cruise,v_cruise,L_D_max):
 h_cruise = 30000 #ft
 Range = 2000 #nm
 L_D_max = 10
-W_cruise_i = 52970
+W_cruise_i = cv.W_cruise_i
 
 rho_range, a_range = atmo_vals(h_cruise)[:2]
 #Test for Lecture example

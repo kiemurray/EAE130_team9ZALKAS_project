@@ -2,7 +2,7 @@
 import numpy as np
 
 # constants
-R=53.35     # gas constant in (ft*lbf/lbm*R)                                                         #ft*lbf/lbm-Rankine
+R = 53.35     # gas constant in (ft*lbf/lbm*R)                                                         #ft*lbf/lbm-Rankine
 g = 32.174  # gravitational constant (slug/lbm)   
 c_f=0.0026
 ra = 950             # nmi
@@ -184,14 +184,13 @@ V_t = 2450 # Total Fuel Volume, gal
 V_i = 0.0 * V_t # Integral Fuel Tank Volume, gal
 V_p = 1.0 * V_t # Self-Sealing Wing Tank Volume, gal
 N_t = 10 # Number of Tanks
-tank_1_v = 59.0 # ft^3
-tank_2_v = 100.0 # ft^3
+tank_1_v = 65.2 # ft^3
+tank_2_v = 102.8 # ft^3
 tank_3_v = 58.7 # ft^3
-tank_4_v = 26.2 # ft^3
-tank_56_v = 38.2 # ft^3
-tank_78_v = 9.0 # ft^3
-wing_tank_v = 65.1 * 2 # ft^3
-inwing_tank_v = 28.5 * 2 # ft^3
+tank_4_v = 28.5 # ft^3
+tank_56_v = 37.6 # ft^3
+wing_tank_v = 65.9 * 2 # ft^3
+inwing_tank_v = 29.2 * 2 # ft^3
 
 # mission segment variables
 # weight fractions
@@ -210,11 +209,11 @@ wf_middescent = 0.995
 
 # takeoff parameters
 V_TO = 160 * 1.68781                    # takeoff speed in ft/s, assuming 160 knots for takeoff
-W_TO = 54747
+W_TO = 52850
 e_to = 0.775                            #takeoff
 k_to = 1 / (np.pi * AR_w * e_to)          #takeoff
 S_wingtest = 600 #based on vsp design B3.16
-T_0 = 23930  # Example value for thrust per engine
+T_0 = 22000  # Example value for thrust per engine
 T_0_mil = 13000
 
 # climb parameters
