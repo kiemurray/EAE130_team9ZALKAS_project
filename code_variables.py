@@ -2,13 +2,13 @@
 import numpy as np
 
 # constants
-R=53.35     # gas constant in (ft*lbf/lbm*R)                                                         #ft*lbf/lbm-Rankine
+R = 53.35     # gas constant in (ft*lbf/lbm*R)                                                         #ft*lbf/lbm-Rankine
 g = 32.174  # gravitational constant (slug/lbm)   
 c_f=0.0026
 ra = 950             # nmi
 E = 20 / 60         # min --> hr
 WOD=15*1.68781                          # ft/s, Wind over deck (given in RFP)
-CD0=0.01036                             # clean, used for cruise
+CD0=0.01131                             # clean, used for cruise
 num_pilot = 1
 avg_wt_person = 200  #lb
 aim_120c = 356 #lb
@@ -31,12 +31,11 @@ M = 2.0 # Mach Number
 # lift coefficients (updated after A2)
 CLmax_TO = 1.5 # maximum lift coefficient for takeoff
 CLmax_L = 1.8 # maximum lift coefficient for landing
-CLmax_climb = 0.9 # maximum lift coefficient for climb, assumed clean
+CLmax_climb = 0.94 # maximum lift coefficient for climb, assumed clean
 CL_alpha = 1.84492410032 # lift coefficient slope with respect to alpha (rad^-1)
 
 
 # stucture variables
-
 x_cg =  23.8094      # aircraft center of gravity (ft) assumed
 num_engines = 2 # Number of Engines
 S_cs = 473 # Total Area of Flight Control Surfaces
@@ -51,10 +50,10 @@ n_z_negative = -5 #estimate for negative limit load
 
 
 
-# wing (600 sq ft)
-y_offset = 3 #ft
-b_w = 37.458        # wing span tip-to-tip (ft)
-b_w_total = b_w + 2*y_offset
+# wing (560 sq ft)
+y_offset = 3 #ft (ignore, b_w measuremeant taken directly from openvsp)
+b_w = 44.554        # wing span tip-to-tip (ft)
+b_w_total = b_w
 c_w = 13.47       # wing chord (ft)
 S_w = 560             # wing area (ft^2)
 AR_w = 2.52
@@ -185,14 +184,13 @@ V_t = 2450 # Total Fuel Volume, gal
 V_i = 0.0 * V_t # Integral Fuel Tank Volume, gal
 V_p = 1.0 * V_t # Self-Sealing Wing Tank Volume, gal
 N_t = 10 # Number of Tanks
-tank_1_v = 59.0 # ft^3
-tank_2_v = 100.0 # ft^3
+tank_1_v = 65.2 # ft^3
+tank_2_v = 102.8 # ft^3
 tank_3_v = 58.7 # ft^3
-tank_4_v = 26.2 # ft^3
-tank_56_v = 38.2 # ft^3
-tank_78_v = 9.0 # ft^3
-wing_tank_v = 65.1 * 2 # ft^3
-inwing_tank_v = 28.5 * 2 # ft^3
+tank_4_v = 28.5 # ft^3
+tank_56_v = 37.6 # ft^3
+wing_tank_v = 65.9 * 2 # ft^3
+inwing_tank_v = 29.2 * 2 # ft^3
 
 # mission segment variables
 # weight fractions
@@ -211,11 +209,11 @@ wf_middescent = 0.995
 
 # takeoff parameters
 V_TO = 160 * 1.68781                    # takeoff speed in ft/s, assuming 160 knots for takeoff
-W_TO = 54747
+W_TO = 52850
 e_to = 0.775                            #takeoff
 k_to = 1 / (np.pi * AR_w * e_to)          #takeoff
 S_wingtest = 600 #based on vsp design B3.16
-T_0 = 23930  # Example value for thrust per engine
+T_0 = 22000  # Example value for thrust per engine
 T_0_mil = 13000
 
 # climb parameters

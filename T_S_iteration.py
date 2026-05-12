@@ -642,10 +642,10 @@ aircraft_points = [
     (S_J39C, T_J39C_wet, "J39C"),
     (S_Su33, T_Su33_wet, "Su-33"),
     (S_Su34, T_Su34_wet, "Su-34"),
-    (S_Typhoon, T_Typhoon_wet, "Typhoon"),
+    #(S_Typhoon, T_Typhoon_wet, "Typhoon"),
     (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
     (S_F18_E_M, T_F18_E_wet, "F/A-18E"),
-    #(S_F35C, T_F35C_wet, "F35-C"),
+    (S_F35C, T_F35C_wet, "F35-C"),
     (S_F16C, T_F16C_wet, "F-16C"),
     (S_F22A, T_F22A_wet, "F-22A"),
     (S_Gripen, T_Gripen_wet, "Gripen E"),
@@ -655,17 +655,17 @@ aircraft_points = [
 #COMAPRABLE POINTS
 for S, T, name in aircraft_points:
     plt.plot(S, T, marker='^', markersize=5, color='black')
-    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
+    plt.annotate(name, (S, T), xytext=(-20,5), textcoords='offset points',fontsize=16)
 
 
 
-plt.plot(cv.S_w, 44000, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+plt.plot(cv.S_w, 44000, marker='*', color='gold', markersize=25,  markeredgecolor='black', zorder=5, markeredgewidth = 1.5, label = 'Design Point')
 # plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 # plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
 # plt.plot(530, F100_229.T_wet, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 # plt.annotate('ZALKAS Fighter (F110)', (530, F100_229.T_wet), xytext=(5,5), textcoords='offset points',fontsize=16)
 
-plt.legend(loc='upper right',fontsize=12)
+plt.legend(loc='upper right', fontsize=16, prop={'size': 18}, handlelength=2, handleheight=1.25)
 plt.ylim(0,80000)
 
 plt.xticks(fontsize=14)
