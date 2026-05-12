@@ -642,7 +642,7 @@ aircraft_points = [
     (S_J39C, T_J39C_wet, "J39C"),
     (S_Su33, T_Su33_wet, "Su-33"),
     (S_Su34, T_Su34_wet, "Su-34"),
-    (S_Typhoon, T_Typhoon_wet, "Typhoon"),
+    #(S_Typhoon, T_Typhoon_wet, "Typhoon"),
     (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
     (S_F18_E_M, T_F18_E_wet, "F/A-18E"),
     #(S_F35C, T_F35C_wet, "F35-C"),
@@ -653,9 +653,9 @@ aircraft_points = [
 #plots and labels comparable aircraft
 
 #COMAPRABLE POINTS
-#for S, T, name in aircraft_points:
-#    plt.plot(S, T, marker='^', markersize=5, color='black')
-#    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
+for S, T, name in aircraft_points:
+    plt.plot(S, T, marker='^', markersize=5, color='black')
+    plt.annotate(name, (S, T), xytext=(-20,5), textcoords='offset points',fontsize=16)
 
 
 
