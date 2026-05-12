@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import code_variables as cv
+import math
 
 #Need diagram based on minimum and maximum weight
 #you can tweak these values
-Weight = cv.W_TO
+Weight = cv.W_l
 #Weight = cv.W_TO*cv.wf_landing
 n_design_positive = cv.n_z
 n_design_negative = cv.n_z_negative
@@ -196,6 +197,12 @@ V_rangeC = np.linspace(0,V_C,numPoints)
 # print('SIDE QUEST: RFP stall check')
 # print(v_stallSL)
 
+# relevant values
+print(v_stall)
+print(V_stall_pos_end)
+print(V_C)
+print(V_D)
+
 
 #Plot based on Equivalent airspeed
 # PLOTS
@@ -244,15 +251,16 @@ plt.plot(V_range, gust_D_neg, linestyle='--',linewidth=2, color='#e69f00')
 plt.xlabel('V (KEAS)', fontsize=18)
 plt.ylabel('Load Factor, n', fontsize=18)
 plt.title('Maximum Weight V-n Diagram at 30,000 ft', fontsize=20)
-plt.annotate('${V_A}$', (V_stall_pos_end, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=20)
-plt.annotate('${V_C}$', (V_C, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=20)
-plt.annotate('${V_D}$', (V_D, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=20)
+
+plt.annotate('${V_A}$', (V_stall_pos_end, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('${V_C}$', (V_C-25, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate(f'$V_D$ = {math.floor(V_D)}', (V_D-75, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
 plt.annotate('${V_{Stall}}$', (v_stall+30, -1), xytext=(-5,5), textcoords='offset points',fontsize=15)
-plt.annotate('Positive Stall Line', (375, 5), xytext=(-5,5), textcoords='offset points',fontsize=15)
-plt.annotate('Negative Stall Line', (150,-3), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Positive Stall Line', (350, 5), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Negative Stall Line', (125,-3), xytext=(-5,5), textcoords='offset points',fontsize=15)
 plt.annotate('Positive Load Limit', (850,7), xytext=(-5,5), textcoords='offset points',fontsize=15)
 plt.annotate('Negative Load Limit', (750,-4.75), xytext=(-5,5), textcoords='offset points',fontsize=15)
-plt.annotate('${V_{NE}}$', (1360,3.5), xytext=(-5,5), textcoords='offset points',fontsize=20)
+plt.annotate('${V_{NE}}$', (1360,3.5), xytext=(-5,5), textcoords='offset points',fontsize=15)
 
 plt.grid(True, alpha=0.4)
 plt.legend(fontsize=14, loc='upper left')
