@@ -653,19 +653,19 @@ aircraft_points = [
 #plots and labels comparable aircraft
 
 #COMAPRABLE POINTS
-for S, T, name in aircraft_points:
-    plt.plot(S, T, marker='^', markersize=5, color='black')
-    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
+#for S, T, name in aircraft_points:
+#    plt.plot(S, T, marker='^', markersize=5, color='black')
+#    plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
 
 
 
-plt.plot(cv.S_w, 44000, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
+plt.plot(cv.S_w, 44000, marker='*', color='gold', markersize=25,  markeredgecolor='black', zorder=5, markeredgewidth = 1.5, label = 'Design Point')
 # plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 # plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
 # plt.plot(530, F100_229.T_wet, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 # plt.annotate('ZALKAS Fighter (F110)', (530, F100_229.T_wet), xytext=(5,5), textcoords='offset points',fontsize=16)
 
-plt.legend(loc='upper right',fontsize=12)
+plt.legend(loc='upper right', fontsize=16, prop={'size': 18}, handlelength=2, handleheight=1.25)
 plt.ylim(0,80000)
 
 plt.xticks(fontsize=14)
