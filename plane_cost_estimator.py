@@ -6,7 +6,7 @@ import code_variables as cv
 W0 = cv.W_TO
 We = W0*(2.34*W0**-0.13)*1.04 #Empty weight for fighter using Raymer table 3.1
 print(f"Empty Weight: {We} lbs")
-We = 27830 
+We = 30486.177
 Neng = 2                      #Number of engines per aircraft
 
 #F414 info
