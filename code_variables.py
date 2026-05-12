@@ -32,6 +32,7 @@ M = 2.0 # Mach Number
 CLmax_TO = 1.5 # maximum lift coefficient for takeoff
 CLmax_L = 1.8 # maximum lift coefficient for landing
 CLmax_climb = 0.9 # maximum lift coefficient for climb, assumed clean
+CL_alpha = 1.84492410032 # lift coefficient slope with respect to alpha (rad^-1)
 
 
 # stucture variables
