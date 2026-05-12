@@ -499,7 +499,7 @@ for i, (label, marker) in enumerate(zip(strike_labels, markers)):
 
 all_handles = [h for h, _ in air_handles] + [h for h, _ in str_handles]
 all_labels  = [l for _, l in air_handles] + [l for _, l in str_handles]
-ax.legend(all_handles, all_labels, loc='upper right', fontsize=9, ncol=2)
+ax.legend(all_handles, all_labels, loc='center right', fontsize=14, ncol=2, bbox_to_anchor=(0.96, 0.5))
 
 takeoff_cg_mac = air_cg_mac[0]
 fwd_limit_mac = takeoff_cg_mac - (0.04 * 100)
