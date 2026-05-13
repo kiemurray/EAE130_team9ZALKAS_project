@@ -77,6 +77,10 @@ W_uav = cv.W_uav # Uninstalled Avionics Weight, lbf
 W_urdr = cv.W_urdr # Uninstalled Radar Weight, lbf
 N_c = N_ci # Number of Crew
 
+print("")
+print("")
+print("")
+
 # Wing Weight (Raymer Eq 15.1)
 W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
 W_Wing = 0.85 * W_wing # Advanced Composites
@@ -90,7 +94,7 @@ print("Horizontal Tail Weight:", W_horizontal_tail, "lbf")
 # Vertical Tail Weight (Raymer Eq 15.3)
 W_vertical_tail = (0.452 * K_rht * (1 + H_t/H_v)**0.5 * (W_dg * N_zv)**0.488 * S_vt**0.718 * M**0.341 * L_t**(-1.0) * (1 + S_r/S_vt)**0.348 * AR_vt**0.223 * (1 + taper_ratio_vt)**0.25 * np.cos(np.radians(sweep_vt))**(-0.323))
 W_vertical_tail = 0.85 * W_vertical_tail # Advanced Composites
-print("Tail Weight:", W_vertical_tail, "lbf")
+print("Vertical Tail Weight:", W_vertical_tail, "lbf")
 
 # Fuselage Weight (Raymer Eq 15.4)
 W_fuselage = (0.499 * K_dwf * W_dg**0.35 * N_z**0.25 * L_f**0.5 * D_f**0.849 * W_f**0.685)
@@ -188,7 +192,10 @@ print(f"Air Conditioning and Anti-Ice Weight: {W_air_conditioning} lbf")
 W_handling_gear = 3.2e-4 * W_dg
 print(f"Handling Gear Weight: {W_handling_gear} lbf")
 
-W_generators = 75 * 2 # Honeywell Manufacturer Data for 250kW generator
+W_generators = 116 * 2 # Boeing Manufacturer Data for Integrated Drive Generator
+print(f"Integrated Generator Weight: {W_generators} lbf")
+
+print("")
 
 # Empty Weight
 W_empty = (W_wing + W_horizontal_tail + W_vertical_tail + W_fuselage + W_rear_landing_gear + W_nose_landing_gear +
@@ -198,10 +205,11 @@ W_empty = (W_wing + W_horizontal_tail + W_vertical_tail + W_fuselage + W_rear_la
          W_avionics + W_radar + W_furnishings + W_air_conditioning + W_handling_gear + W_engine + W_generators)
 print(f"Empty Weight: {W_empty} lbf")
 
+print("")
 
 # X-Axis Center of Gravity
 
-fuselage_cg = 13.8 # ft
+fuselage_cg = 12.25 # ft
 wing_cg = 27.0 # ft
 horizontal_tail_cg = 46.0 # ft
 vertical_tail_cg = 45.2 # ft
@@ -258,6 +266,7 @@ cockpit_z_cg = 2.7 # ft
 fuel_tanks_z_cg = 1.3 # ft
 flight_controls_z_cg = 0.6 # ft
 tailpipe_z_cg = 0 # ft
+electrical_z_cg = -0.4 # ft
 
 # Individual Tank Weights
 
@@ -279,6 +288,7 @@ print(f"Tank 5/6:     {tank_56_w:>10.1f} lbf")
 print(f"Wing Tank:    {wing_tank_w:>10.1f} lbf")
 print(f"Inboard Wing: {inwing_tank_w:>10.1f} lbf")
 print(f"{'Total:':13}{total_fuel_w:>10.1f} lbf")
+print("")
 
 # Ordinance Weights
 
@@ -291,6 +301,7 @@ Class_II_TOGW_S = W_empty + total_fuel_w + AIM_9X_w + MK_83_w
 
 print(f"Class II TOGW Air to Air:       {Class_II_TOGW_A:>10.1f} lbf")
 print(f"Class II TOGW Strike:       {Class_II_TOGW_S:>10.1f} lbf")
+print("")
 
 # X-Axis Center of Gravity
 
@@ -432,7 +443,7 @@ def calculate_z_cg(ordnance_z_cg, ordnance_w, label,
         + (flight_controls_z_cg * W_flight_controls)
         + (cockpit_z_cg * W_instruments)
         + (fuselage_z_cg * W_hydraulics)
-        + (cockpit_z_cg * W_electrical)
+        + (electrical_z_cg * W_electrical)
         + (cockpit_z_cg * W_furnishings)
         + (forward_gear_z_cg * W_handling_gear)
         # --- end previously missing ---
@@ -469,8 +480,10 @@ def calculate_z_cg(ordnance_z_cg, ordnance_w, label,
     print(f"{label} z_CG: {z_cg:.2f} ft  |  Weight: {denominator:.0f} lbf")
     return z_cg, denominator
 
+print("")
 z_cg_air = calculate_z_cg(AIM_120_z_cg, AIM_120_w, "Air-To-Air Configuration")
 z_cg_strike = calculate_z_cg(MK_83_z_cg, MK_83_w, "Strike Configuration")
+print("")
 
 # --- Plot (moved to end so all calculations complete first) ---
 
