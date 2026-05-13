@@ -149,7 +149,7 @@ c_vt = 0.094 # vertical tail volume coefficient (Raymer Section 6.5.3)
 print("Vertical tail arm:",0.40 * L_f,"ft")
 L_vt = 15 # vertical tail moment arm (ft) (Should be 45-50% of the fuselage length according to Raymer 6.5.3) (Updated May 1)
 H_v = 6.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
-AR_vt = 0.24 # Vertical Tail Aspect Ratio
+AR_vt = 2.036 # Vertical Tail Aspect Ratio
 cr_c = 0.30 #rudder chord fraction (Raymer 6.5.3)
 S_r = 33.79 # Rudder Area ft^2
 taper_ratio_vt = 0.544 # Vertical Tail Taper Ratio
@@ -157,8 +157,8 @@ sweep_vt = 55 # Vertical Tail Sweep
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
 L_t = 8.95 # Tail Length, ft
-S_vt = 65 # Vertical Tail Area [ft^2]
-c_t = 8.24676 #stabilator MAC (not updated)
+S_vt = 85 # Vertical Tail Area [ft^2]
+c_t = 6.65 #stabilator MAC (not updated)
 
 # horizontal tail
 c_ht = 0.4        # horizontal tail volume coefficient (Raymer Section 6.5.3)
