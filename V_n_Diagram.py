@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import code_variables as cv
+import math
 
 #Need diagram based on minimum and maximum weight
 #you can tweak these values
@@ -19,7 +20,8 @@ S_ref = cv.S_w
 k = 0.97 #empirical correction factor that accounts for section lift curve slopes different from 2𝜋
 c = cv.c_w #the mean geometric chord, also known as the standard mean chord, defined as S/b
 g = 32.17 # idk, idt the metabook defined this
-V_C = 1179.476 # Mach 2.0 at 30000 ft in knots/s
+# V_C = 1179.476 # Mach 2.0 at 30000 ft in knots/s
+V_C = 846.102544351 # Mach 0.85 at 30000 ft in knot/s, expected intermediate dash from RFP
 CL_alpha = cv.CL_alpha # 1/rad from VSPAero
 
 #Calculations
@@ -196,30 +198,42 @@ V_rangeC = np.linspace(0,V_C,numPoints)
 # print('SIDE QUEST: RFP stall check')
 # print(v_stallSL)
 
+# relevant values
+print(v_stall)
+print(V_stall_pos_end)
+print(V_C)
+print(V_D)
+
 
 #Plot based on Equivalent airspeed
 # PLOTS
 plt.figure(figsize=(12, 8))
 # plt.ylabel("n (-)")
-plt.plot(v_stall_pos,n_stall_pos, color='#d55e00', linewidth=2, label='Max lift line')
-plt.plot(v_stall_neg,n_stall_neg, color='#0072b2', linewidth=2, label='Min lift line')
+# plt.plot(v_stall_pos,n_stall_pos, color='#d55e00', linewidth=2, label='Max lift line')
+# plt.plot(v_stall_neg,n_stall_neg, color='#0072b2', linewidth=2, label='Min lift line')
+plt.plot(v_stall_pos,n_stall_pos, color='black', linewidth=3)
+plt.plot(v_stall_neg,n_stall_neg, color='black', linewidth=3)
 
 # plot those vertical lines
-plt.plot(V_exceed_line, n_exceed_line,label='Never exceed speed', linewidth=2, color='red')
+# plt.plot(V_exceed_line, n_exceed_line,label='Never exceed speed', linewidth=2, color='red')
+plt.plot(V_exceed_line, n_exceed_line, linewidth=3, color='black')
 plt.plot(V_NO_line, n_design_line,label='Design air speed', linestyle='--',linewidth=2, color='#009e73')
-plt.plot(v_stall_line, n_stall_line, label='Stall speed',linewidth=2, color='#e69f00')
+plt.plot(v_stall_line, n_stall_line, label='Stall speed',linewidth=3, color='#cc79a7')
 
 # plot pos and neg loads
-plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='#000000', linewidth=2, label='Positive limit load')
-plt.hlines(n_design_negative, V_start_neg, V_C, colors='#cc79a7', linewidth=2, label='Negative limit load')
+# plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='#000000', linewidth=2, label='Positive limit load')
+# plt.hlines(n_design_negative, V_start_neg, V_C, colors='#cc79a7', linewidth=2, label='Negative limit load')
+plt.hlines(n_design_positive, V_start_pos, V_end_pos, colors='black', linewidth=3)
+plt.hlines(n_design_negative, V_start_neg, V_C, colors='black', linewidth=3)
 
 # plot that awkward negative load line between VC and VD
-plt.plot(VC_VD_range, VC_VD, color='#cc79a7', linewidth=2, label='Negative limit load')
+# plt.plot(VC_VD_range, VC_VD, color='#cc79a7', linewidth=2, label='Negative limit load')
+plt.plot(VC_VD_range, VC_VD, color='black', linewidth=3)
 
 # plot gust load lines
-plt.plot(V_rangeB, gust_B_pos,label='Rough air gust', linestyle='--',linewidth=2, color='#000000')
-plt.plot(V_rangeC, gust_C_pos,label='Gust at max design speed', linestyle='--',linewidth=2, color='#56b4e9')
-plt.plot(V_range, gust_D_pos,label='Gust at max dive speed', linestyle='--',linewidth=2, color='#e69f00')
+plt.plot(V_rangeB, gust_B_pos,label='Rough air gust (56.67 ft/s)', linestyle='--',linewidth=2, color='#000000')
+plt.plot(V_rangeC, gust_C_pos,label='Gust at max design speed (41.67 ft/s)', linestyle='--',linewidth=2, color='#56b4e9')
+plt.plot(V_range, gust_D_pos,label='Gust at max dive speed (20.83 ft/s)', linestyle='--',linewidth=2, color='#e69f00')
 plt.plot(V_rangeB, gust_B_neg, linestyle='--',linewidth=2, color='#000000')
 plt.plot(V_rangeC, gust_C_neg, linestyle='--',linewidth=2, color='#56b4e9')
 plt.plot(V_range, gust_D_neg, linestyle='--',linewidth=2, color='#e69f00')
@@ -238,14 +252,23 @@ plt.plot(V_range, gust_D_neg, linestyle='--',linewidth=2, color='#e69f00')
 plt.xlabel('V (KEAS)', fontsize=18)
 plt.ylabel('Load Factor, n', fontsize=18)
 plt.title('Maximum Weight V-n Diagram at 30,000 ft', fontsize=20)
-plt.annotate('${V_A}$', (V_stall_pos_end, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
-plt.annotate('${V_C}$', (V_C, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
-plt.annotate('${V_D}$', (V_D, 8), xytext=(-5,5), textcoords='offset points',fontsize=20)
+
+plt.annotate('${V_A}$', (V_stall_pos_end, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('${V_C}$', (V_C, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate(f'$V_D$ = {math.floor(V_D)}', (V_D-75, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('${V_{Stall}}$', (v_stall+30, 0), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Positive Stall Line', (225, 5), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Negative Stall Line', (50,-3), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Positive Load Limit', (850,7), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Negative Load Limit', (750,-4.75), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('${V_{NE}}$', (V_D+50,3.5), xytext=(-5,5), textcoords='offset points',fontsize=15)
+
 plt.grid(True, alpha=0.4)
-plt.legend(fontsize=14, loc='upper left')
+plt.legend(loc='lower center', bbox_to_anchor=(0.5, 1.05), ncol=2, fontsize=14)
+plt.tight_layout()
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 plt.xlim(0, V_max)
-plt.ylim(n_design_negative - 1, n_design_positive + 6)  
+plt.ylim(n_design_negative - 1, n_design_positive + 1)  
 
 plt.show()
