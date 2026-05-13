@@ -45,7 +45,7 @@ N_u = 10 # Number of Hydraulic Utility Functions (5-15)
 W_dg = 56631 # Design Gross Weight (lbf)
 n_z = 8.0 # limit load, desired by RFP
 N_z = 1.5 * n_z # Ultimate Load Factor
-n_z_negative = -2 # MIL-8861 for negative limit load
+n_z_negative = -2 # MIL-8861 for negative limit load at max weight
 
 
 
