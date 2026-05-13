@@ -188,18 +188,20 @@ print(f"Air Conditioning and Anti-Ice Weight: {W_air_conditioning} lbf")
 W_handling_gear = 3.2e-4 * W_dg
 print(f"Handling Gear Weight: {W_handling_gear} lbf")
 
+W_generators = 75 * 2 # Honeywell Manufacturer Data for 250kW generator
+
 # Empty Weight
 W_empty = (W_wing + W_horizontal_tail + W_vertical_tail + W_fuselage + W_rear_landing_gear + W_nose_landing_gear +
          W_engine_mounts + W_firewall + W_engine_section + W_inlet +
          W_tailpipe + W_engine_cooling + W_oil_cooling + W_engine_controls + W_starter +
          W_fuel_system + W_flight_controls + W_instruments + W_hydraulics + W_electrical +
-         W_avionics + W_radar + W_furnishings + W_air_conditioning + W_handling_gear + W_engine)
+         W_avionics + W_radar + W_furnishings + W_air_conditioning + W_handling_gear + W_engine + W_generators)
 print(f"Empty Weight: {W_empty} lbf")
 
 
 # X-Axis Center of Gravity
 
-fuselage_cg = 12.35 # 0.26 * L_f # ft
+fuselage_cg = 13.8 # ft
 wing_cg = 27.0 # ft
 horizontal_tail_cg = 46.0 # ft
 vertical_tail_cg = 45.2 # ft
@@ -214,7 +216,6 @@ AC_cg = 15.9 # ft
 AIM_120_cg = 20.1 # ft
 MK_83_cg = 20.1 # ft
 AIM_9X_cg = 31.9 # ft
-tank_78_cg = 36.8 # ft
 tank_56_cg = 14.0 # ft
 wing_tank_cg = 26.3 # ft
 inwing_tank_cg = 23.6 # ft
@@ -226,6 +227,8 @@ cockpit_cg = 11.9 # ft
 fuel_tanks_cg = 24.7 # ft
 flight_controls_cg = 33.6 # ft
 tailpipe_cg = 48.6 # ft
+generators_cg = 40.0 # ft
+electrical_cg = 40.9 # ft
 
 # Z-Axis Center of Gravity
 
@@ -244,7 +247,6 @@ AC_z_cg = 2.3 # ft
 AIM_120_z_cg = -1.4 # ft
 MK_83_z_cg = -1.4 # ft
 AIM_9X_z_cg = -1.9 # ft
-tank_78_z_cg = -0.4 # ft
 tank_56_z_cg = -0.4 # ft
 wing_tank_z_cg = 0.0 # ft
 inwing_tank_z_cg = 0.0 # ft
@@ -310,6 +312,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + (radar_cg * W_radar)
         + (avionics_cg * W_avionics)
         + (AC_cg * W_air_conditioning)
+        + (generators_cg + W_generators)
         # --- previously missing structural/systems weights ---
         + (engine_cg * W_engine_mounts)
         + (engine_cg * W_firewall)
@@ -322,7 +325,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + (flight_controls_cg * W_flight_controls)
         + (cockpit_cg * W_instruments)
         + (fuselage_cg * W_hydraulics)
-        + (cockpit_cg * W_electrical)
+        + (electrical_cg * W_electrical)
         + (cockpit_cg * W_furnishings)
         + (forward_gear_cg * W_handling_gear)
         # --- end previously missing ---
@@ -343,7 +346,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + W_engine_mounts + W_firewall + W_engine_section + W_tailpipe
         + W_oil_cooling + W_engine_controls + W_starter
         + W_fuel_system + W_flight_controls + W_instruments + W_hydraulics + W_electrical
-        + W_furnishings + W_handling_gear
+        + W_furnishings + W_handling_gear + W_generators
         # --- end previously missing ---
         + (ordnance_w if inc_ordinance else 0)
         + (AIM_9X_w if inc_AIM_9X else 0)
