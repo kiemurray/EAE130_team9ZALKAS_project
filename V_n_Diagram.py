@@ -251,7 +251,7 @@ plt.plot(V_range, gust_D_neg, linestyle='--',linewidth=2, color='#e69f00')
                  #label='Design Window')
 plt.xlabel('V (KEAS)', fontsize=18)
 plt.ylabel('Load Factor, n', fontsize=18)
-plt.title('Maximum Weight V-n Diagram at 30,000 ft', fontsize=20)
+plt.title('Maximum Weight V-n Diagram', fontsize=20)
 
 plt.annotate('${V_A}$', (V_stall_pos_end, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
 plt.annotate('${V_C}$', (V_C, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
