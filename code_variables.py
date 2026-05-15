@@ -335,6 +335,10 @@ def calculate_empty_weight(S_wing, S_ht, S_vt, S_wet_fuselage, TOGW, T_0 , num_e
     W_empty = W_wing + W_ht + W_vt + W_fuselage + W_landing_gear + W_engines + W_all_else
     return W_empty
 
+We= calculate_empty_weight(S_w, S_ht, S_vt, S_wet_fuselage, W_TO, T_0 , num_engines)
+
+print(We)
+
 def get_V_MinThrust(Weight,Altitude,wingArea,K_induced,C_D_0): #also minimum drag
     rho, a = atmo_vals(Altitude)[:2] #grabbing density and speed of sound
     V_minThrust = np.sqrt((2*Weight/(rho*wingArea))*np.sqrt(K_induced/C_D_0))
