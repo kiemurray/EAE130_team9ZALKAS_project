@@ -2,7 +2,7 @@
 import numpy as np
 
 # constants
-R=53.35     # gas constant in (ft*lbf/lbm*R)                                                         #ft*lbf/lbm-Rankine
+R = 53.35     # gas constant in (ft*lbf/lbm*R)                                                         #ft*lbf/lbm-Rankine
 g = 32.174  # gravitational constant (slug/lbm)   
 c_f=0.0026
 ra = 950             # nmi
@@ -45,7 +45,7 @@ N_u = 10 # Number of Hydraulic Utility Functions (5-15)
 W_dg = 56631 # Design Gross Weight (lbf)
 n_z = 8.0 # limit load, desired by RFP
 N_z = 1.5 * n_z # Ultimate Load Factor
-n_z_negative = -5 #estimate for negative limit load
+n_z_negative = -2 # MIL-8861 for negative limit load at max weight
 
 
 
@@ -149,7 +149,7 @@ c_vt = 0.094 # vertical tail volume coefficient (Raymer Section 6.5.3)
 print("Vertical tail arm:",0.40 * L_f,"ft")
 L_vt = 15 # vertical tail moment arm (ft) (Should be 45-50% of the fuselage length according to Raymer 6.5.3) (Updated May 1)
 H_v = 6.5 # Vertical Tail Height Above Fuselage (this gets cancelled out anyways)
-AR_vt = 0.24 # Vertical Tail Aspect Ratio
+AR_vt = 2.036 # Vertical Tail Aspect Ratio
 cr_c = 0.30 #rudder chord fraction (Raymer 6.5.3)
 S_r = 33.79 # Rudder Area ft^2
 taper_ratio_vt = 0.544 # Vertical Tail Taper Ratio
@@ -157,8 +157,8 @@ sweep_vt = 55 # Vertical Tail Sweep
 n_zv = 3.0 # Vertical Tail Limit Load (estimated)
 N_zv = 1.5 * n_zv # Vertical Tail Limit Load
 L_t = 8.95 # Tail Length, ft
-S_vt = 65 # Vertical Tail Area [ft^2]
-c_t = 8.24676 #stabilator MAC (not updated)
+S_vt = 85 # Vertical Tail Area [ft^2]
+c_t = 6.65 #stabilator MAC (not updated)
 
 # horizontal tail
 c_ht = 0.4        # horizontal tail volume coefficient (Raymer Section 6.5.3)
@@ -166,7 +166,7 @@ L_ht = 17       # horizontal tail moment arm (ft)
 AR_h = 2.37       # aspect ratio of horizontal stabilizer (empenage slide 54)
 K_rht = 1.047 # Rolling Tail (Stabilators)
 lambda_h = lambda_w +5   # Sweep angle of horizontal tail (degrees) (Raymer 4.5.4 syas add 5 degrees)
-H_t = 0.8 # Horizontal Tail Height Above Fuselage
+H_t = 0.0 # Horizontal Tail Height Above Fuselage
 K_vsh = 1.0 # Non-Variable Sweep Wing
 eta_h = 0.9      # difference factor between the theoretical section lift curve slope for the horizontal tail
 t_t = 0.05 # tail thickness, estimated based on t/c ratios of other aircraft and the fact that the tail is thinner than the wing
@@ -184,14 +184,13 @@ V_t = 2450 # Total Fuel Volume, gal
 V_i = 0.0 * V_t # Integral Fuel Tank Volume, gal
 V_p = 1.0 * V_t # Self-Sealing Wing Tank Volume, gal
 N_t = 10 # Number of Tanks
-tank_1_v = 59.0 # ft^3
-tank_2_v = 100.0 # ft^3
+tank_1_v = 65.2 # ft^3
+tank_2_v = 102.8 # ft^3
 tank_3_v = 58.7 # ft^3
-tank_4_v = 26.2 # ft^3
-tank_56_v = 38.2 # ft^3
-tank_78_v = 9.0 # ft^3
-wing_tank_v = 65.1 * 2 # ft^3
-inwing_tank_v = 28.5 * 2 # ft^3
+tank_4_v = 28.5 # ft^3
+tank_56_v = 37.6 # ft^3
+wing_tank_v = 65.9 * 2 # ft^3
+inwing_tank_v = 29.2 * 2 # ft^3
 
 # mission segment variables
 # weight fractions
@@ -210,11 +209,11 @@ wf_middescent = 0.995
 
 # takeoff parameters
 V_TO = 160 * 1.68781                    # takeoff speed in ft/s, assuming 160 knots for takeoff
-W_TO = 54747
+W_TO = 52850
 e_to = 0.775                            #takeoff
 k_to = 1 / (np.pi * AR_w * e_to)          #takeoff
 S_wingtest = 600 #based on vsp design B3.16
-T_0 = 23930  # Example value for thrust per engine
+T_0 = 22000  # Example value for thrust per engine
 T_0_mil = 13000
 
 # climb parameters

@@ -187,7 +187,7 @@ plt.title('Convergence of TOGW Estimate')
 plt.xlabel('Iteration')
 plt.ylabel('Estimated TOGW (lb)')
 plt.grid()
-plt.show()
+# plt.show()
 print("Final estimated TOGW:", final_TOGW, "lb")
 
 
@@ -550,21 +550,38 @@ plt.figure(figsize=(16,9))
 #plt.title('Converged T vs S',fontsize=25)
 plt.xlabel("Wing Area S (ft²)",fontsize=18)
 plt.ylabel("Total Thrust T (lbf)",fontsize=18)
-plt.plot(S_wing_grid, T_cruise, color='blue', linewidth=2, label='Cruise')
+ax = plt.gca()
+cruise, = ax.plot(S_wing_grid, T_cruise, color='blue', linewidth=2, label='Cruise')
 #plt.plot(S_wing_grid, T_SLdash, color='cyan', linewidth=2, label='SL Dash')
-plt.plot(S_wing_grid, T_SLdashideal, color='cyan', linewidth=2,linestyle='--', label='Ideal SL Dash (M0.9)')
-plt.plot(S_wing_grid, T_30dash, color='limegreen',  linewidth=2,label='30k ft Dash (M1.6)')
-plt.plot(S_wing_grid, T_30dashideal, color='limegreen',  linewidth=2, linestyle='--', label='Ideal 30k ft Dash (M2.0)')
-plt.plot(S_wing_grid, T_maneuver, color='red', linewidth=2,label='Sustained Turn (8 deg/s)')
-plt.plot(S_wing_grid, T_maneuverideal, color='red', linewidth=2, linestyle='--', label='Ideal Sustained Turn (10 deg/s)')
-plt.plot(S_wing_grid, T_ceiling, color='darkgreen', linewidth=2, label='Ceiling (50k ft)')
-plt.plot(S_wing_grid, T_climb, color='orange', linewidth=2, label='SEROC Climb (200 ft/min)')
-plt.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeoff (Catapult)')
+IdealSLDash, = ax.plot(S_wing_grid, T_SLdashideal, color='cyan', linewidth=2,linestyle='--', label='Ideal SL Dash (M0.9)')
+HiDash, = ax.plot(S_wing_grid, T_30dash, color='limegreen',  linewidth=2,label='30k ft Dash (M1.6)')
+IdealHiDash, = ax.plot(S_wing_grid, T_30dashideal, color='limegreen',  linewidth=2, linestyle='--', label='Ideal 30k ft Dash (M2.0)')
+Sustain, = ax.plot(S_wing_grid, T_maneuver, color='red', linewidth=2,label='Sustained Turn (8 deg/s)')
+IdealSus, = ax.plot(S_wing_grid, T_maneuverideal, color='red', linewidth=2, linestyle='--', label='Ideal Sustained Turn (10 deg/s)')
+Ceiling, = ax.plot(S_wing_grid, T_ceiling, color='darkgreen', linewidth=2, label='Ceiling (50k ft)')
+SEROC, = ax.plot(S_wing_grid, T_climb, color='orange', linewidth=2, label='SEROC Climb (200 ft/min)')
+Takeoff, = ax.plot(S_W_S_array_takeoff, T_grid, color='black', linewidth=2, label = 'Takeoff (Catapult)')
 #plt.plot(S_W_S_array_landing_runway, T_grid, color='magenta', linewidth=2, linestyle='--', label = 'Landing')
-plt.plot(S_W_S_array_landing_arrestor, T_grid, color='magenta', linewidth=2, label = 'Arrestor Landing')
-plt.plot(S_W_S_array_stall, T_grid, color='purple', linewidth=2, label = 'Stall')
-plt.plot(S_W_S_array_maxloadfactor, T_grid, color='brown', linewidth=2, label = 'Max Load Factor (7.0g)')
-plt.plot(S_W_S_array_maxloadfactorideal, T_grid, color='brown', linewidth=2, linestyle='--', label = 'Ideal Max Load Factor (8.0g)')
+Arrestor, = ax.plot(S_W_S_array_landing_arrestor, T_grid, color='magenta', linewidth=2, label = 'Arrestor Landing')
+Stall, = ax.plot(S_W_S_array_stall, T_grid, color='purple', linewidth=2, label = 'Stall')
+MaxLoad, = ax.plot(S_W_S_array_maxloadfactor, T_grid, color='brown', linewidth=2, label = 'Max Load Factor (7.0g)')
+IdealMaxLoad, = ax.plot(S_W_S_array_maxloadfactorideal, T_grid, color='brown', linewidth=2, linestyle='--', label = 'Ideal Max Load Factor (8.0g)')
+
+legend_models = ax.legend(handles=[cruise,
+                                   IdealSLDash,
+                                   HiDash,
+                                   IdealHiDash,
+                                   Sustain,
+                                   IdealSus,
+                                   Ceiling,
+                                   SEROC,
+                                   Takeoff,
+                                   Arrestor,
+                                   Stall,
+                                   MaxLoad,
+                                   IdealMaxLoad],
+                                   loc='upper right', fontsize = 16)
+ax.add_artist(legend_models)
 
 S_main = np.array(S_wing_grid)
 T_top = 100000
@@ -639,34 +656,47 @@ plt.contourf(
 
 #comparable aircraft points
 aircraft_points = [
-    (S_J39C, T_J39C_wet, "J39C"),
-    (S_Su33, T_Su33_wet, "Su-33"),
-    (S_Su34, T_Su34_wet, "Su-34"),
-    #(S_Typhoon, T_Typhoon_wet, "Typhoon"),
-    (S_Rafale_M, T_Rafale_M_wet, "Rafale M"),
-    (S_F18_E_M, T_F18_E_wet, "F/A-18E"),
-    #(S_F35C, T_F35C_wet, "F35-C"),
-    (S_F16C, T_F16C_wet, "F-16C"),
-    (S_F22A, T_F22A_wet, "F-22A"),
-    (S_Gripen, T_Gripen_wet, "Gripen E"),
-    (S_F15C, T_F15C_wet, "F-15C")]
+    (S_J39C, T_J39C_wet, "J39C", "d", '#F69C00' ),
+    (S_Su33, T_Su33_wet, "Su-33", "o",'#009B77'),
+    (S_Su34, T_Su34_wet, "Su-34", "s",'#D50032'),
+    (S_Typhoon, T_Typhoon_wet, "Typhoon", "^",'#005B96'),
+    (S_Rafale_M, T_Rafale_M_wet, "Rafale M", "v",'#A38900'),
+    (S_F18_E_M, T_F18_E_wet, "F/A-18E", "<", '#ff6f40'),
+    (S_F35C, T_F35C_wet, "F35-C", "P", '#000000'),
+    (S_F16C, T_F16C_wet, "F-16C", "8",'#e3b0bf'),
+    (S_F22A, T_F22A_wet, "F-22A", "p",'#2196f3'),
+    (S_Gripen, T_Gripen_wet, "Gripen E", "D",'#795548'),
+    (S_F15C, T_F15C_wet, "F-15C", "H",'#6A0f8E')]
 #plots and labels comparable aircraft
+handles = []
+for S, T, label, marker, color in aircraft_points:
+    h = ax.scatter(S, T, label=label, marker=marker, color=color)
+    handles.append(h)
+legend_aircraft = ax.legend(handles=handles,
+                            loc='lower center',
+                            bbox_to_anchor=(0.5, 0),
+                            title="Aircraft")
+ax.add_artist(legend_aircraft)
 
 #COMAPRABLE POINTS
-for S, T, name in aircraft_points:
-    plt.plot(S, T, marker='^', markersize=5, color='black')
-    plt.annotate(name, (S, T), xytext=(-20,5), textcoords='offset points',fontsize=16)
+# for S, T, name, marker, color in aircraft_points:
+#     plt.plot(S, T,label=name, marker=marker, markersize=15, color=color)
+#     # plt.annotate(name, (S, T), xytext=(5,5), textcoords='offset points',fontsize=16)
+#     plt.legend(loc='best',fontsize=11)
 
 
 
-plt.plot(cv.S_w, 44000, marker='*', color='gold', markersize=20,  markeredgecolor='black', zorder=5, label='Desing Point')
-
+plt.plot(cv.S_w, 44000, label='ZALKAS Fighter', marker='*', color='gold', markersize=17,  markeredgecolor='black', zorder=5)
 # plt.plot(S_ZALKAS, T_ZALKAS, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 # plt.annotate('ZALKAS Fighter', (S_ZALKAS, T_ZALKAS), xytext=(5,5), textcoords='offset points',fontsize=16)
 # plt.plot(530, F100_229.T_wet, marker='*', color='gold', markersize=15,  markeredgecolor='black', zorder=5)
 # plt.annotate('ZALKAS Fighter (F110)', (530, F100_229.T_wet), xytext=(5,5), textcoords='offset points',fontsize=16)
 
-plt.legend(loc='upper right',fontsize=12)
+
+
+
+# plt.legend(loc='upper right', fontsize=16, prop={'size': 18}, handlelength=2, handleheight=1.25)
+
 plt.ylim(0,80000)
 
 plt.xticks(fontsize=14)

@@ -77,6 +77,10 @@ W_uav = cv.W_uav # Uninstalled Avionics Weight, lbf
 W_urdr = cv.W_urdr # Uninstalled Radar Weight, lbf
 N_c = N_ci # Number of Crew
 
+print("")
+print("")
+print("")
+
 # Wing Weight (Raymer Eq 15.1)
 W_wing = 0.0103 * K_dw * K_vs * (W_dg * N_z)**0.5 * S_w**0.622 * AR**0.785 * tc_root**(-0.4) * (1 + taper_ratio)**0.05 * np.cos(np.radians(wing_sweep))**(-1.0) * S_csw**0.04
 W_Wing = 0.85 * W_wing # Advanced Composites
@@ -90,11 +94,11 @@ print("Horizontal Tail Weight:", W_horizontal_tail, "lbf")
 # Vertical Tail Weight (Raymer Eq 15.3)
 W_vertical_tail = (0.452 * K_rht * (1 + H_t/H_v)**0.5 * (W_dg * N_zv)**0.488 * S_vt**0.718 * M**0.341 * L_t**(-1.0) * (1 + S_r/S_vt)**0.348 * AR_vt**0.223 * (1 + taper_ratio_vt)**0.25 * np.cos(np.radians(sweep_vt))**(-0.323))
 W_vertical_tail = 0.85 * W_vertical_tail # Advanced Composites
-print("Tail Weight:", W_vertical_tail, "lbf")
+print("Vertical Tail Weight:", W_vertical_tail, "lbf")
 
 # Fuselage Weight (Raymer Eq 15.4)
 W_fuselage = (0.499 * K_dwf * W_dg**0.35 * N_z**0.25 * L_f**0.5 * D_f**0.849 * W_f**0.685)
-W_fuselage = 0.90 * W_fuselage # Advanced Composites
+#W_fuselage = 0.90 * W_fuselage # Advanced Composites
 print("Fuselage Weight:", W_fuselage, "lbf")
 
 # Rear Landing Gear (Raymer Eq 15.5)
@@ -188,18 +192,24 @@ print(f"Air Conditioning and Anti-Ice Weight: {W_air_conditioning} lbf")
 W_handling_gear = 3.2e-4 * W_dg
 print(f"Handling Gear Weight: {W_handling_gear} lbf")
 
+W_generators = 116 * 2 # Boeing Manufacturer Data for Integrated Drive Generator
+print(f"Integrated Generator Weight: {W_generators} lbf")
+
+print("")
+
 # Empty Weight
 W_empty = (W_wing + W_horizontal_tail + W_vertical_tail + W_fuselage + W_rear_landing_gear + W_nose_landing_gear +
          W_engine_mounts + W_firewall + W_engine_section + W_inlet +
          W_tailpipe + W_engine_cooling + W_oil_cooling + W_engine_controls + W_starter +
          W_fuel_system + W_flight_controls + W_instruments + W_hydraulics + W_electrical +
-         W_avionics + W_radar + W_furnishings + W_air_conditioning + W_handling_gear + W_engine)
+         W_avionics + W_radar + W_furnishings + W_air_conditioning + W_handling_gear + W_engine + W_generators)
 print(f"Empty Weight: {W_empty} lbf")
 
+print("")
 
 # X-Axis Center of Gravity
 
-fuselage_cg = 12.35 # 0.26 * L_f # ft
+fuselage_cg = 12.25 # ft
 wing_cg = 27.0 # ft
 horizontal_tail_cg = 46.0 # ft
 vertical_tail_cg = 45.2 # ft
@@ -214,7 +224,6 @@ AC_cg = 15.9 # ft
 AIM_120_cg = 20.1 # ft
 MK_83_cg = 20.1 # ft
 AIM_9X_cg = 31.9 # ft
-tank_78_cg = 36.8 # ft
 tank_56_cg = 14.0 # ft
 wing_tank_cg = 26.3 # ft
 inwing_tank_cg = 23.6 # ft
@@ -226,6 +235,8 @@ cockpit_cg = 11.9 # ft
 fuel_tanks_cg = 24.7 # ft
 flight_controls_cg = 33.6 # ft
 tailpipe_cg = 48.6 # ft
+generators_cg = 40.0 # ft
+electrical_cg = 40.9 # ft
 
 # Z-Axis Center of Gravity
 
@@ -244,7 +255,6 @@ AC_z_cg = 2.3 # ft
 AIM_120_z_cg = -1.4 # ft
 MK_83_z_cg = -1.4 # ft
 AIM_9X_z_cg = -1.9 # ft
-tank_78_z_cg = -0.4 # ft
 tank_56_z_cg = -0.4 # ft
 wing_tank_z_cg = 0.0 # ft
 inwing_tank_z_cg = 0.0 # ft
@@ -256,6 +266,7 @@ cockpit_z_cg = 2.7 # ft
 fuel_tanks_z_cg = 1.3 # ft
 flight_controls_z_cg = 0.6 # ft
 tailpipe_z_cg = 0 # ft
+electrical_z_cg = -0.4 # ft
 
 # Individual Tank Weights
 
@@ -277,6 +288,7 @@ print(f"Tank 5/6:     {tank_56_w:>10.1f} lbf")
 print(f"Wing Tank:    {wing_tank_w:>10.1f} lbf")
 print(f"Inboard Wing: {inwing_tank_w:>10.1f} lbf")
 print(f"{'Total:':13}{total_fuel_w:>10.1f} lbf")
+print("")
 
 # Ordinance Weights
 
@@ -289,6 +301,7 @@ Class_II_TOGW_S = W_empty + total_fuel_w + AIM_9X_w + MK_83_w
 
 print(f"Class II TOGW Air to Air:       {Class_II_TOGW_A:>10.1f} lbf")
 print(f"Class II TOGW Strike:       {Class_II_TOGW_S:>10.1f} lbf")
+print("")
 
 # X-Axis Center of Gravity
 
@@ -310,6 +323,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + (radar_cg * W_radar)
         + (avionics_cg * W_avionics)
         + (AC_cg * W_air_conditioning)
+        + (generators_cg + W_generators)
         # --- previously missing structural/systems weights ---
         + (engine_cg * W_engine_mounts)
         + (engine_cg * W_firewall)
@@ -322,7 +336,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + (flight_controls_cg * W_flight_controls)
         + (cockpit_cg * W_instruments)
         + (fuselage_cg * W_hydraulics)
-        + (cockpit_cg * W_electrical)
+        + (electrical_cg * W_electrical)
         + (cockpit_cg * W_furnishings)
         + (forward_gear_cg * W_handling_gear)
         # --- end previously missing ---
@@ -343,7 +357,7 @@ def calculate_cg(ordnance_cg, ordnance_w, label,
         + W_engine_mounts + W_firewall + W_engine_section + W_tailpipe
         + W_oil_cooling + W_engine_controls + W_starter
         + W_fuel_system + W_flight_controls + W_instruments + W_hydraulics + W_electrical
-        + W_furnishings + W_handling_gear
+        + W_furnishings + W_handling_gear + W_generators
         # --- end previously missing ---
         + (ordnance_w if inc_ordinance else 0)
         + (AIM_9X_w if inc_AIM_9X else 0)
@@ -397,59 +411,6 @@ strike_points = [
 strike_labels = ["Fully Loaded", "Tanks 5/6 Empty", "Tank 3 Empty", "Wing Tanks Empty", "Tank 2 Empty",
                  "MK-83 Drop", "AIM-9X Drop", "Tank 4 Empty", "Tank 1 Empty", "Inwing Tanks Empty"]
 
-air_cg   = [p[0] for p in air_points]
-air_wt   = [p[1] for p in air_points]
-str_cg   = [p[0] for p in strike_points]
-str_wt   = [p[1] for p in strike_points]
-
-air_cg_mac = [ft_to_pct_MAC(cg) for cg in air_cg]
-str_cg_mac = [ft_to_pct_MAC(cg) for cg in str_cg]
-
-markers = ['o', 's', '^', 'D', 'v', 'P', '*', 'X', 'h', 'p']
-
-fig, ax = plt.subplots(figsize=(10, 8))
-
-ax.plot(air_cg_mac, air_wt, 'b-', linewidth=3)
-ax.plot(str_cg_mac, str_wt, 'r--', linewidth=3)
-
-air_handles = []
-str_handles = []
-
-for i, (label, marker) in enumerate(zip(air_labels, markers)):
-    h, = ax.plot(air_cg_mac[i], air_wt[i], color='blue', marker=marker, markersize=10, linestyle='None')
-    air_handles.append((h, f"A2A: {label}"))
-
-for i, (label, marker) in enumerate(zip(strike_labels, markers)):
-    h, = ax.plot(str_cg_mac[i], str_wt[i], color='red', marker=marker, markersize=10, linestyle='None')
-    str_handles.append((h, f"Strike: {label}"))
-
-all_handles = [h for h, _ in air_handles] + [h for h, _ in str_handles]
-all_labels  = [l for _, l in air_handles] + [l for _, l in str_handles]
-ax.legend(all_handles, all_labels, loc='upper right', fontsize=9, ncol=2)
-
-takeoff_cg_mac = air_cg_mac[0]
-fwd_limit_mac = takeoff_cg_mac - (0.04 * 100)
-aft_limit_mac = takeoff_cg_mac + (0.04 * 100)
-
-ax.axvline(x=fwd_limit_mac, color='black', linewidth=2, linestyle='-')
-ax.axvline(x=aft_limit_mac, color='black', linewidth=2, linestyle='-')
-y_mid = (ax.get_ylim()[0] + ax.get_ylim()[1]) / 2
-
-ax.text(fwd_limit_mac - 0.1, y_mid, 'Fwd Limit', rotation=90, va='center', ha='right',
-        fontsize=11, fontweight='bold')
-ax.text(aft_limit_mac + 0.2, y_mid, 'Aft Limit', rotation=90, va='center', ha='left',
-        fontsize=11, fontweight='bold')
-
-ax.set_xlabel("CG Location (% MAC from Datum)", fontsize=13, fontweight='bold')
-ax.set_ylabel("Gross Weight (lbf)", fontsize=13, fontweight='bold')
-ax.set_xticks([])
-ax.set_yticks([])
-ax.set_title("CG Excursion Diagram", fontsize=15, fontweight='bold')
-ax.grid(True, linestyle='--', alpha=0.5)
-
-plt.tight_layout()
-plt.show()
-
 # Z-Axis Center of Gravity
 
 def calculate_z_cg(ordnance_z_cg, ordnance_w, label,
@@ -482,7 +443,7 @@ def calculate_z_cg(ordnance_z_cg, ordnance_w, label,
         + (flight_controls_z_cg * W_flight_controls)
         + (cockpit_z_cg * W_instruments)
         + (fuselage_z_cg * W_hydraulics)
-        + (cockpit_z_cg * W_electrical)
+        + (electrical_z_cg * W_electrical)
         + (cockpit_z_cg * W_furnishings)
         + (forward_gear_z_cg * W_handling_gear)
         # --- end previously missing ---
@@ -519,6 +480,62 @@ def calculate_z_cg(ordnance_z_cg, ordnance_w, label,
     print(f"{label} z_CG: {z_cg:.2f} ft  |  Weight: {denominator:.0f} lbf")
     return z_cg, denominator
 
-
+print("")
 z_cg_air = calculate_z_cg(AIM_120_z_cg, AIM_120_w, "Air-To-Air Configuration")
 z_cg_strike = calculate_z_cg(MK_83_z_cg, MK_83_w, "Strike Configuration")
+print("")
+
+# --- Plot (moved to end so all calculations complete first) ---
+
+air_cg   = [p[0] for p in air_points]
+air_wt   = [p[1] for p in air_points]
+str_cg   = [p[0] for p in strike_points]
+str_wt   = [p[1] for p in strike_points]
+
+air_cg_mac = [ft_to_pct_MAC(cg) for cg in air_cg]
+str_cg_mac = [ft_to_pct_MAC(cg) for cg in str_cg]
+
+markers = ['o', 's', '^', 'D', 'v', 'P', '*', 'X', 'h', 'p']
+
+fig, ax = plt.subplots(figsize=(10, 8))
+
+ax.plot(air_cg_mac, air_wt, 'b-', linewidth=3)
+ax.plot(str_cg_mac, str_wt, 'r--', linewidth=3)
+
+air_handles = []
+str_handles = []
+
+for i, (label, marker) in enumerate(zip(air_labels, markers)):
+    h, = ax.plot(air_cg_mac[i], air_wt[i], color='blue', marker=marker, markersize=10, linestyle='None')
+    air_handles.append((h, f"A2A: {label}"))
+
+for i, (label, marker) in enumerate(zip(strike_labels, markers)):
+    h, = ax.plot(str_cg_mac[i], str_wt[i], color='red', marker=marker, markersize=10, linestyle='None')
+    str_handles.append((h, f"Strike: {label}"))
+
+all_handles = [h for h, _ in air_handles] + [h for h, _ in str_handles]
+all_labels  = [l for _, l in air_handles] + [l for _, l in str_handles]
+ax.legend(all_handles, all_labels, loc='center right', fontsize=14, ncol=2, bbox_to_anchor=(0.96, 0.5))
+
+takeoff_cg_mac = air_cg_mac[0]
+fwd_limit_mac = takeoff_cg_mac - (0.04 * 100)
+aft_limit_mac = takeoff_cg_mac + (0.04 * 100)
+
+ax.axvline(x=fwd_limit_mac, color='black', linewidth=2, linestyle='-')
+ax.axvline(x=aft_limit_mac, color='black', linewidth=2, linestyle='-')
+y_mid = (ax.get_ylim()[0] + ax.get_ylim()[1]) / 2
+
+ax.text(fwd_limit_mac - 0.1, y_mid, 'Fwd Limit', rotation=90, va='center', ha='right',
+        fontsize=11, fontweight='bold')
+ax.text(aft_limit_mac + 0.2, y_mid, 'Aft Limit', rotation=90, va='center', ha='left',
+        fontsize=11, fontweight='bold')
+
+ax.set_xlabel("CG Location (% MAC from Datum)", fontsize=13, fontweight='bold')
+ax.set_ylabel("Gross Weight (lbf)", fontsize=13, fontweight='bold')
+ax.set_xticks([])
+ax.set_yticks([])
+ax.set_title("CG Excursion Diagram", fontsize=15, fontweight='bold')
+ax.grid(True, linestyle='--', alpha=0.5)
+
+plt.tight_layout()
+plt.show()
