@@ -5,7 +5,7 @@ import math
 
 #Need diagram based on minimum and maximum weight
 #you can tweak these values
-Weight = cv.W_TO
+Weight = cv.W_l
 #Weight = cv.W_TO*cv.wf_landing
 n_design_positive = cv.n_z
 n_design_negative = cv.n_z_negative
@@ -256,11 +256,11 @@ plt.title('Maximum Weight V-n Diagram', fontsize=20)
 plt.annotate('${V_A}$', (V_stall_pos_end, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
 plt.annotate('${V_C}$', (V_C, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
 plt.annotate(f'$V_D$ = {math.floor(V_D)} kts', (V_D-50, 8.1), xytext=(-5,5), textcoords='offset points',fontsize=15)
-plt.annotate('${V_{Stall}}$', (v_stall+20, -0.5), xytext=(-5,5), textcoords='offset points',fontsize=15)
-plt.annotate('Positive Stall Line', (425, 5), xytext=(-5,5), textcoords='offset points',fontsize=15)
-plt.annotate('Negative Stall Line', (150,-2), xytext=(-5,5), textcoords='offset points',fontsize=15)
-plt.annotate('Positive Load Limit', (770,6.7), xytext=(-5,5), textcoords='offset points',fontsize=15)
-plt.annotate('Negative Load Limit', (600,-1.75), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('${V_{Stall}}$', (v_stall+20, -1), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Positive Stall Line', (325, 5), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Negative Stall Line', (70,-2), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Positive Load Limit', (670,7.25), xytext=(-5,5), textcoords='offset points',fontsize=15)
+plt.annotate('Negative Load Limit', (475,-2.75), xytext=(-5,5), textcoords='offset points',fontsize=15)
 plt.annotate('${V_{NE}}$', (V_D+25,3.5), xytext=(-5,5), textcoords='offset points',fontsize=15)
 
 plt.grid(True, alpha=0.4)
