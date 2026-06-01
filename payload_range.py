@@ -37,106 +37,107 @@ W_330gal_tank = 290
 W_330gal_fuel = 2244
 
 
-fuel_tanks = [c2w.tank_1_w,
-              c2w.tank_2_w,
-              c2w.tank_34_w,
-              c2w.tank_5_w,
-              c2w.tank_6_w,
-              c2w.tank_78_w,
-              c2w.wing_tank_w]
+# fuel_tanks = [c2w.tank_1_w,
+#               c2w.tank_2_w,
+#               c2w.tank_3_w,
+#               c2w.tank_4_w,
+#               c2w.tank_56_w,
+#               c2w.wing_tank_w]
 
 
-# fuel and payload
-W_fuel_internal = np.sum(fuel_tanks)  
-W_reserve_fuel = 0.1 * W_fuel_internal
-W_max_fuel = W_fuel_internal - W_reserve_fuel + 2*W_480gal_fuel + 2*W_330gal_fuel
-W_fuel_max_payload = W_fuel_internal - W_reserve_fuel
-W_max_fuel -= W_reserve_fuel
+# # fuel and payload
+# W_fuel_internal = np.sum(fuel_tanks)  
+# W_reserve_fuel = 0.1 * W_fuel_internal
+# W_max_fuel = W_fuel_internal - W_reserve_fuel + 2*W_480gal_fuel + 2*W_330gal_fuel
+# W_fuel_max_payload = W_fuel_internal - W_reserve_fuel
+# W_max_fuel -= W_reserve_fuel
 
-print(f"usable int fuel: {W_fuel_max_payload} lbs")
-print(f"usable ext fuel: {2*W_480gal_fuel + 2*W_330gal_fuel} lbs")
-print(f"reserve fuel: {W_reserve_fuel} lbs")
+# print(f"usable int fuel: {W_fuel_max_payload} lbs")
+# print(f"usable ext fuel: {2*W_480gal_fuel + 2*W_330gal_fuel} lbs")
+# print(f"reserve fuel: {W_reserve_fuel} lbs")
 
-print(f"strike payload: {W_payload_max_fuel} lbs")
-print(f"a2a payload: {cv.a2a_payload} lbs")
-print(f"max payload: {W_max_payload} lbs")
+# print(f"strike payload: {W_payload_max_fuel} lbs")
+# print(f"a2a payload: {cv.a2a_payload} lbs")
+# print(f"max payload: {W_max_payload} lbs")
 
-# weight fractions
-wf_cr = 0.93148704              # weight fraction for cruise
-wf_climb =  0.970299            # weight fraction for climb
-wf_midclimb = 0.98               # weight fraction for mid-climb
-wf_midcruise = 0.7806623694686121     # weight fraction for mid-cruise
-wf_warmup= 0.99                 # weight fraction for engine warmup, assumed to be 0.99 (1% fuel burn during warmup)   
-wf_taxi= 0.99
-wf_takeoff= 0.99
-wf_descent= 0.99
-
-
+# # weight fractions
+# wf_cr = 0.93148704              # weight fraction for cruise
+# wf_climb =  0.970299            # weight fraction for climb
+# wf_midclimb = 0.98               # weight fraction for mid-climb
+# wf_midcruise = 0.7806623694686121     # weight fraction for mid-cruise
+# wf_warmup= 0.99                 # weight fraction for engine warmup, assumed to be 0.99 (1% fuel burn during warmup)   
+# wf_taxi= 0.99
+# wf_takeoff= 0.99
+# wf_descent= 0.99
 
 
 
 
-W_OEW = 29445                 #from A1 table 3
 
-def get_CL(W0, W1):
-    W = (W0 + W1) / 2
-    CL = 2 * W / (S * rho * v**2)
-    return CL
 
-def get_CD(CL, dirty):
-    CD = CD0  + CL**2 / (np.pi*AR*e)
-    CD = CD + CD*0.5*dirty
-    return CD
+# W_OEW = 29445                 #from A1 table 3
 
-def jet_range(W0, W1, dirty):
-    CL = get_CL(W0, W1)
-    CD = get_CD(CL, dirty)
-    print(CD)
-    R =2*np.sqrt(2/(rho*S)) * 1/ct * np.sqrt(CL)/CD * (np.sqrt(W0) - np.sqrt(W1))
-    return 0.000164579*R
+# def get_CL(W0, W1):
+#     W = (W0 + W1) / 2
+#     CL = 2 * W / (S * rho * v**2)
+#     return CL
+
+# def get_CD(CL, dirty):
+#     CD = CD0  + CL**2 / (np.pi*AR*e)
+#     CD = CD + CD*0.5*dirty
+#     return CD
+
+# def jet_range(W0, W1, dirty):
+#     CL = get_CL(W0, W1)
+#     CD = get_CD(CL, dirty)
+#     print(CD)
+#     R =2*np.sqrt(2/(rho*S)) * 1/ct * np.sqrt(CL)/CD * (np.sqrt(W0) - np.sqrt(W1))
+#     return 0.000164579*R
 
 
 # Point A
 R_A = 0
 
 # Point B
-W0_B = W_OEW + W_reserve_fuel + W_max_payload + W_fuel_max_payload
-W1_B = W_OEW + W_reserve_fuel + W_max_payload
-vb = get_deadload_endspeed(W0_B)
-print(f"W0_B takeoff speed: {vb:.1f} ft/s")
-R_B = jet_range(W0_B, W1_B, dirty = True)
-print(f"RB = {R_B:.1f} nm")
+# W0_B = W_OEW + W_reserve_fuel + W_max_payload + W_fuel_max_payload
+# W1_B = W_OEW + W_reserve_fuel + W_max_payload
+# vb = get_deadload_endspeed(W0_B)
+# print(f"W0_B takeoff speed: {vb:.1f} ft/s")
+# R_B = jet_range(W0_B, W1_B, dirty = True)
+# print(f"RB = {R_B:.1f} nm")
+R_B = 1590
 
 
-# Point C
-W0_C = W_OEW + W_reserve_fuel + W_payload_max_fuel + W_max_fuel
-W1_C = W_OEW + W_reserve_fuel + W_payload_max_fuel
-vc = get_deadload_endspeed(W0_C)
-print(f"W0_C takeoff speed: {vc:.1f} ft/s")
-R_C = jet_range(W0_C, W1_C, dirty = True)
-print(f"RC = {R_C:.1f} nm")
-
+# # Point C
+# W0_C = W_OEW + W_reserve_fuel + W_payload_max_fuel + W_max_fuel
+# W1_C = W_OEW + W_reserve_fuel + W_payload_max_fuel
+# vc = get_deadload_endspeed(W0_C)
+# print(f"W0_C takeoff speed: {vc:.1f} ft/s")
+# R_C = jet_range(W0_C, W1_C, dirty = True)
+# print(f"RC = {R_C:.1f} nm")
+R_C = 2750
 # Point D
-W0_D = W_OEW + W_reserve_fuel + W_max_fuel
-W1_D = W_OEW + W_reserve_fuel 
-vd = get_deadload_endspeed(W0_D)
-print(f"W0_D takeoff speed: {vd:.1f} ft/s")
-R_D = jet_range(W0_D, W1_D, dirty = True)
-print(f"RD = {R_D:.1f} nm")
+# W0_D = W_OEW + W_reserve_fuel + W_max_fuel
+# W1_D = W_OEW + W_reserve_fuel 
+# vd = get_deadload_endspeed(W0_D)
+# print(f"W0_D takeoff speed: {vd:.1f} ft/s")
+# R_D = jet_range(W0_D, W1_D, dirty = True)
+# print(f"RD = {R_D:.1f} nm")
+R_D = 3180
 
 # Point S (strike)
-W0_strike = W_OEW + W_reserve_fuel + cv.strike_payload + W_fuel_max_payload
-W1_strike = W_OEW + W_reserve_fuel + cv.strike_payload 
-R_strike = jet_range(W0_strike, W1_strike, dirty = False)
-print(f"R_strike = {R_strike:.2f}")
+# W0_strike = W_OEW + W_reserve_fuel + cv.strike_payload + W_fuel_max_payload
+# W1_strike = W_OEW + W_reserve_fuel + cv.strike_payload 
+# R_strike = jet_range(W0_strike, W1_strike, dirty = False)
+# print(f"R_strike = {R_strike:.2f}")
 R_strike = 2000
 W_payload_strike = cv.strike_payload
 
 # Point A2A (air-to-air)
-W0_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload + W_fuel_max_payload
-W1_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload
-R_a2a = jet_range(W0_a2a, W1_a2a, dirty = False)
-print(f"R_a2a = {R_a2a:.2f}")
+# W0_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload + W_fuel_max_payload
+# W1_a2a = W_OEW + W_reserve_fuel + cv.a2a_payload
+# R_a2a = jet_range(W0_a2a, W1_a2a, dirty = False)
+# print(f"R_a2a = {R_a2a:.2f}")
 R_a2a = 2150
 W_payload_a2a = cv.a2a_payload
 
